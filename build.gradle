@@ -58,6 +58,33 @@ clover {
     }
 }
 
+clover {
+  report{
+    xml= true
+    html = true
+  }
+}
+
+tasks.withType(JavaCompile) {
+ options.debug = true
+}
+task resolveDependencies {
+   doLast {
+       project.rootProject.allprojects.each { subProject ->
+           subProject.buildscript.configurations.each { configuration->
+              if(configuration.canBeResolved) {
+                 configuration.resolve()
+              }
+           }
+           subProject.configurations.each { configuration ->
+              if(configuration.canBeResolved) {
+                 configuration.resolve()
+              }
+           }
+       }
+   }
+}
+
 run{
 standardInput=System.in
 }
