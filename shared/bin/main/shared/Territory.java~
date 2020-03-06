@@ -1,0 +1,14 @@
+package shared;
+
+import java.util.List;
+
+public class Territory {
+  private int ownership;//set to player id 1-5 who owns the territory
+  private int tid; //territory id, 1-16
+  private String name; //territory name
+  //private Pair location;
+  private Army defender;
+  private List<Territory> adjacencyList;//can change to ArrayList
+  //neighbor list index 0-5 in counterclock direction
+
+}
