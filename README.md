@@ -1,6 +1,6 @@
 ECE 651: Really Interesting Strategic Conquest
 ![pipeline](https://gitlab.oit.duke.edu/ll199/ece651-spr20-g2/badges/master/pipeline.svg)
-![coverage](https://gitlab.oit.duke.edu/ll199/ece651-spr20-g2/badges/master/coverage.svg?job=test)
+##![coverage](https://gitlab.oit.duke.edu/ll199/ece651-spr20-g2/badges/master/coverage.svg?job=test)
 
 ======================================
 
