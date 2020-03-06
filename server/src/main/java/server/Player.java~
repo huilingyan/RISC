@@ -1,0 +1,61 @@
+package server;
+
+import java.net.Socket;
+import java.util.ArrayList;
+
+import shared.Territory;
+
+public class Player {
+  private int pid;//player id suppose 1-5
+  private String name; //player name
+  private Socket client_socket; //not sure if this is the right type
+  private ArrayList<Territory> player_territory;
+  private boolean active;
+  private boolean connected;
+
+  public Player() {
+  };
+
+  public Player(int p_id, String p_name) {
+    pid = p_id;
+    name = p_name;
+    player_territory = new ArrayList<Territory>();
+    //rest info should be added after socket setup
+  }
+
+  public Player(Player rhs){
+    pid = rhs.pid;
+    name = rhs.name;
+    client_socket = rhs.client_socket;
+    player_territory = rhs.player_territory;
+    active = rhs.active;
+    connected = rhs.connected;
+  }
+  
+  public void setPid(int p_id) {
+    pid = p_id;
+  }
+
+  public int getPid() {
+    return pid;
+  }
+
+  public void setName(String p_name) {
+    name = p_name;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setSocket(Socket client) {
+    client_socket= client;
+  }
+
+  public Socket getSocket() {
+    return client_socket;
+  }
+
+  
+  
+}
