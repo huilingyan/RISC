@@ -1,6 +1,8 @@
 package shared;
 
-public class Army {
+import java.io.Serializable;
+
+public class Army implements Serializable{
   private int num_units;//name can be changed later
 
   public Army() {//empty constructor

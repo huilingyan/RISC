@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,9 +16,15 @@ public class Gameserver {
   private ArrayList<Territory> gameMap;  // list of Territory
   private ServerSocket mySocket;         // server socket
 
+  public Gameserver() {
+    playerList = new ArrayList<Player>();
+    gameMap = new ArrayList<Territory>();
+  }
+
   // Bind the server socket to the given port
   private void bindSocket(int port) {
-    try (ServerSocket newSocket = new ServerSocket(port)){
+    try{
+      ServerSocket newSocket = new ServerSocket(port);
       mySocket = newSocket;
     } catch (IOException e) {
       System.out.println("Failed to bind socket to port " + port);
@@ -27,7 +34,8 @@ public class Gameserver {
 
   // Accept a connection from client
   private Socket acceptConnection() {
-    try(Socket newSocket = mySocket.accept()){
+    try{
+      Socket newSocket = mySocket.accept();
       return newSocket;   // not sure if return socket in try block can work
     } catch (IOException e) {
       System.out.println("IOException when accept()");
@@ -48,6 +56,7 @@ public class Gameserver {
     // accept first player
     Socket newSocket;
     while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
+    System.out.println("Accepts the first player connection");
     addPlayer(0, newSocket);  // add the first player to player list
     // TODO: receive player number
 
@@ -59,8 +68,17 @@ public class Gameserver {
 
   // TODO: change later
   private void playGame() {
-    // TODO: send a string to the first player for now
-    
+    // TODO: send a territory to the first player for now
+    Socket clientSocket = playerList.get(0).getSocket();
+    // TODO: take ObjectOutputStream out from try with, and store it into playerlist
+    try(ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream())) {
+      ArrayList<Territory> list = new ArrayList<Territory>();
+      list.add(new Territory(0, 0, "Test Territory", new Army(10)));
+      out.writeObject(list);
+      // out.flush();
+    }catch(IOException e){}
+    while (true) {    // keep running
+    }
   }
   
   public void runGame() {
