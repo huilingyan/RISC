@@ -8,26 +8,29 @@ import shared.Territory;
 public class Player {
   private int pid;//player id suppose 1-5
   private String name; //player name
-  private Socket client_socket; //not sure if this is the right type
-  private ArrayList<Territory> player_territory;//can store tid instead
+  private Socket clientSocket; //not sure if this is the right type
+  private ArrayList<Territory> playerTerritories;//can store tid instead
   private boolean active;//still has territory
   private boolean connected;//socket connection status
 
   public Player() {
   };
 
-  public Player(int p_id, String p_name) {
+  public Player(int p_id, String p_name, Socket socket) {
     pid = p_id;
     name = p_name;
-    player_territory = new ArrayList<Territory>();
-    //rest info should be added after socket setup
+    clientSocket = socket;
+    playerTerritories = new ArrayList<Territory>();
+    active = true;
+    connected = true;
+    //rest info should be added after socket setup (playerTerritories)
   }
 
   public Player(Player rhs){
     pid = rhs.pid;
     name = rhs.name;
-    client_socket = rhs.client_socket;
-    player_territory = rhs.player_territory;
+    clientSocket = rhs.clientSocket;
+    playerTerritories = rhs.playerTerritories;
     active = rhs.active;
     connected = rhs.connected;
   }
@@ -49,48 +52,48 @@ public class Player {
   }
 
   public void setSocket(Socket client) {
-    client_socket= client;
+    clientSocket= client;
   }
 
   public Socket getSocket() {
-    return client_socket;
+    return clientSocket;
   }
 
   public void setPlayerTerritory(ArrayList<Territory> territories) {
-     player_territory = territories;
+     playerTerritories = territories;
   }
 
   public ArrayList<Territory> getPlayerTerritory() {
-    return player_territory;
+    return playerTerritories;
   }
 
   public void addTerritory(Territory t){
-    for (int i = 0; i < player_territory.size(); i++) {
-      if (t.getTid() == player_territory.get(i).getTid()) {
+    for (int i = 0; i < playerTerritories.size(); i++) {
+      if (t.getTid() == playerTerritories.get(i).getTid()) {
         //adding duplicate territories
         //cancel adding and exit
         return;
       }
     }
-    player_territory.add(t);
+    playerTerritories.add(t);
   }
 
   public void deleteTerritory(Territory t) {
-    for (int i = 0; i < player_territory.size(); i++) {
-      if (t.getTid() == player_territory.get(i).getTid()) {
-        player_territory.remove(i);
+    for (int i = 0; i < playerTerritories.size(); i++) {
+      if (t.getTid() == playerTerritories.get(i).getTid()) {
+        playerTerritories.remove(i);
         return;
       }
     }
     //may need to throw exception here if no territory matches t
   }
 
-  public void setActive(boolean t_or_f) {
-    active = t_or_f;
+  public void setActive(boolean bool) {
+    active = bool;
   }
 
   public boolean checkActive() {
-    if (player_territory.isEmpty()) {
+    if (playerTerritories.isEmpty()) {
       active = false;
     }
     return active;
@@ -100,8 +103,8 @@ public class Player {
     return active;
   }
 
-  public void setConnected(boolean t_or_f) {
-    connected = t_or_f;
+  public void setConnected(boolean bool) {
+    connected = bool;
   }
 
   public boolean isConnected() {

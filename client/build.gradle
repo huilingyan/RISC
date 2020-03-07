@@ -17,7 +17,7 @@ plugins {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'client.App'
+    mainClassName = 'client.Gameclient'
 }
 
 run{
