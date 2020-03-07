@@ -1,7 +1,8 @@
 package shared;
 
+import java.io.Serializable;
 
-public class Operation {
+public class Operation implements Serializable {
     
     protected int type; // operation type: 0-deployment, 1-move, 2-attack
     protected int dest; // destination territory

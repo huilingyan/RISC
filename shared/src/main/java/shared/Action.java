@@ -4,8 +4,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.lang.Integer;
+import java.io.Serializable;
 
-public class Action {
+public class Action implements Serializable {
     public Map<Integer, ArrayList<Operation> > actions= new HashMap<Integer, ArrayList<Operation> >();
 
     public void addOperation(int type, GameOperation op) { // add operation to the actionlist
