@@ -21,7 +21,7 @@ public class Operation {
 
 }
 
-class InitOperation extends Operation { // deploy units to own territories
+/*class InitOperation extends Operation { // deploy units to own territories
 
     public static final int INIT = 0;
 
@@ -31,7 +31,7 @@ class InitOperation extends Operation { // deploy units to own territories
         this.num = num;
     }
 
-}
+}*/
 
 class GameOperation extends Operation { 
 
@@ -50,7 +50,7 @@ class GameOperation extends Operation {
 
 }
 
-class MoveOperation extends GameOperation { // move operation
+/*class MoveOperation extends GameOperation { // move operation
 
     public static final int MOVE = 1;
 
@@ -59,9 +59,9 @@ class MoveOperation extends GameOperation { // move operation
         this.type = MOVE;
     }
 
-}
+}*/
 
-class AttackOperation extends GameOperation { // attack operation
+/*class AttackOperation extends GameOperation { // attack operation
 
     public static final int ATTACK = 2;
 
@@ -70,4 +70,4 @@ class AttackOperation extends GameOperation { // attack operation
         this.type = ATTACK;
     }
     
-}
+}*/

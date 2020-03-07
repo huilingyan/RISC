@@ -4,9 +4,15 @@ import java.util.ArrayList;
 import java.io.*;
 
 import shared.Territory;
-import shared.Operation;
+import shared.*;
 
 public class Displayer {
+
+    private int num_player;
+
+    Displayer(int num_player) {
+        this.num_player = num_player;
+    }
     
     public void displayMap(ArrayList<Territory> t_map) {
         // For version 1, we're only displaying map via text
@@ -18,22 +24,27 @@ public class Displayer {
 
         */   
         // TODO: For version2, visualize it
-        for (Territory t : t_map) {
-            System.out.println("Territory No." + t.getTid() + ":"); // name of territory
-            System.out.println("\tName: " + t.getName()); // name of territory
-            System.out.println("\tBelongs to:" + t.getOwnership()); // owner 
-            System.out.print("\tNext to: "); // owner
 
-            ArrayList<Territory> neighlist = t.getNeighborList();
-            for (Territory neigh : neighlist) { // show neighbour list
-                System.out.print(neigh.getName() + ((neighlist.indexOf(neigh) == neighlist.size() - 1)? ", " : "\n")); // owner
+        for (int i = 0; i < this.num_player; i++) {
+            for (Territory t : t_map) {
+                if (t.getOwnership() == i) { // display territories by group
+                    System.out.println("Territory No." + t.getTid() + ":"); // name of territory
+                    System.out.println("\tName: " + t.getName()); // name of territory
+                    System.out.println("\tBelongs to:" + t.getOwnership()); // owner 
+                    System.out.print("\tNext to: "); // neighbours
+        
+                    ArrayList<Territory> neighlist = t.getNeighborList();
+                    for (Territory neigh : neighlist) { // show neighbour list
+                        System.out.print(neigh.getName() + ((neighlist.indexOf(neigh) == neighlist.size() - 1)? ", " : "\n")); // owner
+                    }
+                    System.out.print("\n");
+                }
             }
-            System.out.print("\n");
         }
     }
 
-    public void displayIntroduction(int num_player, ArrayList<Territory> t_map) {
-        for (int i = 0; i < num_player; i++) {
+    public void displayIntroduction(ArrayList<Territory> t_map) {
+        for (int i = 0; i < this.num_player; i++) {
             System.out.println("Player " + i + ":");
             System.out.println("-------------");
             for (Territory t : t_map) {
@@ -47,7 +58,7 @@ public class Displayer {
                 }
             }
         }
-        System.out.println("You are player" + num_player+ ", what would you like to do?");
+        System.out.println("You are player" + this.num_player+ ", what would you like to do?");
         System.out.println("(M)ove\n(A)ttack\n(D)one");
     }
 
@@ -74,8 +85,8 @@ public class Displayer {
 
     // error msg during move commit
 
-    public void notAdjacentMsg() { 
-        System.out.println("You can't move units to a non-adjacent territory!");
+    public void noPathMsg() { 
+        System.out.println("There's no path to that territory!");
     }
 
     // error msg during attack commit
@@ -83,22 +94,16 @@ public class Displayer {
         System.out.println("You can't attack your own territory...");
     }
 
-    // execute move
-    public void displayMove(Operation op) {
-        /* PROBLEM: Here we need to import MoveOperation and AttackOperation
-        class, which are invisible from client package, thus cannot be imported.*/
+    // display map after implementing move
+    public void showMapAfterMove(MoveOperation op) {
 
     }
 
-    // execute attack
-    public void displayAttack() {
+    // display map after implementing move
+    public void showMapAfterAttack(AttackOperation op) {
 
     }
 
-    // combat
-    public void combatMsg() {
-
-    }
 
 
 
