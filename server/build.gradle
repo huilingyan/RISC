@@ -19,7 +19,7 @@ plugins {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'server.App'
+    mainClassName = 'server.Gameserver'
 }
 
 
