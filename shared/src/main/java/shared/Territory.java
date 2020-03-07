@@ -1,9 +1,10 @@
 package shared;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Territory {
+public class Territory implements Serializable{
   private int ownership;//set to player id 1-5 who owns the territory
   private int tid; //territory id, 1-16
   private String name; //territory name
