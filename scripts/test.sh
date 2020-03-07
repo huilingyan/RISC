@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ./gradlew build || exit 1
-./gradlew cloverGenerateReport || exit 1
+./gradlew cloverAggregateReport || exit 1
 cd server 
 
 emacs --batch -u `whoami` --script ../scripts/docov.el
@@ -31,7 +31,7 @@ echo "TOTAL COVERAGE: ${cv}%"
 cd ..
 ls -l /
 ls -l /coverage-out/
-cp -r server/build/reports/clover/html/* /coverage-out/ || exit 1
-cp -r client/build/reports/clover/html/* /coverage-out/ || exit 1
-cp -r shared/build/reports/clover/html/* /coverage-out/ || exit 1
+cp -r build/reports/clover/html/* /coverage-out/ || exit 1
+#cp -r client/build/reports/clover/html/* /coverage-out/ || exit 1
+#cp -r shared/build/reports/clover/html/* /coverage-out/ || exit 1
 
