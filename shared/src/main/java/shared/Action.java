@@ -8,8 +8,7 @@ import java.lang.Integer;
 public class Action {
     public Map<Integer, ArrayList<Operation> > actions= new HashMap<Integer, ArrayList<Operation> >();
 
-    public void addOperation(GameOperation op) { // add operation to the actionlist
-        int type = op.getType(); // get the operation type
+    public void addOperation(int type, GameOperation op) { // add operation to the actionlist
 
         if (actions.containsKey(type) == true) { // if operation type already exists
             ArrayList<Operation> oplist = actions.get(type); // get the operation list
