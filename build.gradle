@@ -9,6 +9,7 @@ plugins {
     id 'com.bmuschko.clover' version '2.2.3'
 }
 allprojects{
+apply plugin: "com.bmuschko.clover"
  task hello{
 	doLast{
       println("I'm $project.name")
@@ -34,12 +35,21 @@ task resolveDependencies {
        }
    }
 }
-
+    clover{
+    compiler{
+        additionalArgs = "-g:lines,source,vars"
+    }
+    }
+clover {
+  report{
+    xml= true
+    html = true
+  }
+}
 }
 
 subprojects{
 apply plugin:'java'
-apply plugin: "com.bmuschko.clover"
 
     repositories {
         jcenter()
@@ -52,17 +62,6 @@ apply plugin: "com.bmuschko.clover"
         clover 'org.openclover:clover:4.3.1'
         testCompile "org.mockito:mockito-core:2.+"
     }
-    clover{
-    compiler{
-        additionalArgs = "-g:lines,source,vars"
-    }
-    }
-clover {
-  report{
-    xml= true
-    html = true
-  }
-}
     test{
         testLogging{
             showStandardStreams = true
