@@ -2,13 +2,33 @@
 
 ./gradlew build || exit 1
 ./gradlew cloverGenerateReport || exit 1
-ls -l
-cd server
-ls -l
-cd ../
-scripts/coverage_summary_server.sh
-scripts/coverage_summary_client.sh
-scripts/coverage_summary_shared.sh
+cd server 
+
+emacs --batch -u `whoami` --script ../scripts/docov.el
+
+cv=`egrep "\| *Totals *\|" coverage.txt | cut -f 3 -d"|" | tr -d " "`
+
+echo "TOTAL COVERAGE: ${cv}%"
+
+cd ..
+cd client 
+
+emacs --batch -u `whoami` --script ../scripts/docov.el
+
+cv=`egrep "\| *Totals *\|" coverage.txt | cut -f 3 -d"|" | tr -d " "`
+
+echo "TOTAL COVERAGE: ${cv}%"
+
+cd ..
+cd shared 
+
+emacs --batch -u `whoami` --script ../scripts/docov.el
+
+cv=`egrep "\| *Totals *\|" coverage.txt | cut -f 3 -d"|" | tr -d " "`
+
+echo "TOTAL COVERAGE: ${cv}%"
+
+cd ..
 ls -l /
 ls -l /coverage-out/
 cp -r server/build/reports/clover/html/* /coverage-out/ || exit 1
