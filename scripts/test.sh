@@ -2,6 +2,10 @@
 
 ./gradlew build || exit 1
 ./gradlew cloverGenerateReport || exit 1
+ls -l
+cd server
+ls -l
+cd ../
 scripts/coverage_summary_server.sh
 scripts/coverage_summary_client.sh
 scripts/coverage_summary_shared.sh
