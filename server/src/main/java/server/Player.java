@@ -1,5 +1,8 @@
 package server;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -12,8 +15,12 @@ public class Player {
   private ArrayList<Territory> playerTerritories;//can store tid instead
   private boolean active;//still has territory
   private boolean connected;//socket connection status
+  private ObjectOutputStream out;
+  private ObjectInputStream in;
 
   public Player() {
+    playerTerritories = new ArrayList<Territory>();
+    
   };
 
   public Player(int p_id, String p_name, Socket socket) {
@@ -23,6 +30,13 @@ public class Player {
     playerTerritories = new ArrayList<Territory>();
     active = true;
     connected = true;
+    try{
+    out = new ObjectOutputStream(clientSocket.getOutputStream());
+    } catch (IOException e) {
+    }
+    try{
+    in  = new ObjectInputStream(clientSocket.getInputStream());
+    } catch(IOException e){}
     //rest info should be added after socket setup (playerTerritories)
   }
 
@@ -33,6 +47,49 @@ public class Player {
     playerTerritories = rhs.playerTerritories;
     active = rhs.active;
     connected = rhs.connected;
+  }
+
+  public void sendObject(Object obj) {//send object to this player
+    try {
+      out.writeObject(obj);
+    } catch (IOException e) {
+      System.out.println("IOException: send object failed\n");
+    }
+  }
+
+  public Object recvObject() {//receive object from this player
+    try{
+      return in.readObject();
+    } catch (IOException e) {
+        //IOException - Any of the usual Input/Output related exceptions.
+      System.out.println("IOException: recv object failed\n");
+    }
+    catch (ClassNotFoundException e) {
+        //ClassNotFoundException - Class of a serialized object cannot be found.
+      System.out.println("ClassNotFoundException: recv object failed\n");
+    }
+    return null;//may need to change to other type
+  }
+  
+  public void sendInt(int val) {//send int to this player
+    try {
+      out.writeInt(val);
+    } catch (IOException e) {
+      System.out.println("IOException: send int failed\n");
+    }
+  }
+  
+  public int recvInt() {//receive int from this player
+    try{
+      return in.readInt();
+    } catch (IOException e) {
+        //IOException - If other I/O error has occurred.
+      System.out.println("IOException: recv int failed\n");
+    } catch (EOFException e) {
+        //EOFException - If end of file is reached.
+      System.out.println("EOFException: recv int failed\n");
+    }
+    return -1;
   }
   
   public void setPid(int p_id) {
