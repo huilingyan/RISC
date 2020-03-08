@@ -53,17 +53,43 @@ public class Player {
     try {
       out.writeObject(obj);
     } catch (IOException e) {
-      System.out.println("send object failed\n");
+      System.out.println("IOException: send object failed\n");
     }
   }
 
   public Object recvObject() {//receive object from this player
     try{
       return in.readObject();
-    } catch (Exception e) {//IO and ClassNotFound
-      System.out.println("recv object failed\n");
+    } catch (IOException e) {
+        //IOException - Any of the usual Input/Output related exceptions.
+      System.out.println("IOException: recv object failed\n");
+    }
+    catch (ClassNotFoundException e) {
+        //ClassNotFoundException - Class of a serialized object cannot be found.
+      System.out.println("ClassNotFoundException: recv object failed\n");
     }
     return null;//may need to change to other type
+  }
+  
+  public void sendInt(int val) {//send int to this player
+    try {
+      out.writeInt(val);
+    } catch (IOException e) {
+      System.out.println("IOException: send int failed\n");
+    }
+  }
+  
+  public int recvInt() {//receive int from this player
+    try{
+      return in.readInt();
+    } catch (IOException e) {
+        //IOException - If other I/O error has occurred.
+      System.out.println("IOException: recv int failed\n");
+    } catch (EOFException e) {
+        //EOFException - If end of file is reached.
+      System.out.println("EOFException: recv int failed\n");
+    }
+    return -1;
   }
   
   public void setPid(int p_id) {
