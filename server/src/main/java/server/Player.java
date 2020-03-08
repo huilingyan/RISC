@@ -31,14 +31,30 @@ public class Player {
     playerTerritories = new ArrayList<Territory>();
     active = true;
     connected = true;
+    // initialize ObjectOutputStream
     try{
     out = new ObjectOutputStream(clientSocket.getOutputStream());
+    out.flush();
     } catch (IOException e) {
+      e.printStackTrace();
     }
+    /****
     try{
     in  = new ObjectInputStream(clientSocket.getInputStream());
-    } catch(IOException e){}
+    } catch(IOException e){
+      e.printStackTrace();
+    }
+    *****/
     //rest info should be added after socket setup (playerTerritories)
+  }
+
+  public void setUpInputStream() {
+    try{
+    in  = new ObjectInputStream(clientSocket.getInputStream());
+    } catch(IOException e){
+      e.printStackTrace();
+    }
+
   }
 
   public Player(Player rhs){

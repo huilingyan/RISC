@@ -28,11 +28,14 @@ public class Gameclient {
   private void playGame() {
     System.out.println("Connect to server");
     try {
+      System.out.println("start create inputstream");
       ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
       inStream = in;
       // print out the Territory
       ArrayList<Territory> list;
+      System.out.println("reading");
       list = (ArrayList<Territory>) in.readObject();
+      System.out.println("recv done");
       Territory newT = list.get(0);
       System.out.println("Name: " + newT.getName());
       System.out.println("Army num:" + newT.getDefenderNum());

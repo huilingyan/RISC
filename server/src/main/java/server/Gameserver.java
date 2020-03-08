@@ -47,6 +47,7 @@ public class Gameserver {
   private void addPlayer(int id, Socket playerSocket) {
     String playerName = PLAYER_NAME_LIST[id];
     playerList.add(new Player(id, playerName, playerSocket));
+    System.out.println("added player");
   }
 
   // TODO
@@ -68,15 +69,27 @@ public class Gameserver {
 
   // TODO: change later
   private void playGame() {
+    
+    ArrayList<Territory> list = new ArrayList<Territory>();
+    list.add(new Territory(0, 0, "Test Territory", new Army(10)));
+    System.out.println("start sending");
+    playerList.get(0).sendObject(list);      
+
+    /*****    
     // TODO: send a territory to the first player for now
     Socket clientSocket = playerList.get(0).getSocket();
     // TODO: take ObjectOutputStream out from try with, and store it into playerlist
     try(ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream())) {
       ArrayList<Territory> list = new ArrayList<Territory>();
       list.add(new Territory(0, 0, "Test Territory", new Army(10)));
+      System.out.println("start sending");
       out.writeObject(list);
-      // out.flush();
-    }catch(IOException e){}
+      out.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("IOException");
+    }
+    *****/
     while (true) {    // keep running
     }
   }
