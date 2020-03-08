@@ -1,5 +1,6 @@
 package server;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -82,13 +83,15 @@ public class Player {
   public int recvInt() {//receive int from this player
     try{
       return in.readInt();
-    } catch (IOException e) {
-        //IOException - If other I/O error has occurred.
-      System.out.println("IOException: recv int failed\n");
     } catch (EOFException e) {
         //EOFException - If end of file is reached.
       System.out.println("EOFException: recv int failed\n");
     }
+
+    catch (IOException e) {
+        //IOException - If other I/O error has occurred.
+      System.out.println("IOException: recv int failed\n");
+    } 
     return -1;
   }
   
