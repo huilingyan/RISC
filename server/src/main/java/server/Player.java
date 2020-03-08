@@ -1,5 +1,8 @@
 package server;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -12,8 +15,12 @@ public class Player {
   private ArrayList<Territory> playerTerritories;//can store tid instead
   private boolean active;//still has territory
   private boolean connected;//socket connection status
+  private ObjectOutputStream out;
+  private ObjectInputStream in;
 
   public Player() {
+    playerTerritories = new ArrayList<Territory>();
+    
   };
 
   public Player(int p_id, String p_name, Socket socket) {
@@ -23,6 +30,13 @@ public class Player {
     playerTerritories = new ArrayList<Territory>();
     active = true;
     connected = true;
+    try{
+    out = new ObjectOutputStream(clientSocket.getOutputStream());
+    } catch (IOException e) {
+    }
+    try{
+    in  = new ObjectInputStream(clientSocket.getInputStream());
+    } catch(IOException e){}
     //rest info should be added after socket setup (playerTerritories)
   }
 
@@ -33,6 +47,23 @@ public class Player {
     playerTerritories = rhs.playerTerritories;
     active = rhs.active;
     connected = rhs.connected;
+  }
+
+  public void sendObject(Object obj) {//send object to this player
+    try {
+      out.writeObject(obj);
+    } catch (IOException e) {
+      System.out.println("send object failed\n");
+    }
+  }
+
+  public Object recvObject() {//receive object from this player
+    try{
+      return in.readObject();
+    } catch (Exception e) {//IO and ClassNotFound
+      System.out.println("recv object failed\n");
+    }
+    return null;//may need to change to other type
   }
   
   public void setPid(int p_id) {
