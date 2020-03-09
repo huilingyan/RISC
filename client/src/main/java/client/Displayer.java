@@ -2,16 +2,36 @@ package client;
 
 import java.util.ArrayList;
 import java.io.*;
+import java.lang.*;
 
 import shared.Territory;
 import shared.*;
 
 public class Displayer {
 
+    private static Displayer displayer = null;
     private int num_player;
 
-    Displayer(int num_player) {
+
+    private Displayer(int num_player) {
         this.num_player = num_player;
+    }
+
+    public static Displayer getInstance() {
+        if (displayer == null) {
+            throw new AssertionError("Please call init first");
+        }
+        return displayer;
+    }
+
+    public static synchronized Displayer init(int num_player) {
+        if (displayer != null)
+        {
+            throw new AssertionError("You already initialized Displayer!");
+        }
+
+        displayer = new Displayer(num_player);
+        return displayer;
     }
     
     public void displayMap(ArrayList<Territory> t_map) {
@@ -27,7 +47,7 @@ public class Displayer {
 
         for (int i = 0; i < this.num_player; i++) {
             for (Territory t : t_map) {
-                if (t.getOwnership() == i) { // display territories by group
+                if (t.getOwnership() == i) { // display territories in group, by ownership
                     System.out.println("Territory No." + t.getTid() + ":"); // name of territory
                     System.out.println("\tName: " + t.getName()); // name of territory
                     System.out.println("\tBelongs to:" + t.getOwnership()); // owner 
