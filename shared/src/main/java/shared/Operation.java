@@ -1,18 +1,26 @@
 package shared;
 
 import java.io.Serializable;
+import java.lang.String;
+
+/* example:
+    Operation op1 = InitOperation(Blue, 8); // deploy 8 units to territory Blue
+    Operation op2 = MoveOperation(Blue, Green, 5); // move 5 units from Blue to Green
+    Operation op3 = AttackOperation(Blue, Red, 6); // deploy 5 units from Blue to attack Red
+
+*/
 
 public class Operation implements Serializable {
     
-    protected int type; // operation type: 0-deployment, 1-move, 2-attack
-    protected int dest; // destination territory
+    //protected int type; // operation type: 0-deployment, 1-move, 2-attack
+    protected String dest; // destination territory
     protected int num; // number of unit operated on
 
-    public int getType() { // get the operation type
-        return this.type;
-    }
+    // public int getType() { // get the operation type
+    //     return this.type;
+    // }
 
-    public int getDest() { // get the destination
+    public String getDest() { // get the destination
         return this.dest;
     }
 
@@ -22,53 +30,23 @@ public class Operation implements Serializable {
 
 }
 
-/*class InitOperation extends Operation { // deploy units to own territories
-
-    public static final int INIT = 0;
-
-    InitOperation(int dest, int num) {
-        this.type = INIT;
-        this.dest = dest;
-        this.num = num;
-    }
-
-}*/
 
 class GameOperation extends Operation { 
 
-    private int src; // source territory
+    private String src; // source territory
 
-    public GameOperation(int src, int dest, int num) {
+    public GameOperation(String src, String dest, int num) {
         this.src = src;
         this.dest = dest;
         this.num = num;
     }
 
 
-    public int getSrc() { // get the source territory
+    public String getSrc() { // get the source territory
         return this.src;
     }
 
 }
 
-/*class MoveOperation extends GameOperation { // move operation
 
-    public static final int MOVE = 1;
 
-    MoveOperation(int src, int dest, int num) {
-        super(src, dest, num);
-        this.type = MOVE;
-    }
-
-}*/
-
-/*class AttackOperation extends GameOperation { // attack operation
-
-    public static final int ATTACK = 2;
-
-    AttackOperation(int src, int dest, int num) {
-        super(src, dest, num);
-        this.type = ATTACK;
-    }
-    
-}*/
