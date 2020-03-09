@@ -18,7 +18,7 @@ public class Displayer {
 
     public static synchronized Displayer getInstance() {
         if (displayer == null) {
-            throw new AssertionError("Please call init first");
+            displayer = new Displayer();
         }
         return displayer;
     }
