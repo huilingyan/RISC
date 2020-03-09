@@ -2,17 +2,31 @@ package client;
 
 import java.util.ArrayList;
 import java.io.*;
+import java.lang.*;
 
 import shared.Territory;
 import shared.*;
 
 public class Displayer {
 
+    private static Displayer displayer = new Displayer();
     private int num_player;
 
-    Displayer(int num_player) {
-        this.num_player = num_player;
+    private Displayer() {
+
     }
+
+    public static synchronized Displayer getInstance() {
+        if (displayer == null) {
+            throw new AssertionError("Please call init first");
+        }
+        return displayer;
+    }
+
+    public void setNumOfPlayer(int num) {
+        this.num_player = num;
+    }
+
     
     public void displayMap(ArrayList<Territory> t_map) {
         // For version 1, we're only displaying map via text
@@ -27,7 +41,7 @@ public class Displayer {
 
         for (int i = 0; i < this.num_player; i++) {
             for (Territory t : t_map) {
-                if (t.getOwnership() == i) { // display territories by group
+                if (t.getOwnership() == i) { // display territories in group, by ownership
                     System.out.println("Territory No." + t.getTid() + ":"); // name of territory
                     System.out.println("\tName: " + t.getName()); // name of territory
                     System.out.println("\tBelongs to:" + t.getOwnership()); // owner 
