@@ -1,0 +1,54 @@
+package client;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class InputTaker {
+  //this class will try to get a valid format operation from the user
+  //whether the operation can be proceed needs to be checked
+
+  private Displayer dp;
+
+  public InputTaker(Displayer gamedp) {
+    this.dp = gamedp;
+  }
+
+  public int readnofPlayers(Scanner sc) {
+    //the first player must tell the server how many players will join the game
+    //assume the game client already prompted the user to input nof players
+    int n = 0;
+    boolean numbervalid = false;
+    while (numbervalid == false) {
+      n = readanInt(sc);
+      numbervalid = checknofPlayers(n);
+    }
+    return n;
+  }
+  
+
+  private boolean checknofPlayers(int n) {
+    if (n >= 2 && n <= 5) {
+      return true;
+    }
+    //dp.print_playerssupport()
+    //print "this game only supports 2-5 players"
+    return false;
+  }
+
+  public int readanInt(Scanner sc) {
+    boolean readsuccess = false;
+    int n = 0;
+    while (readsuccess == false) {
+      try {
+        n = sc.nextInt();
+      }
+      catch (InputMismatchException e) {
+        //dp.print_notanumber
+        //print not a number
+        continue;
+      }
+      readsuccess = true;
+    }
+    return n;
+  }
+}
