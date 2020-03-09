@@ -1,26 +1,40 @@
 package shared;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.List;
 import java.util.ArrayList;
-import java.lang.Integer;
 import java.io.Serializable;
 
 public class Action implements Serializable {
-    public Map<Integer, ArrayList<Operation> > actions= new HashMap<Integer, ArrayList<Operation> >();
+    private List<InitOperation> initOperations;
+    private List<MoveOperation> moveOperations;
+    private List<AttackOperation> attackOperations;
 
-    public void addOperation(int type, GameOperation op) { // add operation to the actionlist
-
-        if (actions.containsKey(type) == true) { // if operation type already exists
-            ArrayList<Operation> oplist = actions.get(type); // get the operation list
-            oplist.add(op); // append current operation to the list
-            actions.replace(type, oplist); // replace the map with new oplist
-        }
-        else { // if operation type not exist, add to the map
-            ArrayList<Operation> oplist = new ArrayList<>(); // create new oplist
-            oplist.add(op); // append current operation to the list
-            actions.put(type, oplist); // create a new pair of operation for map
-        }
-
+    public Action() {
+        this.initOperations= new ArrayList<InitOperation>();
+        this.moveOperations= new ArrayList<MoveOperation>();
+        this.attackOperations= new ArrayList<AttackOperation>();
     }
+
+    public void addInitOperation(InitOperation iop) {
+        this.initOperations.add(iop);
+    }
+
+    public void addMoveOperation(MoveOperation mop) {
+        this.moveOperations.add(mop);
+    }
+
+    public void addAttackOperation(AttackOperation aop) {
+        this.attackOperations.add(aop);
+    }
+
+    public void concatInitOperation(ArrayList<InitOperation> clientiop) {
+        this.initOperations.addAll(clientiop);
+    }
+
+
+    public void concatGameOperation(Action clientaction) {
+        this.moveOperations.addAll(clientaction.moveOperations);
+        this.attackOperations.addAll(clientaction.attackOperations);
+    }
+
 }

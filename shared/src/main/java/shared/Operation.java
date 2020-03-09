@@ -12,13 +12,13 @@ import java.lang.String;
 
 public class Operation implements Serializable {
     
-    protected int type; // operation type: 0-deployment, 1-move, 2-attack
+    //protected int type; // operation type: 0-deployment, 1-move, 2-attack
     protected String dest; // destination territory
     protected int num; // number of unit operated on
 
-    public int getType() { // get the operation type
-        return this.type;
-    }
+    // public int getType() { // get the operation type
+    //     return this.type;
+    // }
 
     public String getDest() { // get the destination
         return this.dest;
