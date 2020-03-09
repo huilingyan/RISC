@@ -38,7 +38,7 @@ class GameOperation extends Operation {
 
     private int src; // source territory
 
-    GameOperation(int src, int dest, int num) {
+    public GameOperation(int src, int dest, int num) {
         this.src = src;
         this.dest = dest;
         this.num = num;
