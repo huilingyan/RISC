@@ -1,7 +1,7 @@
 package client;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
-import shared.*;
 
 public class InputTaker {
   //this class will try to get a valid format operation from the user
@@ -9,9 +9,6 @@ public class InputTaker {
 
   private Displayer dp;
 
-  public InputTaker() {
-  }
-  
   public InputTaker(Displayer gamedp) {
     this.dp = gamedp;
   }
@@ -34,35 +31,24 @@ public class InputTaker {
       return true;
     }
     //dp.print_playerssupport()
-    System.out.println("this game only supports 2-5 players");
+    //print "this game only supports 2-5 players"
     return false;
   }
 
   public int readanInt(Scanner sc) {
-    //get a single integer from this method
     boolean readsuccess = false;
     int n = 0;
     while (readsuccess == false) {
       try {
-        String s = sc.nextLine();
-        n = Integer.parseInt(s);
-        readsuccess = true;
+        n = sc.nextInt();
       }
-      catch (NumberFormatException ex) {
+      catch (InputMismatchException e) {
         //dp.print_notanumber
-        System.out.println("please input just one number");
-        
+        //print not a number
+        continue;
       }
-      
+      readsuccess = true;
     }
     return n;
   }
-
-  /*public InitOperation readInitOperation(int tid,Scanner sc) {
-    //the game client will pick a tid for the user to input how many soldiers they want to put on tid
-    //still the game client will prompted the user asking for input
-     int n = readanInt(sc);
-    
-    return new InitOperation(tid, n);
-    }*/
 }
