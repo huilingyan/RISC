@@ -4,7 +4,7 @@ public class AttackOperation extends GameOperation { // attack operation
 
     public static final int ATTACK = 2;
 
-    AttackOperation(String src, String dest, int num) {
+    public AttackOperation(String src, String dest, int num) {
         super(src, dest, num);
         this.type = ATTACK;
     }

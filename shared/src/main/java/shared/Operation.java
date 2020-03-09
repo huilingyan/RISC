@@ -35,7 +35,7 @@ class GameOperation extends Operation {
 
     private String src; // source territory
 
-    GameOperation(String src, String dest, int num) {
+    public GameOperation(String src, String dest, int num) {
         this.src = src;
         this.dest = dest;
         this.num = num;

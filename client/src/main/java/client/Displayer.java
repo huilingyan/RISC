@@ -9,30 +9,24 @@ import shared.*;
 
 public class Displayer {
 
-    private static Displayer displayer = null;
+    private static Displayer displayer = new Displayer();
     private int num_player;
 
+    private Displayer() {
 
-    private Displayer(int num_player) {
-        this.num_player = num_player;
     }
 
-    public static Displayer getInstance() {
+    public static synchronized Displayer getInstance() {
         if (displayer == null) {
             throw new AssertionError("Please call init first");
         }
         return displayer;
     }
 
-    public static synchronized Displayer init(int num_player) {
-        if (displayer != null)
-        {
-            throw new AssertionError("You already initialized Displayer!");
-        }
-
-        displayer = new Displayer(num_player);
-        return displayer;
+    public void setNumOfPlayer(int num) {
+        this.num_player = num;
     }
+
     
     public void displayMap(ArrayList<Territory> t_map) {
         // For version 1, we're only displaying map via text
