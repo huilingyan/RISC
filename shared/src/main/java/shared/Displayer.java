@@ -40,24 +40,29 @@ public class Displayer {
         // TODO: For version2, visualize it
 
         for (int i = 0; i < this.num_player; i++) {
-            for (Territory t : t_map) {
-                if (t.getOwnership() == i) { // display territories in group, by ownership
-                    System.out.println("Territory No." + t.getTid() + ":"); // name of territory
-                    System.out.println("\tName: " + t.getName()); // name of territory
-                    System.out.println("\tBelongs to:" + t.getOwnership()); // owner 
-                    System.out.print("\tNext to: "); // neighbours
-        
-                    ArrayList<Territory> neighlist = t.getNeighborList();
-                    int cnt = 0;
-                    for (Territory neigh : neighlist) { // show neighbour list
-                        if (neigh != null) {
-                            cnt++;
-                            System.out.print(neigh.getName() + ((cnt == t.countNeighbors())? "\n" : ", ")); // owner
-                            
-                        }                   
-                    }
-                    System.out.print("\n");
+            displayOnePlayerMap(i, t_map);
+        }
+    }
+
+    public void displayOnePlayerMap(int pid, ArrayList<Territory> t_map) {
+        for (Territory t : t_map) {
+            if (t.getOwnership() == pid) { // display territories in group, by ownership
+                System.out.println("Territory No." + t.getTid() + ":"); // name of territory
+                System.out.println("\tName: " + t.getName()); // name of territory
+                System.out.println("\tBelongs to:" + t.getOwnership()); // owner 
+                System.out.println("\tNumber of units:" + t.getDefenderNum()); // number of units 
+                System.out.print("\tNext to: "); // neighbours
+    
+                ArrayList<Territory> neighlist = t.getNeighborList();
+                int cnt = 0;
+                for (Territory neigh : neighlist) { // show neighbour list
+                    if (neigh != null) {
+                        cnt++;
+                        System.out.print(neigh.getName() + ((cnt == t.countNeighbors())? "\n" : ", ")); // owner
+                        
+                    }                   
                 }
+                System.out.print("\n");
             }
         }
     }
@@ -86,7 +91,7 @@ public class Displayer {
         System.out.println("(M)ove\n(A)ttack\n(D)one");
     }
 
-    // msg during communication with server
+// msg during communication with server
 
     public void connEstablishedMsg() {
         System.out.println("Successfully connected to server!");
@@ -97,7 +102,8 @@ public class Displayer {
     }
 
     
-    // msg during territory setup
+// msg during initialization
+
     // for input validator
     public void illegalNumberMsg() { // use it when client inputs negative num, etc
         System.out.println("The number you input is illegal! Please try again:");
@@ -109,33 +115,30 @@ public class Displayer {
         System.out.println("How many units would you like to deploy to this territory?");
     }
 
+    // can be used by move and attack as well
+    public void invalidDest() {
+        System.out.println("Invalid destination! Please enter again:");
+    }
+
     public void noEnoughUnitMsg() {
         System.out.println("There're no enough units left to deploy!");
     }
 
-    
+    public void deployUnits(InitOperation initop) {
+        System.out.println("Deploy " + initop.num + " to " + initop.dest);
+    }
 
-    // error msg during move commit
+
+// msg during move commit
 
     public void noPathMsg() { 
         System.out.println("There's no path to that territory!");
     }
 
-    // error msg during attack commit
+// msg during attack commit
     public void illegalTerritoryMsg() { 
         System.out.println("You can't attack your own territory...");
     }
-
-    // display map after implementing move
-    public void showMapAfterMove(MoveOperation op) {
-
-    }
-
-    // display map after implementing move
-    public void showMapAfterAttack(AttackOperation op) {
-
-    }
-
     
 
 }

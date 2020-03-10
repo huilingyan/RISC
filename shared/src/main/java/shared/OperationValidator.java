@@ -29,13 +29,13 @@ public class OperationValidator {
 
     public int isValidInitOperation(InitOperation initop, int totalunit) {
 
-        // 1. Check the name of destination territory
+    // 1. Check the name of destination territory
         int isvaliddest = 0;
         Territory t_to_deploy = null; // the territory to operate on
         for (Territory t : this.temp_map) {
             if ((t.getName() == initop.dest) && (t.getOwnership() == this.player_id)) { // if is valid dest
                 isvaliddest = 1;
-                t_to_deploy = t; // get the territory to operate on
+                t_to_deploy = t; 
                 break;
             }
         }
@@ -44,7 +44,7 @@ public class OperationValidator {
             return INVALID_DEST;
         }
 
-        // 2. Check if valid number
+    // 2. Check if valid number
         int remains = getRemainingUnit(totalunit);
         if (initop.num > remains) { // if no enough units
             return NO_ENOUGH_UNITS;
@@ -59,8 +59,8 @@ public class OperationValidator {
         return VALID;
     }
 
-    public boolean checkOperationType(GameOperation op) {
-        return false;
+    public int checkOperationType(GameOperation op) {
+        return 0;
     }
 
     // helper method: get the remaining number of unit for player
