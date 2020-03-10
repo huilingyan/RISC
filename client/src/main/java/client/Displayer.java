@@ -48,8 +48,13 @@ public class Displayer {
                     System.out.print("\tNext to: "); // neighbours
         
                     ArrayList<Territory> neighlist = t.getNeighborList();
+                    int cnt = 0;
                     for (Territory neigh : neighlist) { // show neighbour list
-                        System.out.print(neigh.getName() + ((neighlist.indexOf(neigh) == neighlist.size() - 1)? ", " : "\n")); // owner
+                        if (neigh != null) {
+                            cnt++;
+                            System.out.print(neigh.getName() + ((cnt == t.countNeighbors())? "\n" : ", ")); // owner
+                            
+                        }                   
                     }
                     System.out.print("\n");
                 }
@@ -57,7 +62,7 @@ public class Displayer {
         }
     }
 
-    public void displayIntroduction(ArrayList<Territory> t_map) {
+    public void displayIntroduction(ArrayList<Territory> t_map, int player_id) {
         for (int i = 0; i < this.num_player; i++) {
             System.out.println("Player " + i + ":");
             System.out.println("-------------");
@@ -66,13 +71,18 @@ public class Displayer {
                     System.out.print(t.getDefenderNum() + " units in " + t.getName());
                     System.out.print(" (next to: ");
                     ArrayList<Territory> neighlist = t.getNeighborList();
+                    int cnt = 0;
                     for (Territory neigh : neighlist) { // show neighbour list
-                        System.out.print(neigh.getName() + ((neighlist.indexOf(neigh) == neighlist.size() - 1)? ", " : ")\n")); // owner
+                      if (neigh != null) {
+                        cnt++;
+                        System.out.print(neigh.getName() + ((cnt == t.countNeighbors())? ")\n" : ",")); // owner
+                      }                        
                     }
                 }
             }
+            System.out.print("\n");
         }
-        System.out.println("You are player" + this.num_player+ ", what would you like to do?");
+        System.out.println("You are player " + player_id + ", what would you like to do?");
         System.out.println("(M)ove\n(A)ttack\n(D)one");
     }
 
@@ -117,8 +127,5 @@ public class Displayer {
     public void showMapAfterAttack(AttackOperation op) {
 
     }
-
-
-
 
 }
