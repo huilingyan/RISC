@@ -14,6 +14,7 @@ public class Gameserver {
 
   public static final String[] PLAYER_NAME_LIST = {"Blue", "Red", "Green", "Yellow", "Purple"};  // hardcoded player name list
   public static final String[] TERRITORY_NAME_LIST = {"Pikachu", "Ditto", "Gengar", "Eevee", "Snorlax", "Mew", "Psyduck", "Magneton", "Vulpix", "Jumpluff", "Bulbasaur", "Charmandar", "Squirtle", "Pidgey", "Caterpie", "Rattata"};
+
   
   private ArrayList<Player> playerList;  // list of Player
   private ArrayList<Territory> gameMap;  // list of Territory
@@ -67,27 +68,28 @@ public class Gameserver {
   }
 
   // Initialize territories according to ordered territory names and tid groups, and store them to map
-  private void initializeTerritories(ArrayList<String> names, ArrayList<ArrayList<Integer>> tidGroups){
+  private ArrayList<Territory> initializeTerritories(ArrayList<String> names, ArrayList<ArrayList<Integer>> tidGroups){
     // append all tids into a new list
     ArrayList<Integer> tids = new ArrayList<Integer>();
     for (ArrayList<Integer> group : tidGroups) {
       tids.addAll(group);
     }
     // initialize territory
+    ArrayList<Territory> newMap = new ArrayList<Territory>();
     for (int i = 0; i < tids.size(); i++) {
       int pid = i / 3;   // each player has three territories
       int tid = tids.get(i);
       String name = names.get(tid);
       Territory t = new Territory(pid, tid, name);
-      gameMap.add(t);  // right now territories ordered as in tids
+      newMap.add(t);  // right now territories ordered as in tids
     }
     // set neighbors
-    for (Territory t: gameMap) {
+    for (Territory t: newMap) {
       for (int j = 0; j < 6; j++) {
         int nbID = t.getNbID(j);
         if (nbID >= 0 && tids.contains(nbID)) {
           Territory nb = null;
-          for (Territory _t : gameMap) {
+          for (Territory _t : newMap) {
             if (_t.getTid() == nbID) {
               nb = _t;
               break;
@@ -97,6 +99,7 @@ public class Gameserver {
         }
       }
     }
+    return newMap;
     
   }
   
@@ -109,7 +112,7 @@ public class Gameserver {
     // assign group of territories to player id
     Collections.shuffle(tidGroups);
     // initialize territories
-    initializeTerritories(nameList, tidGroups);
+    gameMap = initializeTerritories(nameList, tidGroups);
   }
 
   // Bind the server socket to the given port
@@ -134,10 +137,13 @@ public class Gameserver {
     return null;
   }
 
-  // Add a player to playerList
-  private void addPlayer(int id, Socket playerSocket) {
-    String playerName = PLAYER_NAME_LIST[id];
-    playerList.add(new Player(id, playerName, playerSocket));
+  // TODO: Change later. Accept a player and add it to player list
+  private void acceptPlayer(int pid) {
+    Socket newSocket;
+    while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
+    System.out.println("Accepts the first player connection");
+    String playerName = PLAYER_NAME_LIST[pid];
+    playerList.add(new Player(pid, playerName, newSocket));
     System.out.println("added player");
   }
 
@@ -146,11 +152,14 @@ public class Gameserver {
     // bind socket
     bindSocket(4444);  // bind socket to port 4444
     // accept first player
-    Socket newSocket;
-    while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
-    System.out.println("Accepts the first player connection");
-    addPlayer(0, newSocket);  // add the first player to player list
+    acceptPlayer(0);  // add the first player to player list
+    // TODO: send player id
+    Player firstPlayer = playerList.get(0);
+
+    
     // TODO: receive player number
+
+    // initialize game map
 
     // TODO: accept other players
 
