@@ -5,13 +5,16 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import shared.*;
 
 public class Gameserver {
 
   public static final String[] PLAYER_NAME_LIST = {"Blue", "Red", "Green", "Yellow", "Purple"};  // hardcoded player name list
-
+  public static final String[] TERRITORY_NAME_LIST = {"Pikachu", "Ditto", "Gengar", "Eevee", "Snorlax", "Mew", "Psyduck", "Magneton", "Vulpix", "Jumpluff", "Bulbasaur", "Charmandar", "Squirtle", "Pidgey", "Caterpie", "Rattata"};
+  
   private ArrayList<Player> playerList;  // list of Player
   private ArrayList<Territory> gameMap;  // list of Territory
   private ServerSocket mySocket;         // server socket
@@ -19,6 +22,59 @@ public class Gameserver {
   public Gameserver() {
     playerList = new ArrayList<Player>();
     gameMap = new ArrayList<Territory>();
+  }
+
+  // Generate a random ordered territory name list
+  private ArrayList<String> shuffleTerritoryNames() {
+    ArrayList<String> list = new ArrayList<String>(Arrays.asList(TERRITORY_NAME_LIST));
+    Collections.shuffle(list);
+    return list;
+  }
+
+  // Group territory ids according to player number
+  private ArrayList<ArrayList<Integer>> groupTerritories(int playerNum) {
+    ArrayList<ArrayList<Integer>> list = new ArrayList<ArrayList<Integer>>();
+    switch (playerNum) {
+    case 2:
+      list.add(new ArrayList<Integer>(Arrays.asList(2, 5, 9)));
+      list.add(new ArrayList<Integer>(Arrays.asList(6, 10, 13)));
+      break;
+    case 3:
+      list.add(new ArrayList<Integer>(Arrays.asList(1, 4, 9)));
+      list.add(new ArrayList<Integer>(Arrays.asList(5, 10, 13)));
+      list.add(new ArrayList<Integer>(Arrays.asList(2, 6, 11)));
+      break;
+    case 4:
+      list.add(new ArrayList<Integer>(Arrays.asList(1, 2, 5)));
+      list.add(new ArrayList<Integer>(Arrays.asList(3, 6, 7)));
+      list.add(new ArrayList<Integer>(Arrays.asList(9, 10, 13)));
+      list.add(new ArrayList<Integer>(Arrays.asList(11, 14, 15)));
+      break;
+    case 5:
+      list.add(new ArrayList<Integer>(Arrays.asList(0, 4, 8)));
+      list.add(new ArrayList<Integer>(Arrays.asList(1, 2, 3)));
+      list.add(new ArrayList<Integer>(Arrays.asList(5, 9, 12)));
+      list.add(new ArrayList<Integer>(Arrays.asList(6, 7, 10)));
+      list.add(new ArrayList<Integer>(Arrays.asList(11, 13, 14)));
+      break;
+    }
+    return list;
+  }
+
+  private void initializeTerritories(ArrayList<String> names, ArrayList<ArrayList<Integer>> tidGroups){
+    ArrayList<Integer> tids = new ArrayList<Integer>();
+  }
+  
+  // TODO: Initialize the game map with the given player number. Each territory has 0 unit (defender)
+  public void initializeMap(int playerNum) {
+    // randomize the territory name order
+    ArrayList<String> nameList = shuffleTerritoryNames();
+    // group the tids according to player num
+    ArrayList<ArrayList<Integer>> tidGroups = groupTerritories(playerNum);
+    // assign group of territories to player id
+    Collections.shuffle(tidGroups);
+    // initialize territories
+    initializeTerritories(nameList, tidGroups);
   }
 
   // Bind the server socket to the given port
@@ -71,7 +127,8 @@ public class Gameserver {
   private void playGame() {
     
     ArrayList<Territory> list = new ArrayList<Territory>();
-    list.add(new Territory(0, 0, "Test Territory", new Army(10)));
+    list.add(new Territory(0, 0, "Test Territory"));
+    list.get(0).setDefenderNum(50);
     System.out.println("start sending");
     playerList.get(0).sendObject(list);      
 
