@@ -205,7 +205,7 @@ public class Territory implements Serializable{
         cnt++;
       }
     }
-    return cnt;c
+    return cnt;
   }
 
 
