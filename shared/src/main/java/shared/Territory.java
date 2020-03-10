@@ -197,4 +197,16 @@ public class Territory implements Serializable{
   public void subtractDefender(int num){
     defender.subtractUnits(num);
   }
+
+  public int countNeighbors() {
+    int cnt = 0;
+    for (Territory neigh : neighborList) {
+      if (neigh != null) {
+        cnt++;
+      }
+    }
+    return cnt;c
+  }
+
+
 }
