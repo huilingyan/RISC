@@ -1,4 +1,4 @@
-package client;
+package shared;
 
 import java.util.ArrayList;
 import java.io.*;
@@ -97,15 +97,23 @@ public class Displayer {
     }
 
     
-    // error msg during territory setup
+    // msg during territory setup
+    // for input validator
+    public void illegalNumberMsg() { // use it when client inputs negative num, etc
+        System.out.println("The number you input is illegal! Please try again:");
+    }
+    
+    // for operation validator
+    public void showRemainUnitNumber(int totalunit) {
+        System.out.println("You have " + totalunit + "units in total. ");
+        System.out.println("How many units would you like to deploy to this territory?");
+    }
 
     public void noEnoughUnitMsg() {
         System.out.println("There're no enough units left to deploy!");
     }
 
-    public void illegalNumberMsg() { // use it when client inputs negative num, etc
-        System.out.println("The number you input is illegal! Please try again:");
-    }
+    
 
     // error msg during move commit
 
@@ -127,5 +135,7 @@ public class Displayer {
     public void showMapAfterAttack(AttackOperation op) {
 
     }
+
+    
 
 }
