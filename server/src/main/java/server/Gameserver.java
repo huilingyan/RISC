@@ -24,6 +24,11 @@ public class Gameserver {
     gameMap = new ArrayList<Territory>();
   }
 
+  // return game map
+  public ArrayList<Territory> getMap() {
+    return gameMap;
+  }
+
   // Generate a random ordered territory name list
   private ArrayList<String> shuffleTerritoryNames() {
     ArrayList<String> list = new ArrayList<String>(Arrays.asList(TERRITORY_NAME_LIST));
@@ -61,8 +66,38 @@ public class Gameserver {
     return list;
   }
 
+  // Initialize territories according to ordered territory names and tid groups, and store them to map
   private void initializeTerritories(ArrayList<String> names, ArrayList<ArrayList<Integer>> tidGroups){
+    // append all tids into a new list
     ArrayList<Integer> tids = new ArrayList<Integer>();
+    for (ArrayList<Integer> group : tidGroups) {
+      tids.addAll(group);
+    }
+    // initialize territory
+    for (int i = 0; i < tids.size(); i++) {
+      int pid = i / 3;   // each player has three territories
+      int tid = tids.get(i);
+      String name = names.get(tid);
+      Territory t = new Territory(pid, tid, name);
+      gameMap.add(t);  // right now territories ordered as in tids
+    }
+    // set neighbors
+    for (Territory t: gameMap) {
+      for (int j = 0; j < 6; j++) {
+        int nbID = t.getNbID(j);
+        if (nbID >= 0 && tids.contains(nbID)) {
+          Territory nb = null;
+          for (Territory _t : gameMap) {
+            if (_t.getTid() == nbID) {
+              nb = _t;
+              break;
+            }
+          }
+          t.setNeighbor(j, nb);
+        }
+      }
+    }
+    
   }
   
   // TODO: Initialize the game map with the given player number. Each territory has 0 unit (defender)
