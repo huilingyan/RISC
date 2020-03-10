@@ -14,6 +14,7 @@ class ServerTest {
     @Test void testhandler() {
         ArrayList<Territory> map = new ArrayList<Territory>();
         Map<Integer, ArrayList<Operation> > actions = new HashMap<Integer, ArrayList<Operation> >();
-        map.add(new Territory(0, 0, "Test Territory", new Army(10)));
+        map.add(new Territory(0, 0, "Test Territory"));
+        map.get(0).setDefenderNum(10);
     }
 }
