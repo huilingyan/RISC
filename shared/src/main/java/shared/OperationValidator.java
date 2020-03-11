@@ -59,8 +59,7 @@ public class OperationValidator {
             return ILLEGAL_NUM;
         }
 
-        // add units to the territory
-        // TODO: check if this works
+        // update temp_map: add units to the territory
         if (t_to_deploy != null) {
             t_to_deploy.addDefender(initop.num);
         }
@@ -114,6 +113,14 @@ public class OperationValidator {
             return INVALID_PATH;
         }
 
+        // update temp_map: add and sub units
+        if (t_to_remove != null) {
+            t_to_remove.subtractDefender(moveop.num);
+        }
+        if (t_to_move != null) {
+            t_to_move.addDefender(moveop.num);
+        }
+
         // if valid, add to move operation
         validatedaction.addMoveOperation(moveop);
         return VALID;
@@ -162,6 +169,10 @@ public class OperationValidator {
        // 3.2 check if is adjacent
         if (isAdjacent(t_to_remove, t_to_move) == false) {
             return NOT_ADJACENT;
+        }
+
+        if (t_to_remove != null) {
+            t_to_remove.subtractDefender(attackop.num);
         }
 
         // if valid, add to move operation
