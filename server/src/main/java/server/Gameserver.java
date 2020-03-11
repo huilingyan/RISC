@@ -19,6 +19,7 @@ public class Gameserver {
   private ArrayList<Player> playerList;  // list of Player
   private ArrayList<Territory> gameMap;  // list of Territory
   private ServerSocket mySocket;         // server socket
+  private int playerNum;
 
   public Gameserver() {
     playerList = new ArrayList<Player>();
@@ -141,41 +142,52 @@ public class Gameserver {
   private void acceptPlayer(int pid) {
     Socket newSocket;
     while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
-    System.out.println("Accepts the first player connection");
+    System.out.println("Accepts player connection");
     String playerName = PLAYER_NAME_LIST[pid];
     playerList.add(new Player(pid, playerName, newSocket));
     System.out.println("added player");
+  }
+
+  private void acceptPlayers() {
+    // accept first player
+    acceptPlayer(0);  // add the first player to player list
+    // send player id
+    Player firstPlayer = playerList.get(0);
+    firstPlayer.sendInt(0);  // send pid to first player
+    System.out.println("sent pid 0");
+    // receive player num
+    firstPlayer.setUpInputStream();
+    playerNum = firstPlayer.recvInt();
+    System.out.println("Received player num: " + playerNum);
+    // TODO: accept other players
+    for (int i = 1; i < playerNum; i++){
+      acceptPlayer(i);
+      Player p = playerList.get(i);
+      p.sendInt(i);  // send pid
+      p.sendInt(playerNum);  // send player num
+    }
+
   }
 
   // TODO
   private void initializeGame() {
     // bind socket
     bindSocket(4444);  // bind socket to port 4444
-    // accept first player
-    acceptPlayer(0);  // add the first player to player list
-    // TODO: send player id
-    Player firstPlayer = playerList.get(0);
-
-    
-    // TODO: receive player number
-
-    // initialize game map
-
-    // TODO: accept other players
-
-    // TODO: initialize playerlist and territory list
-    
+    acceptPlayers();
+    initializeMap(playerNum);
+    // TODO: initialize units
   }
 
   // TODO: change later
   private void playGame() {
-    
+    /*******
     ArrayList<Territory> list = new ArrayList<Territory>();
     list.add(new Territory(0, 0, "Test Territory"));
     list.get(0).setDefenderNum(50);
     System.out.println("start sending");
     playerList.get(0).sendObject(list);      
-
+    *****/
+    
     /*****    
     // TODO: send a territory to the first player for now
     Socket clientSocket = playerList.get(0).getSocket();
