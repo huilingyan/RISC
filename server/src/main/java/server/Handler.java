@@ -11,9 +11,9 @@ public abstract class Handler {
 public Territory findTerritorybyString(ArrayList<Territory> map, String tname) {
     for (int j = 0; j < map.size(); j++) {
       //System.out.println("name:" + newmap.get(i).getName());
-      if (map.get(j).getName().contentEquals(tname)) {
-        return map.get(j);
-        
+      if (map.get(j).getName().equalsIgnoreCase(tname)) {
+        //find territory by specificed territory name, case insensitive
+        return map.get(j);       
       }
     }
     return null;
