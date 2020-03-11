@@ -30,9 +30,7 @@ public class InitHandler implements Handler {
           newmap.get(j).addDefender(num);
           //can change to setDefender(num), instead of adding
         }
-        else{
-          continue;
-        }
+        
       }
      }
 

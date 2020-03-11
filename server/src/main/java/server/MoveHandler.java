@@ -34,9 +34,6 @@ public class MoveHandler implements Handler {
           newmap.get(j).addDefender(num);//dest territory + unit
           //System.out.println(newmap.get(j).getName() + " + " + num);
         }
-        else{
-          continue;
-        }
       }
      }
 
