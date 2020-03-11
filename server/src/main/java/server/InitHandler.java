@@ -24,9 +24,10 @@ public class InitHandler extends Handler {
       String dest = initOp.getDest();
       int num = initOp.getNum();
       //System.out.println("dest:" + dest + " num:" + num);
-      Territory operated_territory = findTerritorybyString(newmap, dest);
-      operated_territory.addDefender(num);
-      
+      Territory t_dest = findTerritorybyString(newmap, dest);
+      if (t_dest != null) {
+        t_dest.addDefender(num);
+      }
      }
 
 

@@ -49,9 +49,10 @@ public class moveHandlerTest {
     Action moveAction = new Action();
     MoveOperation move1 = new MoveOperation("Blue", "Red", 2);
     MoveOperation move2 = new MoveOperation("Yellow", "Purple", 3);
-
+    MoveOperation move3 = new MoveOperation("NULL1", "Purple", 3);
     moveAction.addMoveOperation(move1);
     moveAction.addMoveOperation(move2);
+    moveAction.addMoveOperation(move3);
     //-----------------------------------
     //instance of initHandler
     MoveHandler h1 = new MoveHandler();

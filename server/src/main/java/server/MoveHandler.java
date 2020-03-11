@@ -26,11 +26,12 @@ public class MoveHandler extends Handler {
       int num = moveOp.getNum();
       //System.out.println("dest:" + dest + " num:" + num);
       Territory t_src = findTerritorybyString(newmap, src);
-      t_src.subtractDefender(num);//src territory - unit
       Territory t_dest = findTerritorybyString(newmap, dest);
-      t_dest.addDefender(num);//dest territory + unit     
-     }
-
+      if (t_src != null && t_dest != null) {
+        t_src.subtractDefender(num);//src territory - unit
+        t_dest.addDefender(num);//dest territory + unit
+      }
+    }
     return newmap;
   }
 }

@@ -51,9 +51,11 @@ public class initHandlerTest {
     InitOperation init1 = new InitOperation("Blue", 8);
     InitOperation init2 = new InitOperation("Red", 2);
     InitOperation init3 = new InitOperation("Green", 5);
+    InitOperation init4 = new InitOperation("NULL", 1);
     initAction.addInitOperation(init1);
     initAction.addInitOperation(init2);
     initAction.addInitOperation(init3);
+    initAction.addInitOperation(init4);
     //-----------------------------------
     //instance of initHandler
     InitHandler h1 = new InitHandler();

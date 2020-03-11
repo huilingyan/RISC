@@ -18,7 +18,7 @@ public Territory findTerritorybyString(ArrayList<Territory> map, String tname) {
     }
     return null;
   }
-
+  /*
   public Territory findTerritorybyTid(ArrayList<Territory> map, int tid) {
     for (int j = 0; j < map.size(); j++) {
       //System.out.println("name:" + newmap.get(i).getName());
@@ -28,5 +28,6 @@ public Territory findTerritorybyString(ArrayList<Territory> map, String tname) {
     }
     return null;
   }
+  */
   
 }
