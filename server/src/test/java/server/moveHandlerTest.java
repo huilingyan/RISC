@@ -56,8 +56,14 @@ public class moveHandlerTest {
     //instance of initHandler
     MoveHandler h1 = new MoveHandler();
     ArrayList<Territory> newmap = h1.handleAction(t_map, moveAction);
-    displayer.displayMap(t_map);
-    displayer.displayMap(newmap);
+    assert (newmap.get(0).getDefenderNum() == 3);
+    assert (newmap.get(1).getDefenderNum() == 7);
+    assert (newmap.get(2).getDefenderNum() == 2);
+    assert (newmap.get(3).getDefenderNum() == 0);
+    assert (newmap.get(4).getDefenderNum() == 9);
+    System.out.println("moveHandler test passed");
+    //displayer.displayMap(t_map);
+    //displayer.displayMap(newmap);
 
   }
 

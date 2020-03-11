@@ -5,7 +5,7 @@ import java.util.List;
 
 import shared.*;
 
-public class MoveHandler implements Handler {
+public class MoveHandler extends Handler {
 
   @Override
   public ArrayList<Territory> handleAction(
@@ -25,18 +25,11 @@ public class MoveHandler implements Handler {
       String dest = moveOp.getDest();
       int num = moveOp.getNum();
       //System.out.println("dest:" + dest + " num:" + num);
-      for (int j = 0; j < newmap.size(); j++) {
-        if (newmap.get(j).getName().contentEquals(src)) {
-          newmap.get(j).subtractDefender(num);//src territory - unit
-          //System.out.println(newmap.get(j).getName() + " - " + num);
-        }
-        if (newmap.get(j).getName().contentEquals(dest)) {
-          newmap.get(j).addDefender(num);//dest territory + unit
-          //System.out.println(newmap.get(j).getName() + " + " + num);
-        }
-      }
+      Territory t_src = findTerritorybyString(newmap, src);
+      t_src.subtractDefender(num);//src territory - unit
+      Territory t_dest = findTerritorybyString(newmap, dest);
+      t_dest.addDefender(num);//dest territory + unit     
      }
-
 
     return newmap;
   }
