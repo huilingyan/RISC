@@ -91,6 +91,7 @@ public class Player {
   public void sendInt(int val) {//send int to this player
     try {
       out.writeInt(val);
+      out.flush();
     } catch (IOException e) {
       System.out.println("IOException: send int failed\n");
     }

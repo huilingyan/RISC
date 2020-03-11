@@ -15,6 +15,18 @@ public class Action implements Serializable {
         this.attackOperations= new ArrayList<AttackOperation>();
     }
 
+    public List<InitOperation> getInitOperations() {
+      return initOperations;
+    }
+
+    public List<MoveOperation> getMoveOperations() {
+      return moveOperations;
+    }
+
+    public List<AttackOperation> getAttackOperations() {
+      return attackOperations;
+    }
+    
     public void addInitOperation(InitOperation iop) {
         this.initOperations.add(iop);
     }
@@ -36,5 +48,5 @@ public class Action implements Serializable {
         this.moveOperations.addAll(clientaction.moveOperations);
         this.attackOperations.addAll(clientaction.attackOperations);
     }
-
+  
 }
