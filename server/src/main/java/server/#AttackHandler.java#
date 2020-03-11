@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import shared.*;
 
-public class AttackHandler extends Handler {
+public class InitHandler implements Handler {
 
   @Override
   public ArrayList<Territory> handleAction(
          ArrayList<Territory> map, Action action){
     ArrayList<Territory> newmap = map;
     
-    System.out.println("handled attack actions");
+    System.out.println("handled init actions");
 
     return newmap;
   }
