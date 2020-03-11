@@ -39,8 +39,8 @@ public class Action implements Serializable {
         this.attackOperations.add(aop);
     }
 
-    public void concatInitOperation(ArrayList<InitOperation> clientiop) {
-        this.initOperations.addAll(clientiop);
+    public void concatInitOperation(Action clientaction) {
+        this.initOperations.addAll(clientaction.initOperations);
     }
 
 
