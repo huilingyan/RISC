@@ -1,0 +1,52 @@
+package shared;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.io.Serializable;
+
+public class Action implements Serializable {
+    private ArrayList<InitOperation> initOperations;
+    private ArrayList<MoveOperation> moveOperations;
+    private ArrayList<AttackOperation> attackOperations;
+
+    public Action() {
+        this.initOperations= new ArrayList<InitOperation>();
+        this.moveOperations= new ArrayList<MoveOperation>();
+        this.attackOperations= new ArrayList<AttackOperation>();
+    }
+
+    public ArrayList<InitOperation> getInitOperations() {
+      return initOperations;
+    }
+
+    public ArrayList<MoveOperation> getMoveOperations() {
+      return moveOperations;
+    }
+
+    public ArrayList<AttackOperation> getAttackOperations() {
+      return attackOperations;
+    }
+    
+    public void addInitOperation(InitOperation iop) {
+        this.initOperations.add(iop);
+    }
+
+    public void addMoveOperation(MoveOperation mop) {
+        this.moveOperations.add(mop);
+    }
+
+    public void addAttackOperation(AttackOperation aop) {
+        this.attackOperations.add(aop);
+    }
+
+    public void concatInitOperation(Action clientaction) {
+        this.initOperations.addAll(clientaction.initOperations);
+    }
+
+
+    public void concatGameOperation(Action clientaction) {
+        this.moveOperations.addAll(clientaction.moveOperations);
+        this.attackOperations.addAll(clientaction.attackOperations);
+    }
+  
+}
