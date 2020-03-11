@@ -60,16 +60,16 @@ public class Territory implements Serializable{
   }
   ******/
   
-  /******
+  
   public Territory(Territory rhs) {//copy constructor
     ownership = rhs.ownership;
     tid = rhs.tid;
     name = rhs.name;
-    defender = rhs.defender;
+    defender = new Army(rhs.defender.getUnitNumber());
     neighborList = rhs.neighborList;
     //may need to throw exception here if rhs doesn't have some fields
   }
-  *****/
+  
   
   public void setOwnership(int pid) {
     ownership = pid;
