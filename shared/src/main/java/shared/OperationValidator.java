@@ -191,7 +191,7 @@ public class OperationValidator {
         while(queue.size() != 0) { // when queue is not empty
             Territory t = queue.poll();
 
-            if (t == dest) {
+            if (t.getTid() == dest.getTid()) {
                 return true; // find the path
             }
 
@@ -212,8 +212,10 @@ public class OperationValidator {
 
     private boolean isAdjacent(Territory src, Territory dest) {
         for (Territory neigh : src.getNeighborList()) {
-            if (neigh == dest) { // if dest in neighbout list
-                return true;
+            if (neigh != null) {
+                if (neigh.getTid() == dest.getTid()) { // if dest in neighbout list
+                    return true;
+                }
             }
         }
         return false;
