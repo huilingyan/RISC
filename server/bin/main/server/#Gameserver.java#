@@ -178,11 +178,10 @@ public class Gameserver {
     // receive init operations from players
     Action initAction = new Action();
     for (Player p : playerList) {
-      Action a = (Action)p.recvObject();
-      initAction.concatInitOperation(a);
+      Action ac = (Action)p.recvObject();
+      ac = validateInitAction(ac, p.getPid(), gameMap);
+      initAction.concatInitOperation(ac);
     }
-    // validate action
-    Action validatedAc = validateInitAction(initAction);
     // handle action
     InitHandler handler = new InitHandler();
     gameMap = handler.handleAction(gameMap, validatedAc.getInitOperations());
