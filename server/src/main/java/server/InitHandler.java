@@ -5,7 +5,7 @@ import java.util.List;
 
 import shared.*;
 
-public class InitHandler implements Handler {
+public class InitHandler extends Handler {
 
   @Override
   public ArrayList<Territory> handleAction(
@@ -24,13 +24,9 @@ public class InitHandler implements Handler {
       String dest = initOp.getDest();
       int num = initOp.getNum();
       //System.out.println("dest:" + dest + " num:" + num);
-      for (int j = 0; j < newmap.size(); j++) {
-        //System.out.println("name:" + newmap.get(i).getName());
-        if (newmap.get(j).getName().contentEquals(dest)) {
-          newmap.get(j).addDefender(num);
-          //can change to setDefender(num), instead of adding
-        }
-        
+      Territory t_dest = findTerritorybyString(newmap, dest);
+      if (t_dest != null) {
+        t_dest.addDefender(num);
       }
      }
 
