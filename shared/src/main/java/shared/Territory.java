@@ -208,24 +208,4 @@ public class Territory implements Serializable{
     return cnt;
   }
 
-  public Territory findTerritorybyString(ArrayList<Territory> map, String tname) {
-    for (int j = 0; j < map.size(); j++) {
-      //System.out.println("name:" + newmap.get(i).getName());
-      if (map.get(j).getName().contentEquals(tname)) {
-        return map.get(j);
-        
-      }
-    }
-    return null;
-  }
-
-  public Territory findTerritorybyTid(ArrayList<Territory> map, int tid) {
-    for (int j = 0; j < map.size(); j++) {
-      //System.out.println("name:" + newmap.get(i).getName());
-      if (map.get(j).getTid() == tid) {
-        return map.get(j);
-      }
-    }
-    return null;
-  }
 }
