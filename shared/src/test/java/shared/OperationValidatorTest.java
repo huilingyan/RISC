@@ -111,38 +111,38 @@ public class OperationValidatorTest {
 
 
     for (InitOperation iop : initlist1) {
-      if (v0.isValidInitOperation(iop, totalunit) == 1) {
+      if (v0.isValidInitOperation(iop, totalunit) == v0.VALID) {
         dp.deployUnits(iop);
       }
-      else if (v0.isValidInitOperation(iop, totalunit) == -1) {
-        dp.invalidDest();
+      else if (v0.isValidInitOperation(iop, totalunit) == v0.INVALID_DEST) {
+        dp.showErrorMsg(v0.INVALID_DEST);
       }
-      else if (v0.isValidInitOperation(iop, totalunit) == -2) {
-        dp.noEnoughUnitMsg();
+      else if (v0.isValidInitOperation(iop, totalunit) == v0.NO_ENOUGH_UNITS) {
+        dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
       }
     }
 
     for (InitOperation iop : initlist2) {
-      if (v1.isValidInitOperation(iop, totalunit) == 1) {
+      if (v1.isValidInitOperation(iop, totalunit) == v1.VALID) {
         dp.deployUnits(iop);
       }
-      else if (v1.isValidInitOperation(iop, totalunit) == -1) {
-        dp.invalidDest();
+      else if (v1.isValidInitOperation(iop, totalunit) == v1.INVALID_DEST) {
+        dp.showErrorMsg(v1.INVALID_DEST);
       }
-      else if (v1.isValidInitOperation(iop, totalunit) == -2) {
-        dp.noEnoughUnitMsg();
+      else if (v1.isValidInitOperation(iop, totalunit) == v1.NO_ENOUGH_UNITS) {
+        dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
       }
     }
 
     for (InitOperation iop : initlist3) {
-      if (v2.isValidInitOperation(iop, totalunit) == 1) {
+      if (v2.isValidInitOperation(iop, totalunit) == v2.VALID) {
         dp.deployUnits(iop);
       }
-      else if (v2.isValidInitOperation(iop, totalunit) == -1) {
-        dp.invalidDest();
+      else if (v2.isValidInitOperation(iop, totalunit) == v2.INVALID_DEST) {
+        dp.showErrorMsg(v2.INVALID_DEST);
       }
-      else if (v2.isValidInitOperation(iop, totalunit) == -2) {
-        dp.noEnoughUnitMsg();
+      else if (v2.isValidInitOperation(iop, totalunit) == v2.NO_ENOUGH_UNITS) {
+        dp.showErrorMsg(v2.NO_ENOUGH_UNITS);
       }
     }
 
@@ -159,36 +159,36 @@ public class OperationValidatorTest {
     movelist.add(mop4);
 
     for (MoveOperation mop : movelist) {
-      if (v0.isValidMoveOperation(mop) == 1) {
+      if (v0.isValidMoveOperation(mop) == v0.VALID) {
         dp.moveUnits(mop);
       }
-      else if (v0.isValidMoveOperation(mop) == -1) {
-        dp.invalidDest();
+      else if (v0.isValidMoveOperation(mop) == v0.INVALID_DEST) {
+        dp.showErrorMsg(v0.INVALID_DEST);
       }
-      else if (v0.isValidMoveOperation(mop) == -2) {
-        dp.noEnoughUnitMsg();
+      else if (v0.isValidMoveOperation(mop) == v0.NO_ENOUGH_UNITS) {
+        dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
       }
-      else if (v0.isValidMoveOperation(mop) == -4) {
-        dp.noEnoughUnitMsg();
+      else if (v0.isValidMoveOperation(mop) == v0.INVALID_SRC) {
+        dp.showErrorMsg(v0.INVALID_SRC);
       }
     }
 
     MoveOperation mop5 = new MoveOperation("Five", "Six", 1); // invalid src
 
-    if (v1.isValidMoveOperation(mop5) == 1) {
+    if (v1.isValidMoveOperation(mop5) == v0.VALID) {
       dp.moveUnits(mop5);
     }
-    else if (v1.isValidMoveOperation(mop5) == -1) {
-      dp.invalidDest();
+    else if (v1.isValidMoveOperation(mop5) == v1.INVALID_DEST) {
+      dp.showErrorMsg(v1.INVALID_DEST);
     }
-    else if (v1.isValidMoveOperation(mop5) == -2) {
-      dp.noEnoughUnitMsg();
+    else if (v1.isValidMoveOperation(mop5) == v1.NO_ENOUGH_UNITS) {
+      dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
     }
-    else if (v1.isValidMoveOperation(mop5) == -4) {
-      dp.noEnoughUnitMsg();
+    else if (v1.isValidMoveOperation(mop5) == v1.INVALID_SRC) {
+      dp.showErrorMsg(v1.INVALID_SRC);
     }
-    else if (v1.isValidMoveOperation(mop5) == -5) {
-      dp.noPathMsg();
+    else if (v1.isValidMoveOperation(mop5) == v1.INVALID_PATH) {
+      dp.showErrorMsg(v1.INVALID_PATH);
     }
 
     // attack operations
@@ -202,14 +202,14 @@ public class OperationValidatorTest {
     attacklist.add(aop3);
 
     for (AttackOperation aop : attacklist) {
-      if (v0.isValidAttackOperation(aop) == 1) {
+      if (v0.isValidAttackOperation(aop) == v0.VALID) {
         dp.attackUnits(aop);
       }
-      else if (v0.isValidAttackOperation(aop) == -1) {
-        dp.invalidDest();
+      else if (v0.isValidAttackOperation(aop) == v0.INVALID_DEST) {
+        dp.showErrorMsg(v0.INVALID_DEST);
       }
-      else if (v0.isValidAttackOperation(aop) == -6) {
-        dp.notAdjacentMsg();
+      else if (v0.isValidAttackOperation(aop) == v0.NOT_ADJACENT) {
+        dp.showErrorMsg(v0.NOT_ADJACENT);
       }
     }
 
