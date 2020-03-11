@@ -49,8 +49,8 @@ public class Displayer {
             if (t.getOwnership() == pid) { // display territories in group, by ownership
                 System.out.println("Territory No." + t.getTid() + ":"); // name of territory
                 System.out.println("\tName: " + t.getName()); // name of territory
-                System.out.println("\tBelongs to:" + t.getOwnership()); // owner 
-                System.out.println("\tNumber of units:" + t.getDefenderNum()); // number of units 
+                System.out.println("\tBelongs to: player " + t.getOwnership()); // owner 
+                System.out.println("\tNumber of units: " + t.getDefenderNum()); // number of units 
                 System.out.print("\tNext to: "); // neighbours
     
                 ArrayList<Territory> neighlist = t.getNeighborList();
@@ -93,8 +93,12 @@ public class Displayer {
 
 // msg during communication with server
 
-    public void connEstablishedMsg() {
-        System.out.println("Successfully connected to server!");
+    public void connEstablishedMsg(int player_id) {
+        System.out.println("Successfully connected to server! You're playing as player " + player_id);
+    }
+
+    public void inputPlayerNum() {
+        System.out.println("You're the first player. Please enter the number of players:");
     }
 
     public void disConnectMsg() {
@@ -115,30 +119,46 @@ public class Displayer {
         System.out.println("How many units would you like to deploy to this territory?");
     }
 
-    // can be used by move and attack as well
-    public void invalidDest() {
-        System.out.println("Invalid destination! Please enter again:");
-    }
-
-    public void noEnoughUnitMsg() {
-        System.out.println("There're no enough units left to deploy!");
-    }
-
     public void deployUnits(InitOperation initop) {
-        System.out.println("Deploy " + initop.num + " to " + initop.dest);
+        System.out.println("Deploy " + initop.num + " to " + initop.getDest());
     }
-
 
 // msg during move commit
 
-    public void noPathMsg() { 
-        System.out.println("There's no path to that territory!");
+    public void moveUnits(MoveOperation moveop) {
+        System.out.println("Move " + moveop.num + " units from " + moveop.getSrc() + " to " + moveop.getDest());
     }
 
 // msg during attack commit
-    public void illegalTerritoryMsg() { 
-        System.out.println("You can't attack your own territory...");
-    }
     
+    public void attackUnits(AttackOperation attackop) {
+        System.out.println("Attack " + attackop.getDest() + " from " + attackop.getSrc() + " with " + attackop.num + " units");
+    }
+
+
+    public void showErrorMsg(int errorcode) {
+        switch(errorcode) {
+        case OperationValidator.INVALID_DEST:
+            System.out.println("Invalid destination! Please enter again:");
+            break;
+        case OperationValidator.NO_ENOUGH_UNITS:
+            System.out.println("There're no enough units left to deploy!");
+            break;
+        case OperationValidator.ILLEGAL_NUM:
+            System.out.println("The number you input is illegal! Please try again:");
+            break;
+        case OperationValidator.INVALID_SRC:
+            System.out.println("Invalid source! Please enter again:");
+            break;
+        case OperationValidator.INVALID_PATH:
+            System.out.println("There's no path to that territory!");
+            break;
+        case OperationValidator.NOT_ADJACENT:
+            System.out.println("The territory isn't adjacent! You can't attack it.");
+            break;
+        default:
+            break;
+        }
+    }
 
 }
