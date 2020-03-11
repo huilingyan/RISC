@@ -10,11 +10,9 @@ public class InputTaker {
   private Displayer dp;
 
   public InputTaker() {
+    this.dp = Displayer.getInstance();
   }
   
-  public InputTaker(Displayer gamedp) {
-    this.dp = gamedp;
-  }
 
   public int readnofPlayers(Scanner sc) {
     //the first player must tell the server how many players will join the game
@@ -58,11 +56,25 @@ public class InputTaker {
     return n;
   }
 
-  /*public InitOperation readInitOperation(int tid,Scanner sc) {
-    //the game client will pick a tid for the user to input how many soldiers they want to put on tid
-    //still the game client will prompted the user asking for input
-     int n = readanInt(sc);
+  public int readaPosInt(Scanner sc) {
+    int n = -1;
+    while (n < 0) {
+      n = readanInt(sc);
+      if (n < 0) {
+        System.out.println("please input a number >=0");
+      }
+    }
+    return n;
+  }
+
+  public InitOperation readInitOperation(String tname,Scanner sc) {
+    //the game client will pick a territory name for the user to input how many soldiers they want to put on tid
+    //still the game client will prompted the user asking for input, this method will return an initoperation whose units >=0
+    //still need to operation check
+    int n = readaPosInt(sc);
     
-    return new InitOperation(tid, n);
-    }*/
+    return new InitOperation(tname, n);
+    }
+
+  
 }
