@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import shared.*;
 
-public class AttackHandler implements Handler {
+public class AttackHandler extends Handler {
 
   @Override
   public ArrayList<Territory> handleAction(
