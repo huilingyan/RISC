@@ -14,7 +14,7 @@ public class Gameserver {
 
   public static final String[] PLAYER_NAME_LIST = {"Blue", "Red", "Green", "Yellow", "Purple"};  // hardcoded player name list
   public static final String[] TERRITORY_NAME_LIST = {"Pikachu", "Ditto", "Gengar", "Eevee", "Snorlax", "Mew", "Psyduck", "Magneton", "Vulpix", "Jumpluff", "Bulbasaur", "Charmandar", "Squirtle", "Pidgey", "Caterpie", "Rattata"};
-
+  public static final int UNIT_PER_PLAYER = 50;
   
   private ArrayList<Player> playerList;  // list of Player
   private ArrayList<Territory> gameMap;  // list of Territory
@@ -166,16 +166,53 @@ public class Gameserver {
       p.sendInt(i);  // send pid
       p.sendInt(playerNum);  // send player num
     }
+  }
 
+  // returns an action which only contains validated init operations
+  private Action validateInitAction(Action ac, int pid, ArrayList<Territory> map) {
+    // Action newAction = new Action();
+    OperationValidator validator = new OperationValidator(pid, map);
+    for (InitOperation op : ac.getInitOperations()) {
+      validator.isValidInitOperation(op, UNIT_PER_PLAYER);
+        //  newAction.addInitOperation(op);
+    }
+    
+    return validator.getAction();
   }
 
   // TODO
+  private void initializeUnits() {
+    // send total units and initial map to each player
+    for (Player p : playerList) {
+      p.sendInt(UNIT_PER_PLAYER);
+      p.sendObject(gameMap);
+    }
+    // receive init operations from players
+    Action initAction = new Action();
+    for (Player p : playerList) {
+      if (p.getPid() > 0) {
+        p.setUpInputStream();
+      }
+      Action ac = validateInitAction((Action)p.recvObject(), p.getPid(), gameMap);  // validate
+      initAction.concatInitOperation(ac);
+    }
+    // handle action
+    InitHandler handler = new InitHandler();
+    gameMap = handler.handleAction(gameMap, initAction);
+    // debug
+    Displayer displayer = Displayer.getInstance();
+    displayer.setNumOfPlayer(playerNum);
+    displayer.displayMap(gameMap);
+    
+  }
+
   private void initializeGame() {
     // bind socket
     bindSocket(4444);  // bind socket to port 4444
     acceptPlayers();
     initializeMap(playerNum);
-    // TODO: initialize units
+    initializeUnits();
+    
   }
 
   // TODO: change later
