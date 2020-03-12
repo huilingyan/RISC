@@ -167,8 +167,8 @@ public class Displayer {
 
     public void loseGamePrompt() {
         System.out.println("Game over! You lose.");
-        System.out.println("Would you like to watch the rest of the game or exit directly?");
-        System.out.println("Press Y(Watch the game) or N(Exit) to continue:");
+        System.out.println("Would you like to exit directly or watch the rest of the game?");
+        System.out.println("Press Y(Exit) or N(Watch the game) to continue:");
     }
 
 // after player loses the game
