@@ -160,16 +160,27 @@ public class Displayer {
         }
     }
 
+// Print the result of the game
+    public void winnerAnnouncement() {
+        System.out.println("Congratulations! You win the game!");
+    }
+
+    public void loseGamePrompt() {
+        System.out.println("Game over! You lose.");
+        System.out.println("Would you like to watch the rest of the game or exit directly?");
+        System.out.println("Press Y(Watch the game) or N(Exit) to continue:");
+    }
+
 // after player loses the game
 
     public void showCurrentMap(ArrayList<Territory> curr_map) {
+        System.out.println("Here's the current map after last turn:");
         displayMap(curr_map); // show current map after each turn
     }
 
     public void askForExit() {
         System.out.println("Would you like to exit the game now?");
-        // TODO: add the format of input: e.g. Y/N or Yes/No to continue:
-        // according to the inputTaker
+        System.out.println("Press Y or N to continue:");
     }
 
 }
