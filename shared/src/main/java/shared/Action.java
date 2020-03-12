@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.io.Serializable;
 
 public class Action implements Serializable {
-    private List<InitOperation> initOperations;
-    private List<MoveOperation> moveOperations;
-    private List<AttackOperation> attackOperations;
+    private ArrayList<InitOperation> initOperations;
+    private ArrayList<MoveOperation> moveOperations;
+    private ArrayList<AttackOperation> attackOperations;
 
     public Action() {
         this.initOperations= new ArrayList<InitOperation>();
@@ -15,15 +15,15 @@ public class Action implements Serializable {
         this.attackOperations= new ArrayList<AttackOperation>();
     }
 
-    public List<InitOperation> getInitOperations() {
+    public ArrayList<InitOperation> getInitOperations() {
       return initOperations;
     }
 
-    public List<MoveOperation> getMoveOperations() {
+    public ArrayList<MoveOperation> getMoveOperations() {
       return moveOperations;
     }
 
-    public List<AttackOperation> getAttackOperations() {
+    public ArrayList<AttackOperation> getAttackOperations() {
       return attackOperations;
     }
     

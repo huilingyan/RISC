@@ -21,7 +21,10 @@ public class OperationValidator {
 
     public OperationValidator(int pid, ArrayList<Territory> curr_map) {
         this.validatedaction = new Action();
-        this.temp_map = curr_map;
+        this.temp_map = new ArrayList<Territory>();
+        for (Territory t : curr_map) {
+          temp_map.add(new Territory(t));
+        }
         this.player_id = pid;
     }
 
@@ -31,6 +34,10 @@ public class OperationValidator {
 
     public void setAction(Action action) {
         this.validatedaction = action;
+    }
+
+    public ArrayList<Territory> getCurrentMapState() {
+      return temp_map;
     }
 
     public int isValidInitOperation(InitOperation initop, int totalunit) {
@@ -59,8 +66,7 @@ public class OperationValidator {
             return ILLEGAL_NUM;
         }
 
-        // add units to the territory
-        // TODO: check if this works
+        // update temp_map: add units to the territory
         if (t_to_deploy != null) {
             t_to_deploy.addDefender(initop.num);
         }
@@ -114,6 +120,14 @@ public class OperationValidator {
             return INVALID_PATH;
         }
 
+        // update temp_map: add and sub units
+        if (t_to_remove != null) {
+            t_to_remove.subtractDefender(moveop.num);
+        }
+        if (t_to_move != null) {
+            t_to_move.addDefender(moveop.num);
+        }
+
         // if valid, add to move operation
         validatedaction.addMoveOperation(moveop);
         return VALID;
@@ -164,6 +178,10 @@ public class OperationValidator {
             return NOT_ADJACENT;
         }
 
+        if (t_to_remove != null) {
+            t_to_remove.subtractDefender(attackop.num);
+        }
+
         // if valid, add to move operation
         validatedaction.addAttackOperation(attackop);
         return VALID;
@@ -171,7 +189,7 @@ public class OperationValidator {
     }
 
     // helper method: get the remaining number of unit for player
-    private int getRemainingUnit(int totalunit) {
+    public int getRemainingUnit(int totalunit) {
         int remains = totalunit;
         for (Territory t : this.temp_map) {
             if (t.getOwnership() == this.player_id) { // if is the player's territory
