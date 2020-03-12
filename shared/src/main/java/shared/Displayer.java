@@ -160,4 +160,16 @@ public class Displayer {
         }
     }
 
+// after player loses the game
+
+    public void showCurrentMap(ArrayList<Territory> curr_map) {
+        displayMap(curr_map); // show current map after each turn
+    }
+
+    public void askForExit() {
+        System.out.println("Would you like to exit the game now?");
+        // TODO: add the format of input: e.g. Y/N or Yes/No to continue:
+        // according to the inputTaker
+    }
+
 }
