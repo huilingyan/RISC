@@ -21,7 +21,10 @@ public class OperationValidator {
 
     public OperationValidator(int pid, ArrayList<Territory> curr_map) {
         this.validatedaction = new Action();
-        this.temp_map = curr_map;
+        this.temp_map = new ArrayList<Territory>();
+        for (Territory t : curr_map) {
+          temp_map.add(new Territory(t));
+        }
         this.player_id = pid;
     }
 
@@ -31,6 +34,10 @@ public class OperationValidator {
 
     public void setAction(Action action) {
         this.validatedaction = action;
+    }
+
+    public ArrayList<Territory> getCurrentMapState() {
+      return temp_map;
     }
 
     public int isValidInitOperation(InitOperation initop, int totalunit) {
@@ -182,7 +189,7 @@ public class OperationValidator {
     }
 
     // helper method: get the remaining number of unit for player
-    private int getRemainingUnit(int totalunit) {
+    public int getRemainingUnit(int totalunit) {
         int remains = totalunit;
         for (Territory t : this.temp_map) {
             if (t.getOwnership() == this.player_id) { // if is the player's territory

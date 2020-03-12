@@ -67,6 +67,10 @@ public class Displayer {
         }
     }
 
+    public void displayBeforeInitMap() {
+      System.out.println("Below shows your territories.\n");
+    }
+
     public void displayIntroduction(ArrayList<Territory> t_map, int player_id) {
         for (int i = 0; i < this.num_player; i++) {
             System.out.println("Player " + i + ":");
@@ -108,15 +112,10 @@ public class Displayer {
     
 // msg during initialization
 
-    // for input validator
-    public void illegalNumberMsg() { // use it when client inputs negative num, etc
-        System.out.println("The number you input is illegal! Please try again:");
-    }
-    
     // for operation validator
-    public void showRemainUnitNumber(int totalunit) {
-        System.out.println("You have " + totalunit + "units in total. ");
-        System.out.println("How many units would you like to deploy to this territory?");
+    public void showRemainUnitNumber(int totalunit, String name) {
+        System.out.println("You have " + totalunit + " units in total. ");
+        System.out.println("How many units would you like to deploy to territory " + name + "?");
     }
 
     public void deployUnits(InitOperation initop) {

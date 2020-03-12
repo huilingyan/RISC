@@ -168,6 +168,18 @@ public class Gameserver {
     }
   }
 
+  // returns an action which only contains validated init operations
+  private Action validateInitAction(Action ac, int pid, ArrayList<Territory> map) {
+    // Action newAction = new Action();
+    OperationValidator validator = new OperationValidator(pid, map);
+    for (InitOperation op : ac.getInitOperations()) {
+      validator.isValidInitOperation(op, UNIT_PER_PLAYER);
+        //  newAction.addInitOperation(op);
+    }
+    
+    return validator.getAction();
+  }
+
   // TODO
   private void initializeUnits() {
     // send total units and initial map to each player
@@ -178,14 +190,19 @@ public class Gameserver {
     // receive init operations from players
     Action initAction = new Action();
     for (Player p : playerList) {
-      Action a = (Action)p.recvObject();
-      initAction.concatInitOperation(a);
+      if (p.getPid() > 0) {
+        p.setUpInputStream();
+      }
+      Action ac = validateInitAction((Action)p.recvObject(), p.getPid(), gameMap);  // validate
+      initAction.concatInitOperation(ac);
     }
-    // validate action
-    Action validatedAc = validateInitAction(initAction);
     // handle action
     InitHandler handler = new InitHandler();
-    gameMap = handler.handleAction(gameMap, validatedAc.getInitOperations());
+    gameMap = handler.handleAction(gameMap, initAction);
+    // debug
+    Displayer displayer = Displayer.getInstance();
+    displayer.setNumOfPlayer(playerNum);
+    displayer.displayMap(gameMap);
     
   }
 
