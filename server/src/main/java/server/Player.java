@@ -116,7 +116,7 @@ public class Player {
     }
   }
   
-  public int recvInt() {//receive int from this player
+  public int recvPosInt() {//receive int (>=0) from this player
     if (connected) {
       try {
         return in.readInt();

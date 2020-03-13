@@ -131,14 +131,14 @@ public class Gameserver {
   private Socket acceptConnection() {
     try{
       Socket newSocket = mySocket.accept();
-      return newSocket;   // not sure if return socket in try block can work
+      return newSocket;
     } catch (IOException e) {
       System.out.println("IOException when accept()");
     }
     return null;
   }
 
-  // TODO: Change later. Accept a player and add it to player list
+  // Accept a player and add it to player list
   private void acceptPlayer(int pid) {
     Socket newSocket;
     while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
@@ -157,7 +157,7 @@ public class Gameserver {
     System.out.println("sent pid 0");
     // receive player num
     firstPlayer.setUpInputStream();
-    playerNum = firstPlayer.recvInt();
+    playerNum = firstPlayer.recvPosInt();
     // remove the player from list if disconnected
     if (playerNum < 0 || !firstPlayer.isConnected() || firstPlayer.getSocket().isClosed()) {
       firstPlayer.closeSocket();
@@ -202,7 +202,7 @@ public class Gameserver {
     return validator.getAction();
     }
     
-    // TODO
+    // Initialize units of each territories
     private void initializeUnits() {
     // send total units and initial map to each player
     for (Player p : playerList) {
@@ -220,7 +220,6 @@ public class Gameserver {
         ac = validateInitAction(ac, p.getPid(), gameMap);  // validate
         initAction.concatInitOperation(ac);
       }
-      
     }
     // handle action
     InitHandler handler = new InitHandler();
