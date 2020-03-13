@@ -1,5 +1,6 @@
 package client;
 
+import java.util.HashSet;
 import java.util.Scanner;
 import shared.*;
 
@@ -8,8 +9,10 @@ public class InputTaker {
   //whether the operation can be proceed needs to be checked
 
   private Displayer dp;
+  private HashSet<String> TNameSet;
 
   public InputTaker() {
+    //remember to set Tnameset later!
     this.dp = Displayer.getInstance();
   }
   
@@ -24,6 +27,11 @@ public class InputTaker {
       numbervalid = checknofPlayers(n);
     }
     return n;
+  }
+
+  public void setTNameSet(HashSet<String> hs) {
+    //TNameSet will store the names of territories for quick lookup
+    this.TNameSet = hs;
   }
   
 
@@ -43,6 +51,7 @@ public class InputTaker {
     while (readsuccess == false) {
       try {
         String s = sc.nextLine();
+        System.out.println(s);//let user see his input
         n = Integer.parseInt(s);
         readsuccess = true;
       }
@@ -74,7 +83,103 @@ public class InputTaker {
     int n = readaPosInt(sc);
     
     return new InitOperation(tname, n);
-    }
+  }
 
   
+  public String readaTname(Scanner sc) {
+    boolean readsuccess = false;
+    String s="";
+    String caps = "";
+    while (readsuccess == false) {
+      s = sc.nextLine();
+      System.out.println(s);//let user see his input
+      caps = capString(s);
+      if (TNameSet.contains(caps) || TNameSet.contains(s)) {
+        readsuccess = true;
+      }
+      else {
+        System.out.println("The name you entered is not a territory name.");
+      }
+    }
+    return caps;
+  }
+
+  public String capString(String s) {
+    if (s.length() <= 1) {
+      return s.toUpperCase();
+    }
+    
+    return s.substring(0, 1).toUpperCase() + s.substring(1);
+    
+  }
+
+  public MoveOperation readMoveOperation(Scanner sc) {
+    //This method will prompt for user to input
+    System.out.println("Please enter the name of territory to move armies from:");
+    String srcT = readaTname(sc);
+    System.out.println("Please enter the number of armies you want to move:");
+    int n = readaPosInt(sc);
+    System.out.println("Please enter the name of territory to move armies to:");
+    String destT = readaTname(sc);
+    return new MoveOperation(srcT, destT, n);
+  }
+
+  public AttackOperation readAttackOperation(Scanner sc) {
+    System.out.println("Please enter the name of territory to dispatch armies from:");
+    String srcT = readaTname(sc);
+    System.out.println("Please enter the number of armies you want to dispatch:");
+    int n = readaPosInt(sc);
+    System.out.println("Please enter the name of territory you want to attack:");
+    String destT = readaTname(sc);
+    return new AttackOperation(srcT, destT, n);
+  }
+
+  private boolean turn_selectionSTRcheck(String s) {
+    boolean accepted = (s.equalsIgnoreCase("D") || s.equalsIgnoreCase("M") || s.equalsIgnoreCase("A"));
+    
+    return accepted;
+  }
+
+  public String readselectionStr(Scanner sc) {//get a legal mode selection string
+    String s="";
+    boolean readsuccess = false;
+    while (readsuccess == false) {
+      s = sc.nextLine();
+      System.out.println(s);//let user see his input
+      if (turn_selectionSTRcheck(s)==true) {
+        readsuccess = true;
+      }
+      else {
+        System.out.println("Please choose what to do: A, M, or D");
+      }
+    }
+    
+    return capString(s);
+  }
+
+  private boolean YesorNoSTRcheck(String s) {
+    boolean accepted = (s.equalsIgnoreCase("Y") || s.equalsIgnoreCase("N"));
+    
+    return accepted;
+  }
+  
+  public boolean readYorN(Scanner sc) {
+    //read Y or N from user and return true or false
+    String s="";
+    boolean readsuccess = false;
+    while (readsuccess == false) {
+      s = sc.nextLine();
+      System.out.println(s);//let user see his input
+      if (YesorNoSTRcheck(s)==true) {
+        readsuccess = true;
+      }
+      else {
+        System.out.println("Please enter Y or N");
+      }
+    }
+    if (s.equalsIgnoreCase("Y")) {
+      return true;
+    }
+    return false;
+  }
 }
