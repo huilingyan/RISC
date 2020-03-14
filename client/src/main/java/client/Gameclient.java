@@ -19,11 +19,13 @@ public class Gameclient {
   InputTaker inTaker; // constructor
   Displayer displayer; // constructor
   int playerNum;      // set up when user prompt/recv from server
-
+  boolean isActive;   // constructor
+  
   public Gameclient(Scanner sc) {
     scanner = sc;
     inTaker = new InputTaker();
     displayer = Displayer.getInstance();
+    isActive = true;
   }
 
   // Connect to the server at localhost and the given port
@@ -44,30 +46,7 @@ public class Gameclient {
 
 // TODO: change later
 private void playGame() {
-/****
-    System.out.println("Connect to server");
-    try {
-      System.out.println("start create inputstream");
-      ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
-      inStream = in;
-      // print out the Territory
-      ArrayList<Territory> list;
-      System.out.println("reading");
-      list = (ArrayList<Territory>) in.readObject();
-      System.out.println("recv done");
-      Territory newT = list.get(0);
-      System.out.println("Name: " + newT.getName());
-      System.out.println("Army num:" + newT.getDefenderNum());
-      
-    }
-    catch (IOException e){
-      e.printStackTrace();
-      System.out.println("IOException");
-    }
-    catch (ClassNotFoundException e) {
-      System.out.println("class not found in ObjectInputStream.read");
-    }
-*****/
+
     while (true) {
     }
   }
