@@ -173,10 +173,7 @@ public class OperationValidator {
     }
 
     private boolean isOwnTerritory(Territory t) {
-        if (t.getOwnership() == this.player_id) {
-            return true;
-        }
-        return false;
+        return (t.getOwnership() == this.player_id);
     }
 
     private boolean isValidPath(Territory src, Territory dest) {
