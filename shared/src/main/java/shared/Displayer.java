@@ -71,26 +71,8 @@ public class Displayer {
       System.out.println("Below shows your territories.\n");
     }
 
-    public void displayIntroduction(ArrayList<Territory> t_map, int player_id) {
-        for (int i = 0; i < this.num_player; i++) {
-            System.out.println("Player " + i + ":");
-            System.out.println("-------------");
-            for (Territory t : t_map) {
-                if (t.getOwnership() == i) {
-                    System.out.print(t.getDefenderNum() + " units in " + t.getName());
-                    System.out.print(" (next to: ");
-                    ArrayList<Territory> neighlist = t.getNeighborList();
-                    int cnt = 0;
-                    for (Territory neigh : neighlist) { // show neighbour list
-                      if (neigh != null) {
-                        cnt++;
-                        System.out.print(neigh.getName() + ((cnt == t.countNeighbors())? ")\n" : ",")); // owner
-                      }                        
-                    }
-                }
-            }
-            System.out.print("\n");
-        }
+    public void displayIntroduction(int player_id) {
+                
         System.out.println("You are player " + player_id + ", what would you like to do?");
         System.out.println("(M)ove\n(A)ttack\n(D)one");
     }
@@ -217,10 +199,12 @@ public class Displayer {
         System.out.println("Congratulations! You win the game!");
     }
 
-    public void loseGamePrompt() {
-        System.out.println("Game over! You lose.");
-        System.out.println("Would you like to exit directly or watch the rest of the game?");
-        System.out.println("Press Y(Exit) or N(Watch the game) to continue:");
+    public void loseGameAnnouncement() {
+        System.out.println("You lose the game.");
+    }
+
+    public void gameOverAnnouncement(int pid) {
+      System.out.println("Game Over! Player " + pid + " win the game.");
     }
 
 // after player loses the game
@@ -231,8 +215,8 @@ public class Displayer {
     }
 
     public void askForExit() {
-        System.out.println("Would you like to exit the game now?");
-        System.out.println("Press Y or N to continue:");
+      System.out.println("Would you like to exit directly or watch the rest of the game?");
+      System.out.println("Press Y(Exit) or N(Watch the game) to continue:");
     }
 
 }
