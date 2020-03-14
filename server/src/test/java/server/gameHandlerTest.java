@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import shared.*;
 
-public class attackHandlerTest {
+public class gameHandlerTest {
   @Test
-  public void testAttackHandler() {
+  public void testGameHandler() {
     Displayer displayer = Displayer.getInstance();
     displayer.setNumOfPlayer(3);
     Territory t0 = new Territory(0, 0, "Red");
@@ -18,11 +18,11 @@ public class attackHandlerTest {
     Territory t4 = new Territory(2, 4, "Purple");
 
     // set number of defenders
-    t0.setDefenderNum(5);
-    t1.setDefenderNum(9);
+    t0.setDefenderNum(3);
+    t1.setDefenderNum(11);
     t2.setDefenderNum(12);
-    t3.setDefenderNum(7);
-    t4.setDefenderNum(6);
+    t3.setDefenderNum(10);
+    t4.setDefenderNum(3);
 
     t0.setNeighbor(0, t1);
     t1.setNeighbor(0, t0);
@@ -45,28 +45,37 @@ public class attackHandlerTest {
     
 
     //------------------------------------------------------
-    //set up a init operation list
+    //set up a operation list
+    Action Action = new Action();
+    MoveOperation move1 = new MoveOperation("Blue", "Red", 2);
+    MoveOperation move2 = new MoveOperation("Yellow", "Purple", 3);
+    MoveOperation move3 = new MoveOperation("NULL1", "Purple", 3);
+    Action.addMoveOperation(move1);
+    Action.addMoveOperation(move2);
+    Action.addMoveOperation(move3);
     //player 0: Red 5 Blue 9
     //player 1: Green 12
     //player 2: Yellow 7 Purple 6
-    Action attackAction = new Action();
+    
     AttackOperation attack1 = new AttackOperation("Blue", "Green", 7);
     AttackOperation attack2 = new AttackOperation("Red", "Green", 5);
     AttackOperation attack3 = new AttackOperation("Yellow", "Green", 3);
     AttackOperation attack4 = new AttackOperation("Purple", "Red", 4);
     AttackOperation attack5 = new AttackOperation("Green", "Red", 1);
-    attackAction.addAttackOperation(attack1);
-    attackAction.addAttackOperation(attack2);
-    attackAction.addAttackOperation(attack3);
-    attackAction.addAttackOperation(attack4);
-    attackAction.addAttackOperation(attack5);
+    AttackOperation attack6 = new AttackOperation("null1", "Red", 99);
+    Action.addAttackOperation(attack1);
+    Action.addAttackOperation(attack2);
+    Action.addAttackOperation(attack3);
+    Action.addAttackOperation(attack4);
+    Action.addAttackOperation(attack5);
+    Action.addAttackOperation(attack6);
     //-----------------------------------
     //instance of initHandler
     GameHandler h1 = new GameHandler();
-    ArrayList<Territory> newmap = h1.handleAttack(t_map, attackAction);
+    ArrayList<Territory> newmap = h1.handleAction(t_map, Action);
     //assert (newmap.get(0).getDefenderNum() == 3);
     //attack result is randomized so can't use assert
-    System.out.println("attackHandler test passed");
+    System.out.println("GameHandler test passed");
     //displayer.displayMap(t_map);
     displayer.displayMap(newmap); 
   }
