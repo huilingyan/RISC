@@ -104,7 +104,7 @@ public class Gameserver {
     
   }
   
-  // TODO: Initialize the game map with the given player number. Each territory has 0 unit (defender)
+  // Initialize the game map with the given player number. Each territory has 0 unit (defender)
   public void initializeMap(int playerNum) {
     // randomize the territory name order
     ArrayList<String> nameList = shuffleTerritoryNames();
@@ -131,14 +131,14 @@ public class Gameserver {
   private Socket acceptConnection() {
     try{
       Socket newSocket = mySocket.accept();
-      return newSocket;   // not sure if return socket in try block can work
+      return newSocket;
     } catch (IOException e) {
       System.out.println("IOException when accept()");
     }
     return null;
   }
 
-  // TODO: Change later. Accept a player and add it to player list
+  // Accept a player and add it to player list
   private void acceptPlayer(int pid) {
     Socket newSocket;
     while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
@@ -148,7 +148,7 @@ public class Gameserver {
     System.out.println("added player");
   }
 
-  private void acceptPlayers() {
+  private boolean acceptFirstPlayer() {
     // accept first player
     acceptPlayer(0);  // add the first player to player list
     // send player id
@@ -157,19 +157,41 @@ public class Gameserver {
     System.out.println("sent pid 0");
     // receive player num
     firstPlayer.setUpInputStream();
-    playerNum = firstPlayer.recvInt();
+    playerNum = firstPlayer.recvPosInt();
+    // remove the player from list if disconnected
+    if (playerNum < 0 || !firstPlayer.isConnected() || firstPlayer.getSocket().isClosed()) {
+      firstPlayer.closeSocket();
+      playerList.remove(0);
+      return false;
+    }
     System.out.println("Received player num: " + playerNum);
-    // TODO: accept other players
-    for (int i = 1; i < playerNum; i++){
+    return true;
+  }
+
+  private boolean acceptAnotherPlayer(int i) {
       acceptPlayer(i);
       Player p = playerList.get(i);
       p.sendInt(i);  // send pid
       p.sendInt(playerNum);  // send player num
-    }
+      if (playerNum < 0 || !p.isConnected() || p.getSocket().isClosed()) {
+        p.closeSocket();
+        playerList.remove(i);
+        return false;
+      }
+      return true;
   }
 
-  // returns an action which only contains validated init operations
-  private Action validateInitAction(Action ac, int pid, ArrayList<Territory> map) {
+  private void acceptPlayers() {
+    // accept first player
+    while (!acceptFirstPlayer()){}
+    // accept other players
+    for (int i = 1; i < playerNum; i++){
+      while (!acceptAnotherPlayer(i)) {}
+      }
+    }
+    
+    // returns an action which only contains validated init operations
+    private Action validateInitAction(Action ac, int pid, ArrayList<Territory> map) {
     // Action newAction = new Action();
     OperationValidator validator = new OperationValidator(pid, map);
     for (InitOperation op : ac.getInitOperations()) {
@@ -178,10 +200,10 @@ public class Gameserver {
     }
     
     return validator.getAction();
-  }
-
-  // TODO
-  private void initializeUnits() {
+    }
+    
+    // Initialize units of each territories
+    private void initializeUnits() {
     // send total units and initial map to each player
     for (Player p : playerList) {
       p.sendInt(UNIT_PER_PLAYER);
@@ -193,8 +215,11 @@ public class Gameserver {
       if (p.getPid() > 0) {
         p.setUpInputStream();
       }
-      Action ac = validateInitAction((Action)p.recvObject(), p.getPid(), gameMap);  // validate
-      initAction.concatInitOperation(ac);
+      Action ac = (Action) p.recvObject();
+      if (ac != null) {
+        ac = validateInitAction(ac, p.getPid(), gameMap);  // validate
+        initAction.concatInitOperation(ac);
+      }
     }
     // handle action
     InitHandler handler = new InitHandler();
@@ -204,19 +229,19 @@ public class Gameserver {
     displayer.setNumOfPlayer(playerNum);
     displayer.displayMap(gameMap);
     
-  }
-
-  private void initializeGame() {
+    }
+    
+    private void initializeGame() {
     // bind socket
     bindSocket(4444);  // bind socket to port 4444
     acceptPlayers();
     initializeMap(playerNum);
     initializeUnits();
     
-  }
-
-  // TODO: change later
-  private void playGame() {
+    }
+    
+    // TODO: change later
+    private void playGame() {
     /*******
     ArrayList<Territory> list = new ArrayList<Territory>();
     list.add(new Territory(0, 0, "Test Territory"));

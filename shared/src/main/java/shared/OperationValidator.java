@@ -32,9 +32,9 @@ public class OperationValidator {
         return this.validatedaction;
     }
 
-    public void setAction(Action action) {
-        this.validatedaction = action;
-    }
+    // public void setAction(Action action) {
+    //     this.validatedaction = action;
+    // }
 
     public ArrayList<Territory> getCurrentMapState() {
       return temp_map;
@@ -62,7 +62,7 @@ public class OperationValidator {
             return NO_ENOUGH_UNITS;
         }
 
-        if (initop.num <= 0) { // if illegal number
+        if (initop.num < 0) { // if illegal number
             return ILLEGAL_NUM;
         }
 
@@ -95,7 +95,7 @@ public class OperationValidator {
         }
     // 2. check if valid number
         if (t_to_remove != null) {
-            if (moveop.num <= 0) { 
+            if (moveop.num < 0) { 
                 return ILLEGAL_NUM;
             }
             if (moveop.num > t_to_remove.getDefenderNum()) { // if no enough units
@@ -153,7 +153,7 @@ public class OperationValidator {
         }
     // 2. check if valid number
         if (t_to_remove != null) {
-            if (attackop.num <= 0) { 
+            if (attackop.num < 0) { 
                 return ILLEGAL_NUM;
             }
             if (attackop.num > t_to_remove.getDefenderNum()) { // if no enough units
