@@ -11,12 +11,8 @@ public class InitHandler extends Handler {
   public ArrayList<Territory> handleAction(
          ArrayList<Territory> map, Action action){
     //ArrayList<Territory> newmap = map;//this copy will affect original map
-    ArrayList<Territory> newmap = new ArrayList<Territory>();
-    for (int m = 0; m < map.size(); m++) {
-      Territory t = new Territory(map.get(m));
-      //deep copy, do not affect original map
-      newmap.add(t);
-    }
+    ArrayList<Territory> newmap = copyMap(map);
+    //deep copy, do not affect original map
     
     List<InitOperation> initList = action.getInitOperations();
     for (int i = 0; i < initList.size(); i++) {

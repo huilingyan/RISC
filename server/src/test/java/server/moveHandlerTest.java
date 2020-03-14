@@ -8,7 +8,7 @@ import shared.*;
 
 public class moveHandlerTest {
   @Test
-  public void testInitHandler() {
+  public void testMoveHandler() {
     Displayer displayer = Displayer.getInstance();
     displayer.setNumOfPlayer(3);
     Territory t0 = new Territory(0, 0, "Red");
@@ -55,8 +55,8 @@ public class moveHandlerTest {
     moveAction.addMoveOperation(move3);
     //-----------------------------------
     //instance of initHandler
-    MoveHandler h1 = new MoveHandler();
-    ArrayList<Territory> newmap = h1.handleAction(t_map, moveAction);
+    GameHandler h1 = new GameHandler();
+    ArrayList<Territory> newmap = h1.handleMove(t_map, moveAction);
     assert (newmap.get(0).getDefenderNum() == 3);
     assert (newmap.get(1).getDefenderNum() == 7);
     assert (newmap.get(2).getDefenderNum() == 2);
