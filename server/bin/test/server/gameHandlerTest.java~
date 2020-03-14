@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import shared.*;
 
-public class attackHandlerTest {
+public class GameHandlerTest {
   @Test
-  public void testAttackHandler() {
+  public void testGameHandler() {
     Displayer displayer = Displayer.getInstance();
     displayer.setNumOfPlayer(3);
     Territory t0 = new Territory(0, 0, "Red");
@@ -62,8 +62,8 @@ public class attackHandlerTest {
     attackAction.addAttackOperation(attack5);
     //-----------------------------------
     //instance of initHandler
-    GameHandler h1 = new GameHandler();
-    ArrayList<Territory> newmap = h1.handleAttack(t_map, attackAction);
+    AttackHandler h1 = new AttackHandler();
+    ArrayList<Territory> newmap = h1.handleAction(t_map, attackAction);
     //assert (newmap.get(0).getDefenderNum() == 3);
     //attack result is randomized so can't use assert
     System.out.println("attackHandler test passed");

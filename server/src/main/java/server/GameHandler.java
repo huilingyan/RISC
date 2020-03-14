@@ -7,18 +7,42 @@ import java.util.Map;
 import java.util.Iterator;
 import shared.*;
 
-public class AttackHandler extends Handler {
-
+public class GameHandler extends Handler {
   @Override
   public ArrayList<Territory> handleAction(
       ArrayList<Territory> map, Action action) {
-    //ArrayList<Territory> newmap = map;
-    ArrayList<Territory> newmap = new ArrayList<Territory>();
-    for (int m = 0; m < map.size(); m++) {
-      Territory t = new Territory(map.get(m));
-      //deep copy, do not affect original map
-      newmap.add(t);
+    ArrayList<Territory> map_moved = handleMove(map, action);
+    ArrayList<Territory> map_attacked = handleAttack(map_moved, action);
+    return map_attacked;
+  }
+
+  public ArrayList<Territory> handleMove(
+      ArrayList<Territory> map, Action action) {
+    //ArrayList<Territory> newmap = map;//this copy will affect original map
+    ArrayList<Territory> newmap = copyMap(map);
+    //deep copy, do not affect original map
+
+    List<MoveOperation> moveList = action.getMoveOperations();
+    for (int i = 0; i < moveList.size(); i++) {
+      MoveOperation moveOp = moveList.get(i);
+      String src = moveOp.getSrc();
+      String dest = moveOp.getDest();
+      int num = moveOp.getNum();
+      //System.out.println("dest:" + dest + " num:" + num);
+      Territory t_src = findTerritorybyString(newmap, src);
+      Territory t_dest = findTerritorybyString(newmap, dest);
+      if (t_src != null && t_dest != null) {
+        t_src.subtractDefender(num);//src territory - unit
+        t_dest.addDefender(num);//dest territory + unit
+      }
     }
+    return newmap;
+  }
+
+  public ArrayList<Territory> handleAttack(
+    ArrayList<Territory> map, Action action) {
+    ArrayList<Territory> newmap = copyMap(map);
+    //deep copy, do not affect original map
 
     //if player A attacks territory X with units from multiple of her own
     //territories, they count as a single combined force
@@ -44,7 +68,7 @@ public class AttackHandler extends Handler {
         combinedAttackMap.putIfAbsent(dest, new HashMap<Integer, Integer>());
         //add territory if attack map do not contain it yet
 
-        if (combinedAttackMap.get(dest).get(playerid) == null) {
+        if (combinedAttackMap.get(dest).containsKey(playerid) == false) {
           //the player do not have previous attacks on this territory
           combinedAttackMap.get(dest).put(playerid, num);
           //add dest territory to this player's attack map
@@ -76,11 +100,10 @@ public class AttackHandler extends Handler {
     return newmap;
   }
 
-  public void Combat(HashMap<String, HashMap<Integer, Integer>> combinedAttackMap, ArrayList<Territory> newmap){
+  public void Combat(HashMap<String, HashMap<Integer, Integer>> combinedAttackMap, ArrayList<Territory> newmap) {
     Dice atk_dice = new Dice(20);
     Dice def_dice = new Dice(20);
-    for (Map.Entry<String, HashMap<Integer, Integer>>
-           t_entry : combinedAttackMap.entrySet()) {
+    for (Map.Entry<String, HashMap<Integer, Integer>> t_entry : combinedAttackMap.entrySet()) {
       //locate the territory being attacked
       Territory t_defender = findTerritorybyString(newmap, t_entry.getKey());
       int defender_id = t_defender.getOwnership();
@@ -88,17 +111,17 @@ public class AttackHandler extends Handler {
       //initialize winner
       int winner_id = defender_id;
       int winner_unit_num = defender_unit_num;
-      
+
       while (!t_entry.getValue().isEmpty()) {
         //if multiple players attack the same territory,
-    //each attack is resolved sequentially
-    //first pick a random attacker, fights with current defender
-    //then pick second random attack fights with winner of first attack
-    //until all attack are handled
-        for (Iterator<Map.Entry<Integer, Integer> >
-               it = t_entry.getValue().entrySet().iterator();it.hasNext();) {
+        //each attack is resolved sequentially
+        //first pick a random attacker, fights with current defender
+        //then pick second random attack fights with winner of first attack
+        //until all attack are handled
+        for (Iterator<Map.Entry<Integer, Integer>> it = t_entry.getValue().entrySet().iterator(); it.hasNext();) {
           Map.Entry<Integer, Integer> p_entry = it.next();
-          int rnd = (int) (Math.random()*2);
+          //TODO: make a more reasonable shuffling
+          int rnd = (int) (Math.random() * 2);
           if (rnd == 0) {
             //randomize attack sequence
             //50% to skip current attack order, making it at back of sequence 
@@ -127,17 +150,18 @@ public class AttackHandler extends Handler {
               //attacker becomes defender for possible upcoming attacks
               defender_id = winner_id;
               defender_unit_num = winner_unit_num;
-              
+
             }
             //System.out.println("player " + winner_id + " WINS, remaining " + winner_unit_num + " units");
             it.remove();
-          }      
+          }
         }
-        
+
       }
       //winner take over the territory and change ownership
       t_defender.setOwnership(winner_id);
       t_defender.setDefenderNum(winner_unit_num);
     }
   }
+  
 }
