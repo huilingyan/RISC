@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import shared.*;
 
@@ -241,10 +242,20 @@ public class Gameclient {
     System.out.println("Number of players: " + playerNum);
   }
 
+  private void sendTNamesToIntaker(ArrayList<Territory> map) {
+    HashSet<String> set = new HashSet<String>();
+    for (Territory t : map) {
+      set.add(t.getName());
+    }
+    inTaker.setTNameSet(set);
+  }
+
   // Receive initial map from server and set up units in each territory belonged to the player
   private void initializeUnits() {
     int totalUnit = recvPosInt();
     ArrayList<Territory> gameMap = (ArrayList<Territory>)recvObject();
+    // set hashmap to inputtaker
+    sendTNamesToIntaker(gameMap);
     // for each territory, prompt for num of unit
     OperationValidator validator = new OperationValidator(id, gameMap);
     for (Territory t : gameMap) {
