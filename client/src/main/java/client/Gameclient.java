@@ -159,6 +159,8 @@ public class Gameclient {
     catch (IOException e){
       e.printStackTrace();
       System.out.println("IOException");
+      closeSocket();
+      exit(0);   // exit program if server's down
     }
     // call displayer, display connection message with pid
     displayer.connEstablishedMsg(id);
@@ -181,16 +183,20 @@ public class Gameclient {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to send player num");
+      closeSocket();
+      exit(0);  // exit program if server's down
     }
   }
 
-  private int recvInt() {
+  private int recvPosInt() {  // receive player number, which should be no less than 0
     try {
       int num = inStream.readInt();
       return num;
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to recv int");
+      closeSocket();
+      exit(0);  // exit program if server's down
     }
     return -1;
   }
@@ -201,9 +207,13 @@ public class Gameclient {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to recv object");
+      closeSocket();
+      exit(0);  // exit program if server's down
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.out.println("Class not found");
+      closeSocket();
+      exit(0);  // exit program if server's down
     }
     return null;
   }
@@ -214,12 +224,18 @@ public class Gameclient {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to send object");
+      closeSocket();
+      exit(0);  // exit program if server's down
     }
 
   }
 
   private void receivePlayerNum() {
-    playerNum = recvInt();
+    playerNum = recvPosInt();
+    if (playerNum < 0){
+      closeSocket();
+      exit(0);  // exit program if server's down
+    }
     displayer.setNumOfPlayer(playerNum);
     // debug
     System.out.println("Number of players: " + playerNum);
