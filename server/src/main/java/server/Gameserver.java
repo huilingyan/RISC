@@ -191,15 +191,25 @@ public class Gameserver {
     }
     
     // returns an action which only contains validated init operations
-    private Action validateInitAction(Action ac, int pid, ArrayList<Territory> map) {
+    private Action validateInitAction(Action ac, int pid) {
     // Action newAction = new Action();
-    OperationValidator validator = new OperationValidator(pid, map);
+    OperationValidator validator = new OperationValidator(pid, gameMap);
     for (InitOperation op : ac.getInitOperations()) {
       validator.isValidInitOperation(op, UNIT_PER_PLAYER);
         //  newAction.addInitOperation(op);
-    }
-    
+    }    
     return validator.getAction();
+    }
+
+    private Action validateGameAction(Action ac, int pid) {
+      OperationValidator validator = new OperationValidator(pid, gameMap);
+      for (MoveOperation op : ac.getMoveOperations()) {
+        validator.isValidMoveOperation(op);  
+      }
+      for (AttackOperation op : ac.getAttackOperations()) {
+        validator.isValidAttackOperation(op);  
+      }
+      return validator.getAction();
     }
     
     // Initialize units of each territories
@@ -217,7 +227,7 @@ public class Gameserver {
       }
       Action ac = (Action) p.recvObject();
       if (ac != null) {
-        ac = validateInitAction(ac, p.getPid(), gameMap);  // validate
+        ac = validateInitAction(ac, p.getPid());  // validate
         initAction.concatInitOperation(ac);
       }
     }
@@ -239,40 +249,80 @@ public class Gameserver {
     initializeUnits();
     
     }
+
+
+    // TODO
+    private void recvAndHandleGameAction() {
+      Action gameAction = new Action();
+      for (Player p : playerList) {
+        Action ac = (Action) p.recvObject();
+        if (ac != null) {
+          ac = validateGameAction(ac, p.getPid());  // validate
+          gameAction.concatGameOperation(ac);
+        }
+      }
+      // handle action
+      GameHandler handler = new GameHandler();
+      gameMap = handler.handleAction(gameMap, gameAction);
+    }
+
+    private boolean isGameOver() {
+      int winner = gameMap.get(0).getOwnership();
+      for (int i = 1; i < gameMap.size(); i++) {
+        if (gameMap.get(i).getOwnership() != winner) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    private void mapUnitPlusOne() {
+      for (Territory t : gameMap) {
+        t.addDefender(1);
+      }
+    }
     
     // TODO: change later
     private void playGame() {
-    /*******
-    ArrayList<Territory> list = new ArrayList<Territory>();
-    list.add(new Territory(0, 0, "Test Territory"));
-    list.get(0).setDefenderNum(50);
-    System.out.println("start sending");
-    playerList.get(0).sendObject(list);      
-    *****/
-    
-    /*****    
-    // TODO: send a territory to the first player for now
-    Socket clientSocket = playerList.get(0).getSocket();
-    // TODO: take ObjectOutputStream out from try with, and store it into playerlist
-    try(ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream())) {
-      ArrayList<Territory> list = new ArrayList<Territory>();
-      list.add(new Territory(0, 0, "Test Territory", new Army(10)));
-      System.out.println("start sending");
-      out.writeObject(list);
-      out.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("IOException");
+    while (true) {    // keep running each turn
+      // send map to all players
+      for (Player p : playerList) {
+        p.sendObject(gameMap);
+      }
+      // recv actions, validate, handle
+      recvAndHandleGameAction();
+      // check game over
+      if (!isGameOver()) {
+        // update map and send to players
+        mapUnitPlusOne();
+        for (Player p : playerList) {
+          p.sendObject(gameMap);
+        }
+      } else {
+        // send map to players and break
+        for (Player p : playerList) {
+          p.sendObject(gameMap);
+        }
+        break;
+      }
+    } // while
+  }
+
+  private void closeSockets() {
+    for (Player p : playerList) {
+      p.closeSocket();
     }
-    *****/
-    while (true) {    // keep running
+    try {
+      mySocket.close();
+    } catch (IOException e) {
+      System.out.println("Failed to close server socket");
     }
   }
   
   public void runGame() {
     initializeGame();
     playGame();
-    
+    closeSockets();
   }
   
   public static void main(String[] args) {
