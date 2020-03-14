@@ -1,7 +1,6 @@
 package server;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -254,12 +253,20 @@ public class Gameserver {
     // TODO
     private void recvAndHandleGameAction() {
       Action gameAction = new Action();
+      int count = 0;
       for (Player p : playerList) {
         Action ac = (Action) p.recvObject();
         if (ac != null) {
           ac = validateGameAction(ac, p.getPid());  // validate
           gameAction.concatGameOperation(ac);
+        } else {
+          count++;
         }
+      }
+      // check if all players are disconnected
+      if (count == playerList.size()) {
+        closeSockets();
+        System.exit(0);    // exit program if all players are disconnected
       }
       // handle action
       GameHandler handler = new GameHandler();
