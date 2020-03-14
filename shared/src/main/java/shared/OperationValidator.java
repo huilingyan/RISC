@@ -14,6 +14,7 @@ public class OperationValidator {
     public static final int INVALID_SRC = -4;
     public static final int INVALID_PATH = -5;
     public static final int NOT_ADJACENT = -6;
+    public static final int DEST_SAME_AS_SRC = -7;
 
     private Action validatedaction;
     private ArrayList<Territory> temp_map;
@@ -115,7 +116,13 @@ public class OperationValidator {
         if (isvaliddest == 0) {
             return INVALID_DEST;
         }
-       // 3.2 check if there's a path
+
+       // 3.2 check if is different from src
+        if (dest.toLowerCase().equals(src.toLowerCase())) { // if the dest is same as src
+            return DEST_SAME_AS_SRC;
+        }
+
+       // 3.3 check if there's a path
         if (isValidPath(t_to_remove, t_to_move) == false) {
             return INVALID_PATH;
         }

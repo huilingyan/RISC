@@ -156,6 +156,7 @@ public class OperationValidatorTest {
     MoveOperation mop3 = new MoveOperation("One", "Two", 10); // no enough units
     MoveOperation mop4 = new MoveOperation("Six", "Two", 1); // invalid src
     MoveOperation mop5 = new MoveOperation("One", "Three", -2); // invalid number
+    MoveOperation mop6 = new MoveOperation("One", "One", 1); // src same as dest
     
 
     ArrayList<MoveOperation> movelist = new ArrayList<MoveOperation>();
@@ -164,6 +165,7 @@ public class OperationValidatorTest {
     movelist.add(mop3);
     movelist.add(mop4);
     movelist.add(mop5);
+    movelist.add(mop6);
 
     for (MoveOperation mop : movelist) {
       if (v0.isValidMoveOperation(mop) == v0.VALID) {
@@ -181,9 +183,13 @@ public class OperationValidatorTest {
       else if (v0.isValidMoveOperation(mop) == v0.ILLEGAL_NUM) {
         dp.showErrorMsg(v0.ILLEGAL_NUM);
       }
+      else if (v0.isValidMoveOperation(mop) == v0.DEST_SAME_AS_SRC) {
+        dp.showErrorMsg(v0.DEST_SAME_AS_SRC);
+      }
+      
     }
 
-    MoveOperation mop6 = new MoveOperation("Five", "Six", 1); // invalid src
+    MoveOperation mop7 = new MoveOperation("Five", "Six", 1); // invalid src
 
     // if (v1.isValidMoveOperation(mop6) == v0.VALID) {
     //   dp.moveUnits(mop5);
@@ -197,7 +203,7 @@ public class OperationValidatorTest {
     // else if (v1.isValidMoveOperation(mop6) == v1.INVALID_SRC) {
     //   dp.showErrorMsg(v1.INVALID_SRC);
     // }
-    if (v1.isValidMoveOperation(mop6) == v1.INVALID_PATH) {
+    if (v1.isValidMoveOperation(mop7) == v1.INVALID_PATH) {
       dp.showErrorMsg(v1.INVALID_PATH);
     }
 
