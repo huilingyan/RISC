@@ -33,27 +33,18 @@ public class OperationValidator {
         return this.validatedaction;
     }
 
-    // public void setAction(Action action) {
-    //     this.validatedaction = action;
-    // }
-
     public ArrayList<Territory> getCurrentMapState() {
-      return temp_map;
+        return temp_map;
     }
 
+
     public int isValidInitOperation(InitOperation initop, int totalunit) {
+
+        String dest = initop.getDest();
+
     // 1. Check the name of destination territory
-        int isvaliddest = 0;
-        Territory t_to_deploy = null; // the territory to operate on
-        for (Territory t : this.temp_map) {
-            if ((t.getName().toLowerCase().equals(initop.getDest().toLowerCase())) && (t.getOwnership() == this.player_id)) { // if is valid dest
-                isvaliddest = 1;
-                t_to_deploy = t; 
-                break;
-            }
-        }
-        
-        if (isvaliddest == 0) {
+        Territory t_to_deploy = findTerritory(dest); // the territory to operate on
+        if ((t_to_deploy == null) || (isOwnTerritory(t_to_deploy) == false)) {
             return INVALID_DEST;
         }
 
@@ -62,15 +53,13 @@ public class OperationValidator {
         if (initop.num > remains) { // if no enough units
             return NO_ENOUGH_UNITS;
         }
-
         if (initop.num < 0) { // if illegal number
             return ILLEGAL_NUM;
         }
 
         // update temp_map: add units to the territory
-        if (t_to_deploy != null) {
-            t_to_deploy.addDefender(initop.num);
-        }
+        t_to_deploy.addDefender(initop.num);
+
         // add operation to action
         validatedaction.addInitOperation(initop);
    
@@ -80,45 +69,30 @@ public class OperationValidator {
     public int isValidMoveOperation(MoveOperation moveop) {
         String src = moveop.getSrc();
         String dest = moveop.getDest();
-        Territory t_to_remove = null; // the territory to remove units
-        Territory t_to_move = null; // the territory to move units to
+
     // 1. check if valid src
-        int isvalidsrc = 0;
-        for (Territory t : this.temp_map) {
-            if ((t.getName().toLowerCase().equals(src.toLowerCase())) && (t.getOwnership() == this.player_id)) { // if is valid src
-                isvalidsrc = 1;
-                t_to_remove = t; 
-                break;
-            }
-        }       
-        if (isvalidsrc == 0) {
+        Territory t_to_remove = findTerritory(src); // the territory to remove units
+        if ((t_to_remove == null) || (isOwnTerritory(t_to_remove) == false)) {
             return INVALID_SRC;
         }
+
     // 2. check if valid number
-        if (t_to_remove != null) {
-            if (moveop.num < 0) { 
-                return ILLEGAL_NUM;
-            }
-            if (moveop.num > t_to_remove.getDefenderNum()) { // if no enough units
-                return NO_ENOUGH_UNITS;
-            }
+        if (moveop.num < 0) { 
+            return ILLEGAL_NUM;
         }
+        if (moveop.num > t_to_remove.getDefenderNum()) { // if no enough units
+            return NO_ENOUGH_UNITS;
+        }
+
     // 3. check if valid dest
        // 3.1 check if own territory
-        int isvaliddest = 0;
-        for (Territory t : this.temp_map) {
-            if ((t.getName().toLowerCase().equals(dest.toLowerCase())) && (t.getOwnership() == this.player_id)) { // if is valid dest
-                isvaliddest = 1;
-                t_to_move = t; 
-                break;
-            }
-        }      
-        if (isvaliddest == 0) {
-            return INVALID_DEST;
+        Territory t_to_move = findTerritory(dest); // the territory to move units to
+        if ((t_to_move == null) || (isOwnTerritory(t_to_move) == false)) {
+           return INVALID_DEST;
         }
 
        // 3.2 check if is different from src
-        if (dest.toLowerCase().equals(src.toLowerCase())) { // if the dest is same as src
+        if (dest.equalsIgnoreCase(src)) { // if the dest is same as src
             return DEST_SAME_AS_SRC;
         }
 
@@ -128,12 +102,8 @@ public class OperationValidator {
         }
 
         // update temp_map: add and sub units
-        if (t_to_remove != null) {
-            t_to_remove.subtractDefender(moveop.num);
-        }
-        if (t_to_move != null) {
-            t_to_move.addDefender(moveop.num);
-        }
+        t_to_remove.subtractDefender(moveop.num);       
+        t_to_move.addDefender(moveop.num);
 
         // if valid, add to move operation
         validatedaction.addMoveOperation(moveop);
@@ -144,50 +114,35 @@ public class OperationValidator {
     public int isValidAttackOperation(AttackOperation attackop) {
         String src = attackop.getSrc();
         String dest = attackop.getDest();
-        Territory t_to_remove = null; // the territory to remove units
-        Territory t_to_move = null; // the territory to move units to
+
     // 1. check if valid src
-        int isvalidsrc = 0;       
-        for (Territory t : this.temp_map) {
-            if ((t.getName().toLowerCase().equals(src.toLowerCase())) && (t.getOwnership() == this.player_id)) { // if is valid src
-                isvalidsrc = 1;
-                t_to_remove = t; 
-                break;
-            }
-        }       
-        if (isvalidsrc == 0) {
+        Territory t_to_remove = findTerritory(src); // the territory to remove units
+        if ((t_to_remove == null) || (isOwnTerritory(t_to_remove) == false)) {
             return INVALID_SRC;
         }
+
     // 2. check if valid number
-        if (t_to_remove != null) {
-            if (attackop.num < 0) { 
-                return ILLEGAL_NUM;
-            }
-            if (attackop.num > t_to_remove.getDefenderNum()) { // if no enough units
-                return NO_ENOUGH_UNITS;
-            }
+        if (attackop.num < 0) { 
+            return ILLEGAL_NUM;
         }
+        if (attackop.num > t_to_remove.getDefenderNum()) { // if no enough units
+            return NO_ENOUGH_UNITS;
+        }
+
     // 3. check if valid dest
        // 3.1 check if is other's territory
-        int isvaliddest = 0;
-        for (Territory t : this.temp_map) {
-            if ((t.getName().toLowerCase().equals(dest.toLowerCase())) && (t.getOwnership() != this.player_id)) { // if is valid dest
-                isvaliddest = 1;
-                t_to_move = t; 
-                break;
-            }
-        }      
-        if (isvaliddest == 0) {
-            return INVALID_DEST;
+        Territory t_to_move = findTerritory(dest); // the territory to attack
+        if ((t_to_move == null) || (isOwnTerritory(t_to_move) == true)) {
+          return INVALID_DEST;
         }
+
        // 3.2 check if is adjacent
         if (isAdjacent(t_to_remove, t_to_move) == false) {
             return NOT_ADJACENT;
         }
 
-        if (t_to_remove != null) {
-            t_to_remove.subtractDefender(attackop.num);
-        }
+        // update temp_map: add and sub units
+        t_to_remove.subtractDefender(attackop.num);
 
         // if valid, add to move operation
         validatedaction.addAttackOperation(attackop);
@@ -204,6 +159,21 @@ public class OperationValidator {
             }
         }
         return remains;
+    }
+
+    private Territory findTerritory(String t_name) {
+        Territory t_to_deploy = null; // the territory to operate on
+        for (Territory t : this.temp_map) {
+            if (t.getName().equalsIgnoreCase(t_name)) { // if is valid territory
+                t_to_deploy = t; 
+                return t_to_deploy;
+            }
+        }
+        return null;
+    }
+
+    private boolean isOwnTerritory(Territory t) {
+        return (t.getOwnership() == this.player_id);
     }
 
     private boolean isValidPath(Territory src, Territory dest) {

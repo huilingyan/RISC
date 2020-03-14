@@ -95,60 +95,73 @@ public class OperationValidatorTest {
     InitOperation iop10 = new InitOperation("Nine", -1); // no enough units
     
 
-    ArrayList<InitOperation> initlist1 = new ArrayList<InitOperation>();
-    ArrayList<InitOperation> initlist2 = new ArrayList<InitOperation>();
-    ArrayList<InitOperation> initlist3 = new ArrayList<InitOperation>();
+    // ArrayList<InitOperation> initlist1 = new ArrayList<InitOperation>();
+    // ArrayList<InitOperation> initlist2 = new ArrayList<InitOperation>();
+    // ArrayList<InitOperation> initlist3 = new ArrayList<InitOperation>();
 
-    initlist1.add(iop1);
-    initlist1.add(iop2);
-    initlist1.add(iop3);
+    // initlist1.add(iop1);
+    // initlist1.add(iop2);
+    // initlist1.add(iop3);
 
-    initlist2.add(iop4);
-    initlist2.add(iop5);
-    initlist2.add(iop6);
+    // initlist2.add(iop4);
+    // initlist2.add(iop5);
+    // initlist2.add(iop6);
 
-    initlist3.add(iop7);
-    initlist3.add(iop8);
-    initlist3.add(iop9);
-    initlist3.add(iop10);
+    // initlist3.add(iop7);
+    // initlist3.add(iop8);
+    // initlist3.add(iop9);
+    // initlist3.add(iop10);
 
 
-    for (InitOperation iop : initlist1) {
-      if (v0.isValidInitOperation(iop, totalunit) == v0.VALID) {
-        dp.deployUnits(iop);  
-        dp.showCurrentMap(v0.getCurrentMapState());
-      }
-      // else if (v0.isValidInitOperation(iop, totalunit) == v0.INVALID_DEST) {
-      //   dp.showErrorMsg(v0.INVALID_DEST);
-      // }
-      // else if (v0.isValidInitOperation(iop, totalunit) == v0.NO_ENOUGH_UNITS) {
-      //   dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
-      // }
-    }
+    assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop1, totalunit));
+    assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop2, totalunit));
+    assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop3, totalunit));
 
-    for (InitOperation iop : initlist2) {
-      if (v1.isValidInitOperation(iop, totalunit) == v1.VALID) {
-        dp.deployUnits(iop);
-      }
-      else if (v1.isValidInitOperation(iop, totalunit) == v1.INVALID_DEST) {
-        dp.showErrorMsg(v1.INVALID_DEST);
-      }
-      // else if (v1.isValidInitOperation(iop, totalunit) == v1.NO_ENOUGH_UNITS) {
-      //   dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
-      // }
-    }
+    assertEquals(OperationValidator.INVALID_DEST, v1.isValidInitOperation(iop4, totalunit));
+    assertEquals(OperationValidator.VALID, v1.isValidInitOperation(iop5, totalunit));
+    assertEquals(OperationValidator.VALID, v1.isValidInitOperation(iop6, totalunit));
 
-    for (InitOperation iop : initlist3) {
-      if (v2.isValidInitOperation(iop, totalunit) == v2.VALID) {
-        dp.deployUnits(iop);
-      }
-      else if (v2.isValidInitOperation(iop, totalunit) == v2.ILLEGAL_NUM) {
-        dp.showErrorMsg(v2.ILLEGAL_NUM);
-      }
-      else if (v2.isValidInitOperation(iop, totalunit) == v2.NO_ENOUGH_UNITS) {
-        dp.showErrorMsg(v2.NO_ENOUGH_UNITS);
-      }
-    }
+    assertEquals(OperationValidator.VALID, v2.isValidInitOperation(iop7, totalunit));
+    assertEquals(OperationValidator.VALID, v2.isValidInitOperation(iop8, totalunit));
+    assertEquals(OperationValidator.NO_ENOUGH_UNITS, v2.isValidInitOperation(iop9, totalunit));
+    assertEquals(OperationValidator.ILLEGAL_NUM, v2.isValidInitOperation(iop10, totalunit));
+
+    // for (InitOperation iop : initlist1) {
+    //   if (v0.isValidInitOperation(iop, totalunit) == v0.VALID) {
+    //     dp.deployUnits(iop);  
+    //     dp.showCurrentMap(v0.getCurrentMapState());
+    //   }
+    //   // else if (v0.isValidInitOperation(iop, totalunt)i == v0.INVALID_DEST) {
+    //   //   dp.showErrorMsg(v0.INVALID_DEST);
+    //   // }
+    //   // else if (v0.isValidInitOperation(iop, totalunit) == v0.NO_ENOUGH_UNITS) {
+    //   //   dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
+    //   // }
+    // }
+
+    // for (InitOperation iop : initlist2) {
+    //   if (v1.isValidInitOperation(iop, totalunit) == v1.VALID) {
+    //     dp.deployUnits(iop);
+    //   }
+    //   else if (v1.isValidInitOperation(iop, totalunit) == v1.INVALID_DEST) {
+    //     dp.showErrorMsg(v1.INVALID_DEST);
+    //   }
+    //   // else if (v1.isValidInitOperation(iop, totalunit) == v1.NO_ENOUGH_UNITS) {
+    //   //   dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
+    //   // }
+    // }
+
+    // for (InitOperation iop : initlist3) {
+    //   if (v2.isValidInitOperation(iop, totalunit) == v2.VALID) {
+    //     dp.deployUnits(iop);
+    //   }
+    //   else if (v2.isValidInitOperation(iop, totalunit) == v2.ILLEGAL_NUM) {
+    //     dp.showErrorMsg(v2.ILLEGAL_NUM);
+    //   }
+    //   else if (v2.isValidInitOperation(iop, totalunit) == v2.NO_ENOUGH_UNITS) {
+    //     dp.showErrorMsg(v2.NO_ENOUGH_UNITS);
+    //   }
+    // }
 
     // move operations
     MoveOperation mop1 = new MoveOperation("One", "Three", 2); // valid move
@@ -157,39 +170,47 @@ public class OperationValidatorTest {
     MoveOperation mop4 = new MoveOperation("Six", "Two", 1); // invalid src
     MoveOperation mop5 = new MoveOperation("One", "Three", -2); // invalid number
     MoveOperation mop6 = new MoveOperation("One", "One", 1); // src same as dest
+    MoveOperation mop7 = new MoveOperation("Five", "Six", 1); // invalid src
     
 
-    ArrayList<MoveOperation> movelist = new ArrayList<MoveOperation>();
-    movelist.add(mop1);
-    movelist.add(mop2);
-    movelist.add(mop3);
-    movelist.add(mop4);
-    movelist.add(mop5);
-    movelist.add(mop6);
+    // ArrayList<MoveOperation> movelist = new ArrayList<MoveOperation>();
+    // movelist.add(mop1);
+    // movelist.add(mop2);
+    // movelist.add(mop3);
+    // movelist.add(mop4);
+    // movelist.add(mop5);
+    // movelist.add(mop6);
 
-    for (MoveOperation mop : movelist) {
-      if (v0.isValidMoveOperation(mop) == v0.VALID) {
-        dp.moveUnits(mop);
-      }
-      else if (v0.isValidMoveOperation(mop) == v0.INVALID_DEST) {
-        dp.showErrorMsg(v0.INVALID_DEST);
-      }
-      else if (v0.isValidMoveOperation(mop) == v0.NO_ENOUGH_UNITS) {
-        dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
-      }
-      else if (v0.isValidMoveOperation(mop) == v0.INVALID_SRC) {
-        dp.showErrorMsg(v0.INVALID_SRC);
-      }
-      else if (v0.isValidMoveOperation(mop) == v0.ILLEGAL_NUM) {
-        dp.showErrorMsg(v0.ILLEGAL_NUM);
-      }
-      else if (v0.isValidMoveOperation(mop) == v0.DEST_SAME_AS_SRC) {
-        dp.showErrorMsg(v0.DEST_SAME_AS_SRC);
-      }
+    assertEquals(OperationValidator.VALID, v0.isValidMoveOperation(mop1));
+    assertEquals(OperationValidator.INVALID_DEST, v0.isValidMoveOperation(mop2));
+    assertEquals(OperationValidator.NO_ENOUGH_UNITS, v0.isValidMoveOperation(mop3));
+    assertEquals(OperationValidator.INVALID_SRC, v0.isValidMoveOperation(mop4));
+    assertEquals(OperationValidator.ILLEGAL_NUM, v0.isValidMoveOperation(mop5));
+    assertEquals(OperationValidator.DEST_SAME_AS_SRC, v0.isValidMoveOperation(mop6));
+    assertEquals(OperationValidator.INVALID_PATH, v1.isValidMoveOperation(mop7));
+
+
+    // for (MoveOperation mop : movelist) {
+    //   if (v0.isValidMoveOperation(mop) == v0.VALID) {
+    //     dp.moveUnits(mop);
+    //   }
+    //   else if (v0.isValidMoveOperation(mop) == v0.INVALID_DEST) {
+    //     dp.showErrorMsg(v0.INVALID_DEST);
+    //   }
+    //   else if (v0.isValidMoveOperation(mop) == v0.NO_ENOUGH_UNITS) {
+    //     dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
+    //   }
+    //   else if (v0.isValidMoveOperation(mop) == v0.INVALID_SRC) {
+    //     dp.showErrorMsg(v0.INVALID_SRC);
+    //   }
+    //   else if (v0.isValidMoveOperation(mop) == v0.ILLEGAL_NUM) {
+    //     dp.showErrorMsg(v0.ILLEGAL_NUM);
+    //   }
+    //   else if (v0.isValidMoveOperation(mop) == v0.DEST_SAME_AS_SRC) {
+    //     dp.showErrorMsg(v0.DEST_SAME_AS_SRC);
+    //   }
       
-    }
-
-    MoveOperation mop7 = new MoveOperation("Five", "Six", 1); // invalid src
+    // }
 
     // if (v1.isValidMoveOperation(mop6) == v0.VALID) {
     //   dp.moveUnits(mop5);
@@ -203,9 +224,9 @@ public class OperationValidatorTest {
     // else if (v1.isValidMoveOperation(mop6) == v1.INVALID_SRC) {
     //   dp.showErrorMsg(v1.INVALID_SRC);
     // }
-    if (v1.isValidMoveOperation(mop7) == v1.INVALID_PATH) {
-      dp.showErrorMsg(v1.INVALID_PATH);
-    }
+    // if (v1.isValidMoveOperation(mop7) == v1.INVALID_PATH) {
+    //   dp.showErrorMsg(v1.INVALID_PATH);
+    // }
 
     // attack operations
     AttackOperation aop1 = new AttackOperation("One", "Five", 1); // valid move
@@ -215,36 +236,43 @@ public class OperationValidatorTest {
     AttackOperation aop5 = new AttackOperation("Nine", "Five", 1); // invalid src
     AttackOperation aop6 = new AttackOperation("One", "Five", 20); // no enough units
 
-    ArrayList<AttackOperation> attacklist = new ArrayList<AttackOperation>();
-    attacklist.add(aop1);
-    attacklist.add(aop2);
-    attacklist.add(aop3);
-    attacklist.add(aop4);
-    attacklist.add(aop5);
-    attacklist.add(aop6);
+    // ArrayList<AttackOperation> attacklist = new ArrayList<AttackOperation>();
+    // attacklist.add(aop1);
+    // attacklist.add(aop2);
+    // attacklist.add(aop3);
+    // attacklist.add(aop4);
+    // attacklist.add(aop5);
+    // attacklist.add(aop6);
 
-    for (AttackOperation aop : attacklist) {
-      if (v0.isValidAttackOperation(aop) == v0.VALID) {
-        dp.attackUnits(aop);
-      }
-      else if (v0.isValidAttackOperation(aop) == v0.INVALID_DEST) {
-        dp.showErrorMsg(v0.INVALID_DEST);
-      }
-      else if (v0.isValidAttackOperation(aop) == v0.NOT_ADJACENT) {
-        dp.showErrorMsg(v0.NOT_ADJACENT);
-      }
-      else if (v0.isValidAttackOperation(aop) == v0.ILLEGAL_NUM) {
-        dp.showErrorMsg(v0.ILLEGAL_NUM);
-      }
-      else if (v0.isValidAttackOperation(aop) == v0.INVALID_SRC) {
-        dp.showErrorMsg(v0.INVALID_SRC);
-      }
-      else if (v0.isValidAttackOperation(aop) == v0.NO_ENOUGH_UNITS) {
-        dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
-      }
+    assertEquals(OperationValidator.VALID, v0.isValidAttackOperation(aop1));
+    assertEquals(OperationValidator.INVALID_DEST, v0.isValidAttackOperation(aop2));
+    assertEquals(OperationValidator.NOT_ADJACENT, v0.isValidAttackOperation(aop3));
+    assertEquals(OperationValidator.ILLEGAL_NUM, v0.isValidAttackOperation(aop4));
+    assertEquals(OperationValidator.INVALID_SRC, v0.isValidAttackOperation(aop5));
+    assertEquals(OperationValidator.NO_ENOUGH_UNITS, v0.isValidAttackOperation(aop6));
+
+    // for (AttackOperation aop : attacklist) {
+    //   if (v0.isValidAttackOperation(aop) == v0.VALID) {
+    //     dp.attackUnits(aop);
+    //   }
+    //   else if (v0.isValidAttackOperation(aop) == v0.INVALID_DEST) {
+    //     dp.showErrorMsg(v0.INVALID_DEST);
+    //   }
+    //   else if (v0.isValidAttackOperation(aop) == v0.NOT_ADJACENT) {
+    //     dp.showErrorMsg(v0.NOT_ADJACENT);
+    //   }
+    //   else if (v0.isValidAttackOperation(aop) == v0.ILLEGAL_NUM) {
+    //     dp.showErrorMsg(v0.ILLEGAL_NUM);
+    //   }
+    //   else if (v0.isValidAttackOperation(aop) == v0.INVALID_SRC) {
+    //     dp.showErrorMsg(v0.INVALID_SRC);
+    //   }
+    //   else if (v0.isValidAttackOperation(aop) == v0.NO_ENOUGH_UNITS) {
+    //     dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
+    //   }
       
       
-    }
+    // }
 
   }
 
