@@ -39,8 +39,9 @@ public class InputTaker {
     if (n >= 2 && n <= 5) {
       return true;
     }
-    //dp.print_playerssupport()
-    System.out.println("this game only supports 2-5 players");
+    // if input is invalid
+    dp.invalidPlayerNum();
+
     return false;
   }
 
@@ -56,9 +57,7 @@ public class InputTaker {
         readsuccess = true;
       }
       catch (NumberFormatException ex) {
-        //dp.print_notanumber
-        System.out.println("please input just one number");
-        
+        dp.tooManyNumber();        
       }
       
     }
@@ -70,7 +69,7 @@ public class InputTaker {
     while (n < 0) {
       n = readanInt(sc);
       if (n < 0) {
-        System.out.println("please input a number >=0");
+        dp.negNumberMsg();
       }
     }
     return n;
@@ -98,7 +97,7 @@ public class InputTaker {
         readsuccess = true;
       }
       else {
-        System.out.println("The name you entered is not a territory name.");
+        dp.invalidTerritoryName();
       }
     }
     return caps;
@@ -114,23 +113,29 @@ public class InputTaker {
   }
 
   public MoveOperation readMoveOperation(Scanner sc) {
-    //This method will prompt for user to input
-    System.out.println("Please enter the name of territory to move armies from:");
+    // Enter src territory
+    dp.enterMoveSrcTerritory();
     String srcT = readaTname(sc);
-    System.out.println("Please enter the number of armies you want to move:");
+    // Enter number of armies
+    dp.enterNumOfMove();
     int n = readaPosInt(sc);
-    System.out.println("Please enter the name of territory to move armies to:");
+    // Enter dest territory
+    dp.enterMoveDestTerritory();
     String destT = readaTname(sc);
+
     return new MoveOperation(srcT, destT, n);
   }
 
   public AttackOperation readAttackOperation(Scanner sc) {
-    System.out.println("Please enter the name of territory to dispatch armies from:");
+    dp.enterAttackSrcTerritory();
     String srcT = readaTname(sc);
-    System.out.println("Please enter the number of armies you want to dispatch:");
+
+    dp.enterNumOfAttack();
     int n = readaPosInt(sc);
-    System.out.println("Please enter the name of territory you want to attack:");
+
+    dp.enterAttackDestTerritory();
     String destT = readaTname(sc);
+
     return new AttackOperation(srcT, destT, n);
   }
 
@@ -150,7 +155,7 @@ public class InputTaker {
         readsuccess = true;
       }
       else {
-        System.out.println("Please choose what to do: A, M, or D");
+        dp.invalidOrder();
       }
     }
     
@@ -174,7 +179,7 @@ public class InputTaker {
         readsuccess = true;
       }
       else {
-        System.out.println("Please enter Y or N");
+        dp.invalidExitChoice();
       }
     }
     if (s.equalsIgnoreCase("Y")) {
