@@ -92,6 +92,8 @@ public class OperationValidatorTest {
     InitOperation iop7 = new InitOperation("Seven", 8);
     InitOperation iop8 = new InitOperation("Eight", 6); 
     InitOperation iop9 = new InitOperation("Nine", 7); // no enough units
+    InitOperation iop10 = new InitOperation("Nine", -1); // no enough units
+    
 
     ArrayList<InitOperation> initlist1 = new ArrayList<InitOperation>();
     ArrayList<InitOperation> initlist2 = new ArrayList<InitOperation>();
@@ -108,18 +110,20 @@ public class OperationValidatorTest {
     initlist3.add(iop7);
     initlist3.add(iop8);
     initlist3.add(iop9);
+    initlist3.add(iop10);
 
 
     for (InitOperation iop : initlist1) {
       if (v0.isValidInitOperation(iop, totalunit) == v0.VALID) {
-        dp.deployUnits(iop);
+        dp.deployUnits(iop);  
+        dp.showCurrentMap(v0.getCurrentMapState());
       }
-      else if (v0.isValidInitOperation(iop, totalunit) == v0.INVALID_DEST) {
-        dp.showErrorMsg(v0.INVALID_DEST);
-      }
-      else if (v0.isValidInitOperation(iop, totalunit) == v0.NO_ENOUGH_UNITS) {
-        dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
-      }
+      // else if (v0.isValidInitOperation(iop, totalunit) == v0.INVALID_DEST) {
+      //   dp.showErrorMsg(v0.INVALID_DEST);
+      // }
+      // else if (v0.isValidInitOperation(iop, totalunit) == v0.NO_ENOUGH_UNITS) {
+      //   dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
+      // }
     }
 
     for (InitOperation iop : initlist2) {
@@ -129,17 +133,17 @@ public class OperationValidatorTest {
       else if (v1.isValidInitOperation(iop, totalunit) == v1.INVALID_DEST) {
         dp.showErrorMsg(v1.INVALID_DEST);
       }
-      else if (v1.isValidInitOperation(iop, totalunit) == v1.NO_ENOUGH_UNITS) {
-        dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
-      }
+      // else if (v1.isValidInitOperation(iop, totalunit) == v1.NO_ENOUGH_UNITS) {
+      //   dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
+      // }
     }
 
     for (InitOperation iop : initlist3) {
       if (v2.isValidInitOperation(iop, totalunit) == v2.VALID) {
         dp.deployUnits(iop);
       }
-      else if (v2.isValidInitOperation(iop, totalunit) == v2.INVALID_DEST) {
-        dp.showErrorMsg(v2.INVALID_DEST);
+      else if (v2.isValidInitOperation(iop, totalunit) == v2.ILLEGAL_NUM) {
+        dp.showErrorMsg(v2.ILLEGAL_NUM);
       }
       else if (v2.isValidInitOperation(iop, totalunit) == v2.NO_ENOUGH_UNITS) {
         dp.showErrorMsg(v2.NO_ENOUGH_UNITS);
@@ -151,12 +155,15 @@ public class OperationValidatorTest {
     MoveOperation mop2 = new MoveOperation("One", "Eight", 2); // invalid dest
     MoveOperation mop3 = new MoveOperation("One", "Two", 10); // no enough units
     MoveOperation mop4 = new MoveOperation("Six", "Two", 1); // invalid src
+    MoveOperation mop5 = new MoveOperation("One", "Three", -2); // invalid number
+    
 
     ArrayList<MoveOperation> movelist = new ArrayList<MoveOperation>();
     movelist.add(mop1);
     movelist.add(mop2);
     movelist.add(mop3);
     movelist.add(mop4);
+    movelist.add(mop5);
 
     for (MoveOperation mop : movelist) {
       if (v0.isValidMoveOperation(mop) == v0.VALID) {
@@ -171,23 +178,26 @@ public class OperationValidatorTest {
       else if (v0.isValidMoveOperation(mop) == v0.INVALID_SRC) {
         dp.showErrorMsg(v0.INVALID_SRC);
       }
+      else if (v0.isValidMoveOperation(mop) == v0.ILLEGAL_NUM) {
+        dp.showErrorMsg(v0.ILLEGAL_NUM);
+      }
     }
 
-    MoveOperation mop5 = new MoveOperation("Five", "Six", 1); // invalid src
+    MoveOperation mop6 = new MoveOperation("Five", "Six", 1); // invalid src
 
-    if (v1.isValidMoveOperation(mop5) == v0.VALID) {
-      dp.moveUnits(mop5);
-    }
-    else if (v1.isValidMoveOperation(mop5) == v1.INVALID_DEST) {
-      dp.showErrorMsg(v1.INVALID_DEST);
-    }
-    else if (v1.isValidMoveOperation(mop5) == v1.NO_ENOUGH_UNITS) {
-      dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
-    }
-    else if (v1.isValidMoveOperation(mop5) == v1.INVALID_SRC) {
-      dp.showErrorMsg(v1.INVALID_SRC);
-    }
-    else if (v1.isValidMoveOperation(mop5) == v1.INVALID_PATH) {
+    // if (v1.isValidMoveOperation(mop6) == v0.VALID) {
+    //   dp.moveUnits(mop5);
+    // }
+    // else if (v1.isValidMoveOperation(mop6) == v1.INVALID_DEST) {
+    //   dp.showErrorMsg(v1.INVALID_DEST);
+    // }
+    // else if (v1.isValidMoveOperation(mop6) == v1.NO_ENOUGH_UNITS) {
+    //   dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
+    // }
+    // else if (v1.isValidMoveOperation(mop6) == v1.INVALID_SRC) {
+    //   dp.showErrorMsg(v1.INVALID_SRC);
+    // }
+    if (v1.isValidMoveOperation(mop6) == v1.INVALID_PATH) {
       dp.showErrorMsg(v1.INVALID_PATH);
     }
 
@@ -195,11 +205,17 @@ public class OperationValidatorTest {
     AttackOperation aop1 = new AttackOperation("One", "Five", 1); // valid move
     AttackOperation aop2 = new AttackOperation("One", "Two", 2); // invalid dest
     AttackOperation aop3 = new AttackOperation("One", "Seven", 2); // not adjacent
+    AttackOperation aop4 = new AttackOperation("One", "Five", -1); // invalid number
+    AttackOperation aop5 = new AttackOperation("Nine", "Five", 1); // invalid src
+    AttackOperation aop6 = new AttackOperation("One", "Five", 20); // no enough units
 
     ArrayList<AttackOperation> attacklist = new ArrayList<AttackOperation>();
     attacklist.add(aop1);
     attacklist.add(aop2);
     attacklist.add(aop3);
+    attacklist.add(aop4);
+    attacklist.add(aop5);
+    attacklist.add(aop6);
 
     for (AttackOperation aop : attacklist) {
       if (v0.isValidAttackOperation(aop) == v0.VALID) {
@@ -211,6 +227,17 @@ public class OperationValidatorTest {
       else if (v0.isValidAttackOperation(aop) == v0.NOT_ADJACENT) {
         dp.showErrorMsg(v0.NOT_ADJACENT);
       }
+      else if (v0.isValidAttackOperation(aop) == v0.ILLEGAL_NUM) {
+        dp.showErrorMsg(v0.ILLEGAL_NUM);
+      }
+      else if (v0.isValidAttackOperation(aop) == v0.INVALID_SRC) {
+        dp.showErrorMsg(v0.INVALID_SRC);
+      }
+      else if (v0.isValidAttackOperation(aop) == v0.NO_ENOUGH_UNITS) {
+        dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
+      }
+      
+      
     }
 
   }

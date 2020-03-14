@@ -32,9 +32,9 @@ public class OperationValidator {
         return this.validatedaction;
     }
 
-    public void setAction(Action action) {
-        this.validatedaction = action;
-    }
+    // public void setAction(Action action) {
+    //     this.validatedaction = action;
+    // }
 
     public ArrayList<Territory> getCurrentMapState() {
       return temp_map;
