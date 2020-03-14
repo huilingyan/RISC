@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import shared.*;
 
@@ -44,15 +45,108 @@ public class Gameclient {
     }
   }
 
-// TODO: change later
-private void playGame() {
-
-    while (true) {
+  // Count the number of territories owned by the player
+  private int getMyNumOfT(ArrayList<Territory> map) {
+    int count = 0;
+    for (Territory t : map) {
+      if (t.getOwnership() == id) {
+        count++;
+      }
     }
+    return count;
+  }
+
+  private int checkWinner(ArrayList<Territory> map) {
+    int winner = map.get(0).getOwnership();
+    for (int i = 1; i < map.size(); i++) {
+      if (map.get(i).getOwnership() != winner) {
+        return -1;   // no winner yet
+      }
+    }
+    return winner;
+  }
+
+  // TODO
+  private void promptForAction(ArrayList<Territory> map) {
+    OperationValidator validator = new OperationValidator(id, map);
+    while (true) {
+      displayer.displayIntroduction(id);
+      String selection = inTaker.readselectionStr(scanner);
+      int state;
+      if (selection.equalsIgnoreCase("D")) {
+        // break the loop
+        break;
+      } else if (selection.equalsIgnoreCase("M")) {
+        // move operation
+        MoveOperation op;
+        while (true) {
+          op = inTaker.readMoveOperation(scanner);
+          state = validator.isValidMoveOperation(op);
+          if (state < 0) {
+            displayer.showErrorMsg(state);
+          } else {
+            break;
+          }
+        }
+        displayer.moveUnits(op);
+      } else {
+        // attack operation
+        AttackOperation op;
+        while (true) {
+          op = inTaker.readAttackOperation(scanner);
+          state = validator.isValidAttackOperation(op);
+          if (state < 0) {
+            displayer.showErrorMsg(state);
+          } else {
+            break;
+          }
+        }
+        displayer.attackUnits(op);
+      }
+    }
+    // send action to server
+    sendObject(validator.getAction());
+  }
+
+  // TODO: change later
+  private void playGame() {
+    while (true) {   // start each turn
+      ArrayList<Territory> map = (ArrayList<Territory>) recvObject();
+      if (map == null) {  // server's down
+        break;
+      }
+      displayer.showCurrentMap(map);  // display the map
+      int myTCount = getMyNumOfT(map);
+      if (myTCount == map.size()) {        // win the game
+        displayer.winnerAnnouncement();  
+        break;
+      } else if (myTCount == 0) {          // lost the game
+        int winner = checkWinner(map);
+        if (winner >= 0) {
+          displayer.gameOverAnnouncement(winner);
+          closeSocket();
+          System.exit(0);
+        }
+        if (isActive) {
+          isActive = false;
+          displayer.loseGameAnnouncement();
+        }
+        displayer.askForExit();
+        boolean exit = inTaker.readYorN(scanner);
+        if (exit) {   // exit
+          closeSocket();
+          System.exit(0);
+        }
+        continue;    // watch the game, continue
+      } else {
+        // regular game process
+        promptForAction(map);
+      }
+
+    }  // while
   }
 
   
-
   // Set up ObjectInputStream and receive player id from server
   private void receiveID() {
     try {
@@ -66,6 +160,8 @@ private void playGame() {
     catch (IOException e){
       e.printStackTrace();
       System.out.println("IOException");
+      closeSocket();
+      System.exit(0);   // exit program if server's down
     }
     // call displayer, display connection message with pid
     displayer.connEstablishedMsg(id);
@@ -88,18 +184,22 @@ private void playGame() {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to send player num");
+      closeSocket();
+      System.exit(0);  // exit program if server's down
     }
   }
 
-  private int recvInt() {
+  private int recvPosInt() {  // receive player number, which should be no less than 0
     try {
       int num = inStream.readInt();
       return num;
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to recv int");
+      closeSocket();
+      System.exit(0);  // exit program if server's down
     }
-    return 0;
+    return -1;
   }
 
   private Object recvObject() {
@@ -108,9 +208,13 @@ private void playGame() {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to recv object");
+      closeSocket();
+      System.exit(0);  // exit program if server's down
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.out.println("Class not found");
+      closeSocket();
+      System.exit(0);  // exit program if server's down
     }
     return null;
   }
@@ -121,21 +225,37 @@ private void playGame() {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Fail to send object");
+      closeSocket();
+      System.exit(0);  // exit program if server's down
     }
 
   }
 
   private void receivePlayerNum() {
-    playerNum = recvInt();
+    playerNum = recvPosInt();
+    if (playerNum < 0){
+      closeSocket();
+      System.exit(0);  // exit program if server's down
+    }
     displayer.setNumOfPlayer(playerNum);
     // debug
     System.out.println("Number of players: " + playerNum);
   }
 
-  // TODO
+  private void sendTNamesToIntaker(ArrayList<Territory> map) {
+    HashSet<String> set = new HashSet<String>();
+    for (Territory t : map) {
+      set.add(t.getName());
+    }
+    inTaker.setTNameSet(set);
+  }
+
+  // Receive initial map from server and set up units in each territory belonged to the player
   private void initializeUnits() {
-    int totalUnit = recvInt();
+    int totalUnit = recvPosInt();
     ArrayList<Territory> gameMap = (ArrayList<Territory>)recvObject();
+    // set hashmap to inputtaker
+    sendTNamesToIntaker(gameMap);
     // for each territory, prompt for num of unit
     OperationValidator validator = new OperationValidator(id, gameMap);
     for (Territory t : gameMap) {
@@ -170,13 +290,22 @@ private void playGame() {
     } else {
       receivePlayerNum();
     }
-    // TODO: initialize units
+    // initialize units
     initializeUnits();
+  }
+
+  private void closeSocket() {
+    try {
+      outStream.close();
+    } catch (IOException e) {
+      System.out.println("Failed to close outputstream");
+    }
   }
   
   public void runGame() {
     initializeGame();
     playGame();
+    closeSocket();
   }
 
   public static void main(String[] args) {
