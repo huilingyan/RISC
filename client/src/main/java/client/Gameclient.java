@@ -46,7 +46,7 @@ public class Gameclient {
   }
 
   // Count the number of territories owned by the player
-  private int getNumOfTerritories(ArrayList<Territory> map) {
+  private int getMyNumOfT(ArrayList<Territory> map) {
     int count = 0;
     for (Territory t : map) {
       if (t.getOwnership() == id) {
@@ -116,11 +116,11 @@ public class Gameclient {
         break;
       }
       displayer.showCurrentMap(map);  // display the map
-      int num = getNumOfTerritories(map);
-      if (num == map.size()) {        // win the game
+      int myTCount = getMyNumOfT(map);
+      if (myTCount == map.size()) {        // win the game
         displayer.winnerAnnouncement();  
         break;
-      } else if (num == 0) {          // lost the game
+      } else if (myTCount == 0) {          // lost the game
         int winner = checkWinner(map);
         if (winner >= 0) {
           displayer.gameOverAnnouncement(winner);
