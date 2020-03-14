@@ -189,7 +189,11 @@ public class Displayer {
         case OperationValidator.NOT_ADJACENT:
             System.out.println("The territory isn't adjacent! You can't attack it.");
             break;
+        case OperationValidator.DEST_SAME_AS_SRC:
+            System.out.println("You cannot move units to the same territory!");
+            break;
         default:
+            System.out.println("Unknown error!");
             break;
         }
     }
