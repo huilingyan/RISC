@@ -77,7 +77,7 @@ public class Displayer {
         System.out.println("(M)ove\n(A)ttack\n(D)one");
     }
 
-// msg during communication with server
+// Messages during communication with server
 
     public void connEstablishedMsg(int player_id) {
         System.out.println("Successfully connected to server! You're playing as player " + player_id);
@@ -91,10 +91,62 @@ public class Displayer {
         System.out.println("Disconnected from server!");
     }
 
-    
+// Messages for InputTaker
+
+    // invalid input messages
+    public void invalidPlayerNum() {
+        System.out.println("This game only supports 2-5 players! Please input again:");
+    }
+
+    public void tooManyNumber() {
+        System.out.println("Please input just one number:");
+    }
+
+    public void negNumberMsg() {
+        System.out.println("Please input a number which is >= 0:");
+    }
+
+    public void invalidTerritoryName() {
+        System.out.println("The name you entered is not a valid territory name! Please input again:");
+    }
+
+    public void invalidOrder() {
+        System.out.println("Invalid choice! Please choose what to do: A, M, or D?");
+    }
+
+    public void invalidExitChoice() {
+        System.out.println("Invalid choice! Please enter Y or N:");
+    }
+
+    // prompts during move operation
+    public void enterMoveSrcTerritory() {
+        System.out.println("Please enter the source territory to move armies from:");
+    }
+
+    public void enterNumOfMove() {
+        System.out.println("Please enter the number of armies you want to move:");
+    }
+
+    public void enterMoveDestTerritory() {
+        System.out.println("Please enter the destination territory to move armies to:");
+    }
+
+    // prompts during attack operation
+    public void enterAttackSrcTerritory() {
+        System.out.println("Please enter the source territory to dispatch armies from:");
+    }
+
+    public void enterNumOfAttack() {
+        System.out.println("Please enter the number of armies you want to dispatch:");
+    }
+
+    public void enterAttackDestTerritory() {
+        System.out.println("Please enter the destination territory you want to attack:");
+    }
+
+// Messages for OperationValidator 
 // msg during initialization
 
-    // for operation validator
     public void showRemainUnitNumber(int totalunit, String name) {
         System.out.println("You have " + totalunit + " units in total. ");
         System.out.println("How many units would you like to deploy to territory " + name + "?");
