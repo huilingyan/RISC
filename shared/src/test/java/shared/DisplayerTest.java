@@ -42,7 +42,7 @@ public class DisplayerTest {
       t_map.add(t4);
 
       displayer.displayMap(t_map);
-      displayer.displayIntroduction(t_map, 2);
+      displayer.displayIntroduction(2);
   }
 
   @Test
@@ -54,7 +54,7 @@ public class DisplayerTest {
     displayer.disConnectMsg();
     displayer.showRemainUnitNumber(20, "Pikachu");
     displayer.winnerAnnouncement();
-    displayer.loseGamePrompt();
+    displayer.loseGameAnnouncement();
     displayer.askForExit();
   }
 

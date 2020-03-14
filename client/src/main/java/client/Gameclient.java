@@ -160,7 +160,7 @@ public class Gameclient {
       e.printStackTrace();
       System.out.println("IOException");
       closeSocket();
-      exit(0);   // exit program if server's down
+      System.exit(0);   // exit program if server's down
     }
     // call displayer, display connection message with pid
     displayer.connEstablishedMsg(id);
@@ -184,7 +184,7 @@ public class Gameclient {
       e.printStackTrace();
       System.out.println("Fail to send player num");
       closeSocket();
-      exit(0);  // exit program if server's down
+      System.exit(0);  // exit program if server's down
     }
   }
 
@@ -196,7 +196,7 @@ public class Gameclient {
       e.printStackTrace();
       System.out.println("Fail to recv int");
       closeSocket();
-      exit(0);  // exit program if server's down
+      System.exit(0);  // exit program if server's down
     }
     return -1;
   }
@@ -208,12 +208,12 @@ public class Gameclient {
       e.printStackTrace();
       System.out.println("Fail to recv object");
       closeSocket();
-      exit(0);  // exit program if server's down
+      System.exit(0);  // exit program if server's down
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.out.println("Class not found");
       closeSocket();
-      exit(0);  // exit program if server's down
+      System.exit(0);  // exit program if server's down
     }
     return null;
   }
@@ -225,7 +225,7 @@ public class Gameclient {
       e.printStackTrace();
       System.out.println("Fail to send object");
       closeSocket();
-      exit(0);  // exit program if server's down
+      System.exit(0);  // exit program if server's down
     }
 
   }
@@ -234,7 +234,7 @@ public class Gameclient {
     playerNum = recvPosInt();
     if (playerNum < 0){
       closeSocket();
-      exit(0);  // exit program if server's down
+      System.exit(0);  // exit program if server's down
     }
     displayer.setNumOfPlayer(playerNum);
     // debug
@@ -243,7 +243,7 @@ public class Gameclient {
 
   // Receive initial map from server and set up units in each territory belonged to the player
   private void initializeUnits() {
-    int totalUnit = recvInt();
+    int totalUnit = recvPosInt();
     ArrayList<Territory> gameMap = (ArrayList<Territory>)recvObject();
     // for each territory, prompt for num of unit
     OperationValidator validator = new OperationValidator(id, gameMap);
