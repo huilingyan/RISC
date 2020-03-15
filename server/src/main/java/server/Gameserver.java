@@ -85,10 +85,17 @@ public class Gameserver {
     }
     // set neighbors
     for (Territory t: newMap) {
-      for (int j = 0; j < Territory.MAX_NEIGHBOR; j++) {
-        int nbID = t.calcNbID(j);
+      for (int j = 0; j < 6; j++) {
+        int nbID = t.getNbID(j);
         if (nbID >= 0 && tids.contains(nbID)) {
-          t.setNeighbor(j, nbID);
+          Territory nb = null;
+          for (Territory _t : newMap) {
+            if (_t.getTid() == nbID) {
+              nb = _t;
+              break;
+            }
+          }
+          t.setNeighbor(j, nb);
         }
       }
     }
@@ -254,14 +261,12 @@ public class Gameserver {
       Action gameAction = new Action();
       int count = 0;
       for (Player p : playerList) {
-        if (p.isActive()) {  // inactive player won't send action to server
-          Action ac = (Action) p.recvObject();
-          if (ac != null) {
-            ac = validateGameAction(ac, p.getPid());  // validate
-            gameAction.concatGameOperation(ac);
-          } else {
-            count++;
-          }
+        Action ac = (Action) p.recvObject();
+        if (ac != null) {
+          ac = validateGameAction(ac, p.getPid());  // validate
+          gameAction.concatGameOperation(ac);
+        } else {
+          count++;
         }
       }
       // check if all players are disconnected
@@ -289,24 +294,6 @@ public class Gameserver {
         t.addDefender(1);
       }
     }
-
-    private boolean noTerritoryForPlayer(int pid) {
-      boolean noT = true;
-      for (Territory t : gameMap) {
-        if (t.getOwnership() == pid) {
-          return false;
-        }
-      }
-      return noT;
-    }
-
-    private void markInactivePlayers() {
-      for (Player p : playerList) {
-        if (p.isActive() && noTerritoryForPlayer(p.getPid())) {
-          p.setActive(false);
-        }
-      }
-    }
     
     // TODO: change later
     private void playGame() {
@@ -317,8 +304,6 @@ public class Gameserver {
       }
       // recv actions, validate, handle
       recvAndHandleGameAction();
-      // mark any new inactive player after handle action
-      markInactivePlayers();
       // check game over
       if (!isGameOver()) {
         // update map and send to players

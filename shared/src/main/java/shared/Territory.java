@@ -31,9 +31,9 @@ public class Territory implements Serializable{
   private String name; //territory name
   //private int x,y; //location coordinate
   private Army defender; //currently only have num_units field
-  private ArrayList<Integer> neighborList;//can change to List
+  private ArrayList<Territory> neighborList;//can change to List
   //neighbor list index 0-5 in counterclock direction
-  //stored tid of the neighbor
+  //another way is only store tid or name of territories, but i think it is not enough
 
   // Initialize a territory with 0 defender
   public Territory(int pid, int t_id, String t_name) {
@@ -42,10 +42,10 @@ public class Territory implements Serializable{
     tid = t_id;
     name = t_name;
     defender = new Army(0);
-    neighborList = new ArrayList<Integer>();
+    neighborList = new ArrayList<Territory>();
     // initialize neighbor list with all null
     for (int i = 0; i < MAX_NEIGHBOR; i++) {
-      neighborList.add(-1);   // -1 means no neighbor
+      neighborList.add(null);
     }
   }
 
@@ -66,7 +66,7 @@ public class Territory implements Serializable{
     tid = rhs.tid;
     name = rhs.name;
     defender = new Army(rhs.defender.getUnitNumber());
-    neighborList = new ArrayList<Integer>(rhs.getNeighborList());
+    neighborList = rhs.neighborList;
     //may need to throw exception here if rhs doesn't have some fields
   }
   
@@ -103,22 +103,21 @@ public class Territory implements Serializable{
     return defender.getUnitNumber();
   }
 
-  public void setNeighborList(ArrayList<Integer> adjList){
+  public void setNeighborList(ArrayList<Territory> adjList){
     neighborList = adjList;
   }
 
-  public ArrayList<Integer> getNeighborList() {
+  public ArrayList<Territory> getNeighborList() {
     return neighborList;
   }
 
-  public void setNeighbor(int index, int nbid) {
+  public void setNeighbor(int index, Territory neighbor) {
     //set the specified territory at the specified position in this list.
-    neighborList.set(index, nbid);
+    neighborList.set(index, neighbor);
   }
 
-  // calculate the tid of neighbor given the neighbor index(0-5), under condition of full map (16 territories)
-  // -1 means no neighbor
-  public int calcNbID(int index) {
+  // return the tid of neighbor given the neighbor index(0-5)
+  public int getNbID(int index) {
     int nbID;
     switch (index) {
     case 0:  // up
@@ -179,7 +178,7 @@ public class Territory implements Serializable{
   }
 
   // return the neighbor given the neighbor index
-  public int getNeighbor(int index) {
+  public Territory getNeighbor(int index) {
   /*       0
          ----
       5 /    \ 1
@@ -201,8 +200,8 @@ public class Territory implements Serializable{
 
   public int countNeighbors() {
     int cnt = 0;
-    for (int nbid : neighborList) {
-      if (nbid != -1) {
+    for (Territory neigh : neighborList) {
+      if (neigh != null) {
         cnt++;
       }
     }
