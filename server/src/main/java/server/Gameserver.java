@@ -85,17 +85,10 @@ public class Gameserver {
     }
     // set neighbors
     for (Territory t: newMap) {
-      for (int j = 0; j < 6; j++) {
-        int nbID = t.getNbID(j);
+      for (int j = 0; j < Territory.MAX_NEIGHBOR; j++) {
+        int nbID = t.calcNbID(j);
         if (nbID >= 0 && tids.contains(nbID)) {
-          Territory nb = null;
-          for (Territory _t : newMap) {
-            if (_t.getTid() == nbID) {
-              nb = _t;
-              break;
-            }
-          }
-          t.setNeighbor(j, nb);
+          t.setNeighbor(j, nbID);
         }
       }
     }
