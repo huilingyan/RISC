@@ -6,5 +6,9 @@ ECE 651: Really Interesting Strategic Conquest
 
 The code in this project is for a strategic game where players try to rule all the lands with soldiers.
 
+The server hostname and port are stored in shared/src/main/resources/config.properties
+
+Please change the host information as needed before starting the Gameserver program.
+
 ## Coverage
 [Detailed coverage](https://ll199.pages.oit.duke.edu/ece651-spr20-g2/dashboard.html)

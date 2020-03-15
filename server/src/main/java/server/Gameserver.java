@@ -85,17 +85,10 @@ public class Gameserver {
     }
     // set neighbors
     for (Territory t: newMap) {
-      for (int j = 0; j < 6; j++) {
-        int nbID = t.getNbID(j);
+      for (int j = 0; j < Territory.MAX_NEIGHBOR; j++) {
+        int nbID = t.calcNbID(j);
         if (nbID >= 0 && tids.contains(nbID)) {
-          Territory nb = null;
-          for (Territory _t : newMap) {
-            if (_t.getTid() == nbID) {
-              nb = _t;
-              break;
-            }
-          }
-          t.setNeighbor(j, nb);
+          t.setNeighbor(j, nbID);
         }
       }
     }
@@ -116,9 +109,15 @@ public class Gameserver {
   }
 
   // Bind the server socket to the given port
-  private void bindSocket(int port) {
+  private void bindSocket() {
+    Config config = new Config("config.properties");
+    String port = config.readProperty("port");
+    if (port == null) {
+      System.out.println("Cannot find port property in config file");
+      System.exit(0);
+    }
     try{
-      ServerSocket newSocket = new ServerSocket(port);
+      ServerSocket newSocket = new ServerSocket(Integer.parseInt(port));
       mySocket = newSocket;
     } catch (IOException e) {
       System.out.println("Failed to bind socket to port " + port);
@@ -241,8 +240,8 @@ public class Gameserver {
     }
     
     private void initializeGame() {
-    // bind socket
-    bindSocket(4444);  // bind socket to port 4444
+    
+    bindSocket(); 
     acceptPlayers();
     initializeMap(playerNum);
     initializeUnits();
@@ -255,12 +254,14 @@ public class Gameserver {
       Action gameAction = new Action();
       int count = 0;
       for (Player p : playerList) {
-        Action ac = (Action) p.recvObject();
-        if (ac != null) {
-          ac = validateGameAction(ac, p.getPid());  // validate
-          gameAction.concatGameOperation(ac);
-        } else {
-          count++;
+        if (p.isActive()) {  // inactive player won't send action to server
+          Action ac = (Action) p.recvObject();
+          if (ac != null) {
+            ac = validateGameAction(ac, p.getPid());  // validate
+            gameAction.concatGameOperation(ac);
+          } else {
+            count++;
+          }
         }
       }
       // check if all players are disconnected
@@ -288,6 +289,24 @@ public class Gameserver {
         t.addDefender(1);
       }
     }
+
+    private boolean noTerritoryForPlayer(int pid) {
+      boolean noT = true;
+      for (Territory t : gameMap) {
+        if (t.getOwnership() == pid) {
+          return false;
+        }
+      }
+      return noT;
+    }
+
+    private void markInactivePlayers() {
+      for (Player p : playerList) {
+        if (p.isActive() && noTerritoryForPlayer(p.getPid())) {
+          p.setActive(false);
+        }
+      }
+    }
     
     // TODO: change later
     private void playGame() {
@@ -298,6 +317,8 @@ public class Gameserver {
       }
       // recv actions, validate, handle
       recvAndHandleGameAction();
+      // mark any new inactive player after handle action
+      markInactivePlayers();
       // check game over
       if (!isGameOver()) {
         // update map and send to players
@@ -333,6 +354,13 @@ public class Gameserver {
   }
   
   public static void main(String[] args) {
+    /****
+    // test properties
+    Config config = new Config("config.properties");
+    System.out.println(config.readProperty("hostname"));
+    System.out.println(config.readProperty("port"));
+    ****/
+    // game
     Gameserver server = new Gameserver();
     server.runGame();
   }
