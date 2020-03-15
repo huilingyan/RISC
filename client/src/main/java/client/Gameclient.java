@@ -72,32 +72,41 @@ public class Gameclient {
   // TODO
   private void promptForAction(ArrayList<Territory> map) {
     OperationValidator validator = new OperationValidator(id, map);
-    while (true) {  // prompt for one operation in each while loop
+    while (true) {
       displayer.displayIntroduction(id);
       String selection = inTaker.readselectionStr(scanner);
       int state;
-      if (selection.equalsIgnoreCase("D")) {  // player finish entering operations
-        break;      // break the loop and send action
+      if (selection.equalsIgnoreCase("D")) {
+        // break the loop
+        break;
       } else if (selection.equalsIgnoreCase("M")) {
         // move operation
-        MoveOperation op = inTaker.readMoveOperation(scanner);
-        state = validator.isValidMoveOperation(op);
-        if (state < 0) {  // invalid move
-          displayer.showErrorMsg(state);
-        } else {    
-          displayer.moveUnits(op);
+        MoveOperation op;
+        while (true) {
+          op = inTaker.readMoveOperation(scanner);
+          state = validator.isValidMoveOperation(op);
+          if (state < 0) {
+            displayer.showErrorMsg(state);
+          } else {
+            break;
+          }
         }
-      } else {     // attack operation
-        AttackOperation op = inTaker.readAttackOperation(scanner);
-        state = validator.isValidAttackOperation(op);
-        if (state < 0) {   // invalid attack
-          displayer.showErrorMsg(state);
-        } else {
-          displayer.attackUnits(op);
+        displayer.moveUnits(op);
+      } else {
+        // attack operation
+        AttackOperation op;
+        while (true) {
+          op = inTaker.readAttackOperation(scanner);
+          state = validator.isValidAttackOperation(op);
+          if (state < 0) {
+            displayer.showErrorMsg(state);
+          } else {
+            break;
+          }
         }
-        
-      }  // if/else
-    }  // while
+        displayer.attackUnits(op);
+      }
+    }
     // send action to server
     sendObject(validator.getAction());
   }
@@ -121,9 +130,9 @@ public class Gameclient {
           closeSocket();
           System.exit(0);
         }
-        if (isActive) {    // just lose the game in this turn
+        if (isActive) {
           isActive = false;
-          displayer.loseGameAnnouncement();  // lose game message
+          displayer.loseGameAnnouncement();
         }
         displayer.askForExit();
         boolean exit = inTaker.readYorN(scanner);
@@ -131,7 +140,6 @@ public class Gameclient {
           closeSocket();
           System.exit(0);
         }
-        // let server check inactive player and don't receive action from them
         continue;    // watch the game, continue
       } else {
         // regular game process
