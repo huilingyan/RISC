@@ -170,8 +170,8 @@ public class OperationValidatorTest {
     MoveOperation mop4 = new MoveOperation("Six", "Two", 1); // invalid src
     MoveOperation mop5 = new MoveOperation("One", "Three", -2); // invalid number
     MoveOperation mop6 = new MoveOperation("One", "One", 1); // src same as dest
-    MoveOperation mop7 = new MoveOperation("Five", "Six", 1); // invalid src
-    
+    MoveOperation mop7 = new MoveOperation("Five", "Six", 1); // no path
+    MoveOperation mop8 = new MoveOperation("Two", "One", 1); // invalid src
 
     // ArrayList<MoveOperation> movelist = new ArrayList<MoveOperation>();
     // movelist.add(mop1);
@@ -188,6 +188,7 @@ public class OperationValidatorTest {
     assertEquals(OperationValidator.ILLEGAL_NUM, v0.isValidMoveOperation(mop5));
     assertEquals(OperationValidator.DEST_SAME_AS_SRC, v0.isValidMoveOperation(mop6));
     assertEquals(OperationValidator.INVALID_PATH, v1.isValidMoveOperation(mop7));
+    assertEquals(OperationValidator.VALID, v0.isValidMoveOperation(mop8));
 
 
     // for (MoveOperation mop : movelist) {

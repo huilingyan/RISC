@@ -3,7 +3,8 @@ package shared;
 import java.util.ArrayList;
 import java.lang.String;
 import java.util.LinkedList;
-
+import java.util.Set;
+import java.util.HashSet;
 
 public class OperationValidator {
 
@@ -175,16 +176,22 @@ public class OperationValidator {
     private boolean isOwnTerritory(Territory t) {
         return (t.getOwnership() == this.player_id);
     }
-
+  
     private boolean isValidPath(Territory src, Territory dest) {
 
-        LinkedList<Territory> visited = new LinkedList<Territory>();
+        // LinkedList<Territory> visited = new LinkedList<Territory>();
         LinkedList<Territory> queue = new LinkedList<Territory>();
+        Set<Territory> visited = new HashSet<Territory>();
+        // debug
+        System.out.println("dest tid: " + dest.getTid());
 
         queue.add(src);
 
         while(queue.size() != 0) { // when queue is not empty
             Territory t = queue.poll();
+
+            // debug
+            System.out.println("t name: " + t.getName() + ", tid: " + t.getTid());
 
             if (t.getTid() == dest.getTid()) {
                 return true; // find the path
