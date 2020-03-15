@@ -261,12 +261,14 @@ public class Gameserver {
       Action gameAction = new Action();
       int count = 0;
       for (Player p : playerList) {
-        Action ac = (Action) p.recvObject();
-        if (ac != null) {
-          ac = validateGameAction(ac, p.getPid());  // validate
-          gameAction.concatGameOperation(ac);
-        } else {
-          count++;
+        if (p.isActive()) {  // inactive player won't send action to server
+          Action ac = (Action) p.recvObject();
+          if (ac != null) {
+            ac = validateGameAction(ac, p.getPid());  // validate
+            gameAction.concatGameOperation(ac);
+          } else {
+            count++;
+          }
         }
       }
       // check if all players are disconnected
@@ -294,6 +296,24 @@ public class Gameserver {
         t.addDefender(1);
       }
     }
+
+    private boolean noTerritoryForPlayer(int pid) {
+      boolean noT = true;
+      for (Territory t : gameMap) {
+        if (t.getOwnership() == pid) {
+          return false;
+        }
+      }
+      return noT;
+    }
+
+    private void markInactivePlayers() {
+      for (Player p : playerList) {
+        if (p.isActive() && noTerritoryForPlayer(p.getPid())) {
+          p.setActive(false);
+        }
+      }
+    }
     
     // TODO: change later
     private void playGame() {
@@ -304,6 +324,8 @@ public class Gameserver {
       }
       // recv actions, validate, handle
       recvAndHandleGameAction();
+      // mark any new inactive player after handle action
+      markInactivePlayers();
       // check game over
       if (!isGameOver()) {
         // update map and send to players
