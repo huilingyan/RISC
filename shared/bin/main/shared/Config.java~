@@ -1,0 +1,16 @@
+package shared;
+
+import java.io.InputStream;
+
+public class Config {
+
+  private InputStream inStream;
+  
+  public Config(String filePath) {
+    inStream = getClass().getClassLoader().getResourceAsStream(filePath);
+    if (inStream == null) {
+      System.out.println("Cannot find the file " + filePath);
+    }
+  }
+  
+}

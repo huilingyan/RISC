@@ -30,12 +30,15 @@ public class Gameclient {
   }
 
   // Connect to the server at localhost and the given port
-  private void connectToServer(int port) {
+  private void connectToServer() {
+    Config config = new Config("config.properties");
+    String host = config.readProperty("hostname");
+    String port = config.readProperty("port");
     try {
-      Socket newSocket = new Socket("127.0.0.1", port);
+      Socket newSocket = new Socket(host, Integer.parseInt(port));
       serverSocket = newSocket;
     } catch (IOException e){
-      System.out.println("Cannnot connect to server at localhost, port " + port);
+      System.out.println("Cannnot connect to server at " + host + " : " + port);
     }
     try {
       outStream = new ObjectOutputStream(serverSocket.getOutputStream());
@@ -283,7 +286,7 @@ public class Gameclient {
   }
 
   private void initializeGame() {
-    connectToServer(4444);
+    connectToServer();
     receiveID();
     if (id == 0) {
       promptAndSendPlayerNum();
