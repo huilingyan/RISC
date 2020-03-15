@@ -23,16 +23,16 @@ public class DisplayerTest {
       t3.setDefenderNum(3);
       t4.setDefenderNum(6);
 
-      t0.setNeighbor(0, t1);
-      t1.setNeighbor(0, t0);
-      t1.setNeighbor(1, t2);
-      t2.setNeighbor(0, t1);
-      t2.setNeighbor(1, t3);
-      t2.setNeighbor(2, t4);
-      t3.setNeighbor(0, t2);
-      t3.setNeighbor(1, t4);
-      t4.setNeighbor(0, t2);
-      t4.setNeighbor(1, t3);
+      t0.setNeighbor(0, 1);
+      t1.setNeighbor(0, 0);
+      t1.setNeighbor(1, 2);
+      t2.setNeighbor(0, 1);
+      t2.setNeighbor(1, 3);
+      t2.setNeighbor(2, 4);
+      t3.setNeighbor(0, 2);
+      t3.setNeighbor(1, 4);
+      t4.setNeighbor(0, 2);
+      t4.setNeighbor(1, 3);
 
       ArrayList<Territory> t_map = new ArrayList<Territory>();
       t_map.add(t0);
@@ -43,11 +43,31 @@ public class DisplayerTest {
 
       displayer.displayMap(t_map);
       displayer.displayIntroduction(2);
+      displayer.showCurrentMap(t_map);
   }
 
   @Test
   public void test_Messages() {
     Displayer displayer = Displayer.getInstance();
+
+    // msg during input
+    displayer.invalidPlayerNum();
+    displayer.tooManyNumber();
+    displayer.negNumberMsg();
+    displayer.invalidTerritoryName();
+    displayer.invalidOrder();
+    displayer.invalidExitChoice();
+    displayer.enterMoveDestTerritory();;
+    displayer.enterNumOfMove();
+    displayer.enterNumOfAttack();
+    displayer.enterMoveDestTerritory();
+    displayer.enterAttackSrcTerritory();
+    displayer.enterNumOfAttack();
+    displayer.enterAttackDestTerritory();
+
+
+
+    // msg during turns
     displayer.displayBeforeInitMap();
     displayer.connEstablishedMsg(1);
     displayer.inputPlayerNum();
@@ -55,7 +75,18 @@ public class DisplayerTest {
     displayer.showRemainUnitNumber(20, "Pikachu");
     displayer.winnerAnnouncement();
     displayer.loseGameAnnouncement();
+    displayer.gameOverAnnouncement(2);
     displayer.askForExit();
+
+    // error msg
+    displayer.showErrorMsg(OperationValidator.INVALID_DEST);
+    displayer.showErrorMsg(OperationValidator.NO_ENOUGH_UNITS);
+    displayer.showErrorMsg(OperationValidator.ILLEGAL_NUM);
+    displayer.showErrorMsg(OperationValidator.INVALID_SRC);
+    displayer.showErrorMsg(OperationValidator.INVALID_PATH);
+    displayer.showErrorMsg(OperationValidator.NOT_ADJACENT);
+    displayer.showErrorMsg(OperationValidator.DEST_SAME_AS_SRC);
+
   }
 
 }
