@@ -116,9 +116,15 @@ public class Gameserver {
   }
 
   // Bind the server socket to the given port
-  private void bindSocket(int port) {
+  private void bindSocket() {
+    Config config = new Config("config.properties");
+    String port = config.readProperty("port");
+    if (port == null) {
+      System.out.println("Cannot find port property in config file");
+      System.exit(0);
+    }
     try{
-      ServerSocket newSocket = new ServerSocket(port);
+      ServerSocket newSocket = new ServerSocket(Integer.parseInt(port));
       mySocket = newSocket;
     } catch (IOException e) {
       System.out.println("Failed to bind socket to port " + port);
@@ -241,8 +247,8 @@ public class Gameserver {
     }
     
     private void initializeGame() {
-    // bind socket
-    bindSocket(4444);  // bind socket to port 4444
+    
+    bindSocket(); 
     acceptPlayers();
     initializeMap(playerNum);
     initializeUnits();
@@ -333,6 +339,13 @@ public class Gameserver {
   }
   
   public static void main(String[] args) {
+    /****
+    // test properties
+    Config config = new Config("config.properties");
+    System.out.println(config.readProperty("hostname"));
+    System.out.println(config.readProperty("port"));
+    ****/
+    // game
     Gameserver server = new Gameserver();
     server.runGame();
   }
