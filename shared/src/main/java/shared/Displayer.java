@@ -53,12 +53,12 @@ public class Displayer {
                 System.out.println("\tNumber of units: " + t.getDefenderNum()); // number of units 
                 System.out.print("\tNext to: "); // neighbours
     
-                ArrayList<Territory> neighlist = t.getNeighborList();
+                ArrayList<Integer> neighlist = t.getNeighborList();
                 int cnt = 0;
-                for (Territory neigh : neighlist) { // show neighbour list
-                    if (neigh != null) {
+                for (int neigh : neighlist) { // show neighbour list
+                    if (neigh != -1) {
                         cnt++;
-                        System.out.print(neigh.getName() + ((cnt == t.countNeighbors())? "\n" : ", ")); // owner
+                        System.out.print(findNameByTid(neigh, t_map) + ((cnt == t.countNeighbors())? "\n" : ", ")); // owner
                         
                     }                   
                 }
@@ -221,6 +221,16 @@ public class Displayer {
     public void askForExit() {
       System.out.println("Would you like to exit directly or watch the rest of the game?");
       System.out.println("Press Y(Exit) or N(Watch the game) to continue:");
+    }
+
+    // helper methods
+    private String findNameByTid(int tid, ArrayList<Territory> t_map) {
+        for (Territory t : t_map) {
+            if (t.getTid() == tid) { // if find the territory
+                return t.getName();
+            }
+        }
+        return null; // not found
     }
 
 }

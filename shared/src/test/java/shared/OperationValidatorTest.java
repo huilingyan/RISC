@@ -27,37 +27,37 @@ public class OperationValidatorTest {
     Territory t9 = new Territory(2, 9, "Nine");
 
     // set neighbours for each of them
-    t1.setNeighbor(1, t2);
-    t1.setNeighbor(3, t5);
+    t1.setNeighbor(1, 2);
+    t1.setNeighbor(3, 5);
 
-    t2.setNeighbor(2, t3);
-    t2.setNeighbor(3, t4);
-    t2.setNeighbor(4, t1);
+    t2.setNeighbor(2, 3);
+    t2.setNeighbor(3, 4);
+    t2.setNeighbor(4, 1);
 
-    t3.setNeighbor(1, t6);
-    t3.setNeighbor(3, t7);
-    t3.setNeighbor(4, t4);
-    t3.setNeighbor(5, t2);
+    t3.setNeighbor(1, 6);
+    t3.setNeighbor(3, 7);
+    t3.setNeighbor(4, 4);
+    t3.setNeighbor(5, 2);
 
-    t4.setNeighbor(0, t2);
-    t4.setNeighbor(1, t3);
-    t4.setNeighbor(2, t7);
-    t4.setNeighbor(4, t5);
-    t4.setNeighbor(5, t1);
+    t4.setNeighbor(0, 2);
+    t4.setNeighbor(1, 3);
+    t4.setNeighbor(2, 7);
+    t4.setNeighbor(4, 5);
+    t4.setNeighbor(5, 1);
 
-    t5.setNeighbor(0, t1);
-    t5.setNeighbor(1, t4);
-    t5.setNeighbor(3, t9);
+    t5.setNeighbor(0, 1);
+    t5.setNeighbor(1, 4);
+    t5.setNeighbor(3, 9);
 
-    t6.setNeighbor(4, t3);
+    t6.setNeighbor(4, 3);
 
-    t7.setNeighbor(0, t3);
-    t7.setNeighbor(2, t8);
-    t7.setNeighbor(5, t4);
+    t7.setNeighbor(0, 3);
+    t7.setNeighbor(2, 8);
+    t7.setNeighbor(5, 4);
 
-    t8.setNeighbor(5, t7);
+    t8.setNeighbor(5, 7);
 
-    t9.setNeighbor(0, t5);
+    t9.setNeighbor(0, 5);
 
     ArrayList<Territory> curr_map = new ArrayList<Territory>();
     curr_map.add(t1);
@@ -80,6 +80,7 @@ public class OperationValidatorTest {
     // create operations
     // set total unit number
     int totalunit = 20;
+
     // init operation
     InitOperation iop1 = new InitOperation("One", 6);
     InitOperation iop2 = new InitOperation("Two", 7);
@@ -94,26 +95,9 @@ public class OperationValidatorTest {
     InitOperation iop9 = new InitOperation("Nine", 7); // no enough units
     InitOperation iop10 = new InitOperation("Nine", -1); // no enough units
     
-
-    // ArrayList<InitOperation> initlist1 = new ArrayList<InitOperation>();
-    // ArrayList<InitOperation> initlist2 = new ArrayList<InitOperation>();
-    // ArrayList<InitOperation> initlist3 = new ArrayList<InitOperation>();
-
-    // initlist1.add(iop1);
-    // initlist1.add(iop2);
-    // initlist1.add(iop3);
-
-    // initlist2.add(iop4);
-    // initlist2.add(iop5);
-    // initlist2.add(iop6);
-
-    // initlist3.add(iop7);
-    // initlist3.add(iop8);
-    // initlist3.add(iop9);
-    // initlist3.add(iop10);
-
-
     assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop1, totalunit));
+    dp.deployUnits(iop1);
+
     assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop2, totalunit));
     assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop3, totalunit));
 
@@ -126,42 +110,7 @@ public class OperationValidatorTest {
     assertEquals(OperationValidator.NO_ENOUGH_UNITS, v2.isValidInitOperation(iop9, totalunit));
     assertEquals(OperationValidator.ILLEGAL_NUM, v2.isValidInitOperation(iop10, totalunit));
 
-    // for (InitOperation iop : initlist1) {
-    //   if (v0.isValidInitOperation(iop, totalunit) == v0.VALID) {
-    //     dp.deployUnits(iop);  
-    //     dp.showCurrentMap(v0.getCurrentMapState());
-    //   }
-    //   // else if (v0.isValidInitOperation(iop, totalunt)i == v0.INVALID_DEST) {
-    //   //   dp.showErrorMsg(v0.INVALID_DEST);
-    //   // }
-    //   // else if (v0.isValidInitOperation(iop, totalunit) == v0.NO_ENOUGH_UNITS) {
-    //   //   dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
-    //   // }
-    // }
-
-    // for (InitOperation iop : initlist2) {
-    //   if (v1.isValidInitOperation(iop, totalunit) == v1.VALID) {
-    //     dp.deployUnits(iop);
-    //   }
-    //   else if (v1.isValidInitOperation(iop, totalunit) == v1.INVALID_DEST) {
-    //     dp.showErrorMsg(v1.INVALID_DEST);
-    //   }
-    //   // else if (v1.isValidInitOperation(iop, totalunit) == v1.NO_ENOUGH_UNITS) {
-    //   //   dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
-    //   // }
-    // }
-
-    // for (InitOperation iop : initlist3) {
-    //   if (v2.isValidInitOperation(iop, totalunit) == v2.VALID) {
-    //     dp.deployUnits(iop);
-    //   }
-    //   else if (v2.isValidInitOperation(iop, totalunit) == v2.ILLEGAL_NUM) {
-    //     dp.showErrorMsg(v2.ILLEGAL_NUM);
-    //   }
-    //   else if (v2.isValidInitOperation(iop, totalunit) == v2.NO_ENOUGH_UNITS) {
-    //     dp.showErrorMsg(v2.NO_ENOUGH_UNITS);
-    //   }
-    // }
+    
 
     // move operations
     MoveOperation mop1 = new MoveOperation("One", "Three", 2); // valid move
@@ -173,15 +122,9 @@ public class OperationValidatorTest {
     MoveOperation mop7 = new MoveOperation("Five", "Six", 1); // invalid src
     
 
-    // ArrayList<MoveOperation> movelist = new ArrayList<MoveOperation>();
-    // movelist.add(mop1);
-    // movelist.add(mop2);
-    // movelist.add(mop3);
-    // movelist.add(mop4);
-    // movelist.add(mop5);
-    // movelist.add(mop6);
-
     assertEquals(OperationValidator.VALID, v0.isValidMoveOperation(mop1));
+    dp.moveUnits(mop1);
+
     assertEquals(OperationValidator.INVALID_DEST, v0.isValidMoveOperation(mop2));
     assertEquals(OperationValidator.NO_ENOUGH_UNITS, v0.isValidMoveOperation(mop3));
     assertEquals(OperationValidator.INVALID_SRC, v0.isValidMoveOperation(mop4));
@@ -190,43 +133,6 @@ public class OperationValidatorTest {
     assertEquals(OperationValidator.INVALID_PATH, v1.isValidMoveOperation(mop7));
 
 
-    // for (MoveOperation mop : movelist) {
-    //   if (v0.isValidMoveOperation(mop) == v0.VALID) {
-    //     dp.moveUnits(mop);
-    //   }
-    //   else if (v0.isValidMoveOperation(mop) == v0.INVALID_DEST) {
-    //     dp.showErrorMsg(v0.INVALID_DEST);
-    //   }
-    //   else if (v0.isValidMoveOperation(mop) == v0.NO_ENOUGH_UNITS) {
-    //     dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
-    //   }
-    //   else if (v0.isValidMoveOperation(mop) == v0.INVALID_SRC) {
-    //     dp.showErrorMsg(v0.INVALID_SRC);
-    //   }
-    //   else if (v0.isValidMoveOperation(mop) == v0.ILLEGAL_NUM) {
-    //     dp.showErrorMsg(v0.ILLEGAL_NUM);
-    //   }
-    //   else if (v0.isValidMoveOperation(mop) == v0.DEST_SAME_AS_SRC) {
-    //     dp.showErrorMsg(v0.DEST_SAME_AS_SRC);
-    //   }
-      
-    // }
-
-    // if (v1.isValidMoveOperation(mop6) == v0.VALID) {
-    //   dp.moveUnits(mop5);
-    // }
-    // else if (v1.isValidMoveOperation(mop6) == v1.INVALID_DEST) {
-    //   dp.showErrorMsg(v1.INVALID_DEST);
-    // }
-    // else if (v1.isValidMoveOperation(mop6) == v1.NO_ENOUGH_UNITS) {
-    //   dp.showErrorMsg(v1.NO_ENOUGH_UNITS);
-    // }
-    // else if (v1.isValidMoveOperation(mop6) == v1.INVALID_SRC) {
-    //   dp.showErrorMsg(v1.INVALID_SRC);
-    // }
-    // if (v1.isValidMoveOperation(mop7) == v1.INVALID_PATH) {
-    //   dp.showErrorMsg(v1.INVALID_PATH);
-    // }
 
     // attack operations
     AttackOperation aop1 = new AttackOperation("One", "Five", 1); // valid move
@@ -236,43 +142,15 @@ public class OperationValidatorTest {
     AttackOperation aop5 = new AttackOperation("Nine", "Five", 1); // invalid src
     AttackOperation aop6 = new AttackOperation("One", "Five", 20); // no enough units
 
-    // ArrayList<AttackOperation> attacklist = new ArrayList<AttackOperation>();
-    // attacklist.add(aop1);
-    // attacklist.add(aop2);
-    // attacklist.add(aop3);
-    // attacklist.add(aop4);
-    // attacklist.add(aop5);
-    // attacklist.add(aop6);
 
     assertEquals(OperationValidator.VALID, v0.isValidAttackOperation(aop1));
+    dp.attackUnits(aop1);
     assertEquals(OperationValidator.INVALID_DEST, v0.isValidAttackOperation(aop2));
     assertEquals(OperationValidator.NOT_ADJACENT, v0.isValidAttackOperation(aop3));
     assertEquals(OperationValidator.ILLEGAL_NUM, v0.isValidAttackOperation(aop4));
     assertEquals(OperationValidator.INVALID_SRC, v0.isValidAttackOperation(aop5));
     assertEquals(OperationValidator.NO_ENOUGH_UNITS, v0.isValidAttackOperation(aop6));
 
-    // for (AttackOperation aop : attacklist) {
-    //   if (v0.isValidAttackOperation(aop) == v0.VALID) {
-    //     dp.attackUnits(aop);
-    //   }
-    //   else if (v0.isValidAttackOperation(aop) == v0.INVALID_DEST) {
-    //     dp.showErrorMsg(v0.INVALID_DEST);
-    //   }
-    //   else if (v0.isValidAttackOperation(aop) == v0.NOT_ADJACENT) {
-    //     dp.showErrorMsg(v0.NOT_ADJACENT);
-    //   }
-    //   else if (v0.isValidAttackOperation(aop) == v0.ILLEGAL_NUM) {
-    //     dp.showErrorMsg(v0.ILLEGAL_NUM);
-    //   }
-    //   else if (v0.isValidAttackOperation(aop) == v0.INVALID_SRC) {
-    //     dp.showErrorMsg(v0.INVALID_SRC);
-    //   }
-    //   else if (v0.isValidAttackOperation(aop) == v0.NO_ENOUGH_UNITS) {
-    //     dp.showErrorMsg(v0.NO_ENOUGH_UNITS);
-    //   }
-      
-      
-    // }
 
   }
 
