@@ -132,8 +132,8 @@ public class GameHandler extends Handler {
         //execute combat calculation 
         int attacker_id = p_entry.getKey();
         int attacker_unit_num = p_entry.getValue();
-        System.out.println("On territory:" + t_defender.getName());
-        System.out.println("player " + attacker_id + " with " + attacker_unit_num + " units" + " ATTACKS player " + defender_id + " with " + defender_unit_num + " units");
+        //System.out.println("On territory:" + t_defender.getName());
+        //System.out.println("player " + attacker_id + " with " + attacker_unit_num + " units" + " ATTACKS player " + defender_id + " with " + defender_unit_num + " units");
         while ((attacker_unit_num > 0) && (defender_unit_num > 0)) {
           //combat: roll 2 dices, one for attacker, one for defender
           //one with lower points loses 1 unit (in a tie defender wins)
@@ -154,7 +154,7 @@ public class GameHandler extends Handler {
           defender_unit_num = winner_unit_num;
 
         }
-        System.out.println("player " + winner_id + " WINS, remaining " + winner_unit_num + " units");
+        //System.out.println("player " + winner_id + " WINS, remaining " + winner_unit_num + " units");
             
       }
         
