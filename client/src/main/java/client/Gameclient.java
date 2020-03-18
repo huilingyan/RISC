@@ -114,7 +114,7 @@ public class Gameclient {
       if (myTCount == map.size()) {        // win the game
         displayer.winnerAnnouncement();  
         break;
-      } else if (myTCount == 0) {          // lost the game
+      } else if (myTCount == 0) {          // lose the game
         int winner = checkWinner(map);
         if (winner >= 0) {
           displayer.gameOverAnnouncement(winner);
