@@ -179,48 +179,78 @@ public class OperationValidator {
   
     private boolean isValidPath(Territory src, Territory dest) {
 
+<<<<<<< HEAD
         // LinkedList<Territory> visited = new LinkedList<Territory>();
         LinkedList<Territory> queue = new LinkedList<Territory>();
         Set<Territory> visited = new HashSet<Territory>();
         // debug
         System.out.println("dest tid: " + dest.getTid());
+=======
+        LinkedList<Integer> visited = new LinkedList<Integer>();
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+>>>>>>> 43147e59191ccc2bbc1c5f3d581ed3c7695ce40f
 
-        queue.add(src);
+        queue.add(src.getTid());
 
         while(queue.size() != 0) { // when queue is not empty
-            Territory t = queue.poll();
+            int tid = queue.poll();
 
+<<<<<<< HEAD
             // debug
             System.out.println("t name: " + t.getName() + ", tid: " + t.getTid());
 
             if (t.getTid() == dest.getTid()) {
+=======
+            if (tid == dest.getTid()) {
+>>>>>>> 43147e59191ccc2bbc1c5f3d581ed3c7695ce40f
                 return true; // find the path
             }
 
-            if (visited.contains(t)) {
+            if (visited.contains(tid)) {
                 continue;
             }
 
-            for (Territory neigh : t.getNeighborList()) {
-                if ((neigh != null) && (neigh.getOwnership() == this.player_id)) {
+            Territory t = findTerritoryByTid(tid);
+
+            for (int neigh : t.getNeighborList()) {
+                if ((neigh != -1) && (findOwnershipByTid(neigh) == this.player_id)) {
                     queue.add(neigh);
                 }                
             }
-            visited.add(t);
+            visited.add(t.getTid());
         }
 
         return false;
     }
 
     private boolean isAdjacent(Territory src, Territory dest) {
-        for (Territory neigh : src.getNeighborList()) {
-            if (neigh != null) {
-                if (neigh.getTid() == dest.getTid()) { // if dest in neighbout list
+
+        for (int neigh : src.getNeighborList()) {
+            if (neigh != -1) {
+                if (neigh == dest.getTid()) { // if dest in neighbout list
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    private Territory findTerritoryByTid(int tid) {
+        for (Territory t : this.temp_map) {
+            if (t.getTid() == tid) { // if find the territory
+                return t;
+            }
+        }
+        return null; // not found
+    }
+
+    private int findOwnershipByTid(int tid) {
+        for (Territory t : this.temp_map) {
+            if (t.getTid() == tid) { // if find the territory
+                return t.getOwnership();
+            }
+        }
+        return -1; // not found
     }
 
 }
