@@ -3,7 +3,8 @@ package shared;
 import java.util.ArrayList;
 import java.lang.String;
 import java.util.LinkedList;
-
+import java.util.Set;
+import java.util.HashSet;
 
 public class OperationValidator {
 
@@ -175,7 +176,7 @@ public class OperationValidator {
     private boolean isOwnTerritory(Territory t) {
         return (t.getOwnership() == this.player_id);
     }
-
+  
     private boolean isValidPath(Territory src, Territory dest) {
 
         LinkedList<Integer> visited = new LinkedList<Integer>();
