@@ -321,11 +321,11 @@ public class Gameserver {
       markInactivePlayers();
       // check game over
       if (!isGameOver()) {
-        // update map and send to players
+        // update map, map is sent in next turn 
         mapUnitPlusOne();
-        for (Player p : playerList) {
-          p.sendObject(gameMap);
-        }
+        // for (Player p : playerList) {
+        //  p.sendObject(gameMap);
+        // }
       } else {
         // send map to players and break
         for (Player p : playerList) {
