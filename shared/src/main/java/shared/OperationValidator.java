@@ -179,30 +179,15 @@ public class OperationValidator {
   
     private boolean isValidPath(Territory src, Territory dest) {
 
-<<<<<<< HEAD
-        // LinkedList<Territory> visited = new LinkedList<Territory>();
-        LinkedList<Territory> queue = new LinkedList<Territory>();
-        Set<Territory> visited = new HashSet<Territory>();
-        // debug
-        System.out.println("dest tid: " + dest.getTid());
-=======
         LinkedList<Integer> visited = new LinkedList<Integer>();
         LinkedList<Integer> queue = new LinkedList<Integer>();
->>>>>>> 43147e59191ccc2bbc1c5f3d581ed3c7695ce40f
 
         queue.add(src.getTid());
 
         while(queue.size() != 0) { // when queue is not empty
             int tid = queue.poll();
 
-<<<<<<< HEAD
-            // debug
-            System.out.println("t name: " + t.getName() + ", tid: " + t.getTid());
-
-            if (t.getTid() == dest.getTid()) {
-=======
             if (tid == dest.getTid()) {
->>>>>>> 43147e59191ccc2bbc1c5f3d581ed3c7695ce40f
                 return true; // find the path
             }
 
