@@ -200,15 +200,15 @@ public class Displayer {
 
 // Print the result of the game
     public void winnerAnnouncement() {
-        System.out.println("Congratulations! You win the game!");
+        System.out.println("Congratulations! You won the game!");
     }
 
     public void loseGameAnnouncement() {
-        System.out.println("You lose the game.");
+        System.out.println("You lost!");
     }
 
     public void gameOverAnnouncement(int pid) {
-      System.out.println("Game Over! Player " + pid + " win the game.");
+      System.out.println("Game Over! Player " + pid + " won the game.");
     }
 
 // after player loses the game
