@@ -5,30 +5,28 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
-import shared.Territory;
-
+/****
+A class to represent a player on game server side
+******/
 public class Player {
   private int pid;//player id suppose 1-5
   private String name; //player name
-  private Socket clientSocket; //not sure if this is the right type
-  private ArrayList<Territory> playerTerritories;//can store tid instead
+  private Socket clientSocket; // connected socket
   private boolean active;//still has territory
   private boolean connected;//socket connection status
   private ObjectOutputStream out;
   private ObjectInputStream in;
 
-  public Player() {
-    playerTerritories = new ArrayList<Territory>();
-    
-  };
-
+  /*****
+  Initialize a player object with pid, name and connected socket
+  Also initialize an outputstream from the socket
+  active and connected are default to be true  
+   ****/
   public Player(int p_id, String p_name, Socket socket) {
     pid = p_id;
     name = p_name;
     clientSocket = socket;
-    playerTerritories = new ArrayList<Territory>();
     active = true;
     connected = true;
     // initialize ObjectOutputStream
@@ -36,99 +34,95 @@ public class Player {
     out = new ObjectOutputStream(clientSocket.getOutputStream());
     out.flush();
     } catch (IOException e) {
-      e.printStackTrace();
       connected = false;
     }
-    /****
-    try{
-    in  = new ObjectInputStream(clientSocket.getInputStream());
-    } catch(IOException e){
-      e.printStackTrace();
-    }
-    *****/
-    //rest info should be added after socket setup (playerTerritories)
+
   }
 
+  /****
+  Initialize an inputstream from the socket 
+  Usually is called in gameserver right before recv from socket  
+   ****/
   public void setUpInputStream() {
     if (connected){
     try{
     in  = new ObjectInputStream(clientSocket.getInputStream());
     } catch(IOException e){
-      e.printStackTrace();
       connected = false;
     }
     }
   }
 
+  /****
+  Close all opened outputstream and inputstream and the socket  
+   ****/
   public void closeSocket() {
     try {
       out.close();   // close outputstream will also close the socket and inputstream
     } catch (IOException e) {
-      System.out.println("IOException when closing outputstream");
     }
   }
 
-  public Player(Player rhs){
-    pid = rhs.pid;
-    name = rhs.name;
-    clientSocket = rhs.clientSocket;
-    playerTerritories = rhs.playerTerritories;
-    active = rhs.active;
-    connected = rhs.connected;
-  }
-
+  /****
+  Send the object from server side to the player if is connected  
+   ****/
   public void sendObject(Object obj) {//send object to this player
     if (connected) {
       try {
         out.writeObject(obj);
       } catch (IOException e) {
-        System.out.println("IOException: send object failed\n");
         connected = false;
       }
     }
   }
 
+  /***
+  Recv an object from player if is connected
+  if not connected, return null  
+  ****/
   public Object recvObject() {//receive object from this player
     if (connected) {
       try {
         return in.readObject();
       } catch (IOException e) {
         //IOException - Any of the usual Input/Output related exceptions.
-        System.out.println("IOException: recv object failed\n");
         connected = false;
       } catch (ClassNotFoundException e) {
         //ClassNotFoundException - Class of a serialized object cannot be found.
-        System.out.println("ClassNotFoundException: recv object failed\n");
       }
     }
     return null;//may need to change to other type
   }
-  
+
+  /****
+  Send an int to the player if connected  
+   ****/
   public void sendInt(int val) {//send int to this player
     if (connected) {
       try {
         out.writeInt(val);
         out.flush();
       } catch (IOException e) {
-        System.out.println("IOException: send int failed\n");
         connected = false;
       }
     }
   }
-  
+
+  /***
+  Recv a non-negative int from the player if connected
+  if not connected, return -1  
+  ****/
   public int recvPosInt() {//receive int (>=0) from this player
     if (connected) {
       try {
         return in.readInt();
       } catch (EOFException e) {
         //EOFException - If end of file is reached.
-        System.out.println("EOFException: recv int failed\n");
         connected = false;
       }
 
       catch (IOException e) {
         //IOException - If other I/O error has occurred.
-        System.out.println("IOException: recv int failed\n");
         connected = false;
       }
     }
@@ -159,44 +153,9 @@ public class Player {
     return clientSocket;
   }
 
-  public void setPlayerTerritory(ArrayList<Territory> territories) {
-     playerTerritories = territories;
-  }
-
-  public ArrayList<Territory> getPlayerTerritory() {
-    return playerTerritories;
-  }
-
-  public void addTerritory(Territory t){
-    for (int i = 0; i < playerTerritories.size(); i++) {
-      if (t.getTid() == playerTerritories.get(i).getTid()) {
-        //adding duplicate territories
-        //cancel adding and exit
-        return;
-      }
-    }
-    playerTerritories.add(t);
-  }
-
-  public void deleteTerritory(Territory t) {
-    for (int i = 0; i < playerTerritories.size(); i++) {
-      if (t.getTid() == playerTerritories.get(i).getTid()) {
-        playerTerritories.remove(i);
-        return;
-      }
-    }
-    //may need to throw exception here if no territory matches t
-  }
 
   public void setActive(boolean bool) {
     active = bool;
-  }
-
-  public boolean checkActive() {
-    if (playerTerritories.isEmpty()) {
-      active = false;
-    }
-    return active;
   }
   
   public boolean isActive() {

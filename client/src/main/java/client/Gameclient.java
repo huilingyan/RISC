@@ -10,6 +10,9 @@ import java.util.HashSet;
 
 import shared.*;
 
+/***
+A class that functions as a game client
+****/
 public class Gameclient {
 
   Socket serverSocket; // set up when connect
@@ -21,7 +24,10 @@ public class Gameclient {
   Displayer displayer; // constructor
   int playerNum;      // set up when user prompt/recv from server
   boolean isActive;   // constructor
-  
+
+  /****
+  The consructor that takes a scanner and initialize the InputTaker and Displayer
+  *****/
   public Gameclient(Scanner sc) {
     scanner = sc;
     inTaker = new InputTaker();
@@ -29,7 +35,9 @@ public class Gameclient {
     isActive = true;
   }
 
-  // Connect to the server at localhost and the given port
+  /****
+  Connect to the server host provided in config file
+  ***/  
   private void connectToServer() {
     Config config = new Config("config.properties");
     String host = config.readProperty("hostname");
@@ -48,7 +56,9 @@ public class Gameclient {
     }
   }
 
-  // Count the number of territories owned by the player
+  /******
+  Count the number of territories owned by the player
+  ******/  
   private int getMyNumOfT(ArrayList<Territory> map) {
     int count = 0;
     for (Territory t : map) {
@@ -59,6 +69,10 @@ public class Gameclient {
     return count;
   }
 
+  /*****
+  Returns the pid of the game winner
+  If the game is still going on, return -1  
+   *****/
   private int checkWinner(ArrayList<Territory> map) {
     int winner = map.get(0).getOwnership();
     for (int i = 1; i < map.size(); i++) {
@@ -69,7 +83,10 @@ public class Gameclient {
     return winner;
   }
 
-  // TODO
+  /*****
+  Ask the user to input operations for this turn, and send the action to server 
+  when user inputs done. 
+   *****/
   private void promptForAction(ArrayList<Territory> map) {
     OperationValidator validator = new OperationValidator(id, map);
     while (true) {  // prompt for one operation in each while loop
@@ -102,7 +119,9 @@ public class Gameclient {
     sendObject(validator.getAction());
   }
 
-  // TODO: change later
+  /****
+  Normal game flow after initialization 
+  *****/
   private void playGame() {
     while (true) {   // start each turn
       ArrayList<Territory> map = (ArrayList<Territory>) recvObject();
@@ -141,8 +160,9 @@ public class Gameclient {
     }  // while
   }
 
-  
-  // Set up ObjectInputStream and receive player id from server
+  /*****
+  Set up ObjectInputStream and receive player id from server
+  *****/  
   private void receiveID() {
     try {
       // System.out.println("start create inputstream");
@@ -153,8 +173,6 @@ public class Gameclient {
       // System.out.println(id);
     }
     catch (IOException e){
-      e.printStackTrace();
-      System.out.println("IOException");
       closeSocket();
       System.exit(0);   // exit program if server's down
     }
@@ -163,69 +181,71 @@ public class Gameclient {
     
   }
 
+  /*****
+  Ask the user to input player number, and send to server  
+  ******/
   private void promptAndSendPlayerNum() {
     // prompt for player number and send to server
     displayer.inputPlayerNum();
-    // System.out.println("Please input number of players:");
     int num = inTaker.readnofPlayers(scanner);
     playerNum = num;
     displayer.setNumOfPlayer(playerNum);
-    // debug
-    System.out.println("Number of players: " + playerNum);
     // send to server
     try {
       outStream.writeInt(num);
       outStream.flush();
     } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("Fail to send player num");
       closeSocket();
       System.exit(0);  // exit program if server's down
     }
   }
 
+  /****
+  Recv a non-negative number from server, return -1 on error 
+  *****/
   private int recvPosInt() {  // receive player number, which should be no less than 0
     try {
       int num = inStream.readInt();
       return num;
     } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("Fail to recv int");
       closeSocket();
       System.exit(0);  // exit program if server's down
     }
     return -1;
   }
 
+  /****
+  Recv an object from servre, return null on error  
+   ****/
   private Object recvObject() {
     try {
       return inStream.readObject();
     } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("Fail to recv object");
       closeSocket();
       System.exit(0);  // exit program if server's down
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      System.out.println("Class not found");
       closeSocket();
       System.exit(0);  // exit program if server's down
     }
     return null;
   }
 
+  /****
+  Send an object to server  
+  *****/
   private void sendObject(Object ob) {
     try {
       outStream.writeObject(ob);
     } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("Fail to send object");
       closeSocket();
       System.exit(0);  // exit program if server's down
     }
 
   }
 
+  /***
+  Receive and set the player number  
+  ****/
   private void receivePlayerNum() {
     playerNum = recvPosInt();
     if (playerNum < 0){
@@ -233,10 +253,11 @@ public class Gameclient {
       System.exit(0);  // exit program if server's down
     }
     displayer.setNumOfPlayer(playerNum);
-    // debug
-    System.out.println("Number of players: " + playerNum);
   }
 
+  /****
+  Set up the hashset containing all territory names in map to the InputTaker  
+   ****/
   private void sendTNamesToIntaker(ArrayList<Territory> map) {
     HashSet<String> set = new HashSet<String>();
     for (Territory t : map) {
@@ -245,7 +266,9 @@ public class Gameclient {
     inTaker.setTNameSet(set);
   }
 
-  // Receive initial map from server and set up units in each territory belonged to the player
+  /****
+  Receive initial map from server and set up units in each territory belonged to the player
+  ****/   
   private void initializeUnits() {
     int totalUnit = recvPosInt();
     ArrayList<Territory> gameMap = (ArrayList<Territory>)recvObject();
@@ -277,6 +300,9 @@ public class Gameclient {
     sendObject(validator.getAction());
   }
 
+  /****
+  Initailization stage of the game  
+  *****/
   private void initializeGame() {
     connectToServer();
     receiveID();
@@ -289,21 +315,28 @@ public class Gameclient {
     initializeUnits();
   }
 
+  /****
+  Close the socket and any open output/input stream  
+   ****/
   private void closeSocket() {
     try {
       outStream.close();
     } catch (IOException e) {
-      System.out.println("Failed to close outputstream");
     }
   }
-  
+
+  /****
+  Run the game  
+  *****/
   public void runGame() {
     initializeGame();
     playGame();
     closeSocket();
   }
 
+  
   public static void main(String[] args) {
+    // run the game
     Gameclient game = new Gameclient(new Scanner(System.in));
     game.runGame();
   }

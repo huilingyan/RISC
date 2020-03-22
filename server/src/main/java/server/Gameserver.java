@@ -9,6 +9,9 @@ import java.util.Collections;
 
 import shared.*;
 
+/****
+A class that acts like a game server for RISC
+ ***/
 public class Gameserver {
 
   public static final String[] PLAYER_NAME_LIST = {"Blue", "Red", "Green", "Yellow", "Purple"};  // hardcoded player name list
@@ -18,26 +21,35 @@ public class Gameserver {
   private ArrayList<Player> playerList;  // list of Player
   private ArrayList<Territory> gameMap;  // list of Territory
   private ServerSocket mySocket;         // server socket
-  private int playerNum;
+  private int playerNum;                 // number of player
 
+  /***
+  Initialize the game server with emply playerList and gameMap 
+  ****/
   public Gameserver() {
     playerList = new ArrayList<Player>();
     gameMap = new ArrayList<Territory>();
   }
-
-  // return game map
+  
+  /****
+  return game map
+  ****/
   public ArrayList<Territory> getMap() {
     return gameMap;
   }
-
-  // Generate a random ordered territory name list
+  
+  /***
+  Generate a random ordered territory name list
+  ****/  
   private ArrayList<String> shuffleTerritoryNames() {
     ArrayList<String> list = new ArrayList<String>(Arrays.asList(TERRITORY_NAME_LIST));
     Collections.shuffle(list);
     return list;
   }
 
-  // Group territory ids according to player number
+  /*****
+  Group territory ids according to player number
+  ****/  
   private ArrayList<ArrayList<Integer>> groupTerritories(int playerNum) {
     ArrayList<ArrayList<Integer>> list = new ArrayList<ArrayList<Integer>>();
     switch (playerNum) {
@@ -67,7 +79,9 @@ public class Gameserver {
     return list;
   }
 
-  // Initialize territories according to ordered territory names and tid groups, and store them to map
+  /****
+  Initialize territories according to ordered territory names and tid groups, and store them to map
+  ***/  
   private ArrayList<Territory> initializeTerritories(ArrayList<String> names, ArrayList<ArrayList<Integer>> tidGroups){
     // append all tids into a new list
     ArrayList<Integer> tids = new ArrayList<Integer>();
@@ -95,8 +109,10 @@ public class Gameserver {
     return newMap;
     
   }
-  
-  // Initialize the game map with the given player number. Each territory has 0 unit (defender)
+
+  /****
+  Initialize the game map with the given player number. Each territory has 0 unit (defender)
+  ****/  
   public void initializeMap(int playerNum) {
     // randomize the territory name order
     ArrayList<String> nameList = shuffleTerritoryNames();
@@ -108,7 +124,9 @@ public class Gameserver {
     gameMap = initializeTerritories(nameList, tidGroups);
   }
 
-  // Bind the server socket to the given port
+  /****
+  Bind the server socket to the given port
+  *****/  
   private void bindSocket() {
     Config config = new Config("config.properties");
     String port = config.readProperty("port");
@@ -125,34 +143,39 @@ public class Gameserver {
     }
   }
 
-  // Accept a connection from client
+  /****
+  Accept a connection from client
+  ****/  
   private Socket acceptConnection() {
     try{
       Socket newSocket = mySocket.accept();
       return newSocket;
     } catch (IOException e) {
-      System.out.println("IOException when accept()");
-    }
+     }
     return null;
   }
 
-  // Accept a player and add it to player list
+  /*****
+  Accept a player and add it to player list
+  ******/  
   private void acceptPlayer(int pid) {
     Socket newSocket;
     while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
-    System.out.println("Accepts player connection");
     String playerName = PLAYER_NAME_LIST[pid];
     playerList.add(new Player(pid, playerName, newSocket));
-    System.out.println("added player");
   }
 
+  /***
+  Accept the first player and add it to playerlist
+  If player is still connected after it send the player num, return true 
+  Else, remove it from playerlist and return false  
+  ****/
   private boolean acceptFirstPlayer() {
     // accept first player
     acceptPlayer(0);  // add the first player to player list
     // send player id
     Player firstPlayer = playerList.get(0);
     firstPlayer.sendInt(0);  // send pid to first player
-    System.out.println("sent pid 0");
     // receive player num
     firstPlayer.setUpInputStream();
     playerNum = firstPlayer.recvPosInt();
@@ -162,10 +185,14 @@ public class Gameserver {
       playerList.remove(0);
       return false;
     }
-    System.out.println("Received player num: " + playerNum);
     return true;
   }
 
+  /*****
+  Accept a player after the first one and add it to playerlist
+  If the player is still connected after it recv player num, return true
+  Else, remove the player from playerlist and return false  
+   *****/
   private boolean acceptAnotherPlayer(int i) {
       acceptPlayer(i);
       Player p = playerList.get(i);
@@ -179,17 +206,22 @@ public class Gameserver {
       return true;
   }
 
+  /****
+  Accept all players  
+   ****/
   private void acceptPlayers() {
     // accept first player
     while (!acceptFirstPlayer()){}
     // accept other players
     for (int i = 1; i < playerNum; i++){
       while (!acceptAnotherPlayer(i)) {}
-      }
     }
-    
-    // returns an action which only contains validated init operations
-    private Action validateInitAction(Action ac, int pid) {
+  }
+
+  /****
+  Returns an action which only contains validated init operations
+  ****/  
+  private Action validateInitAction(Action ac, int pid) {
     // Action newAction = new Action();
     OperationValidator validator = new OperationValidator(pid, gameMap);
     for (InitOperation op : ac.getInitOperations()) {
@@ -197,8 +229,11 @@ public class Gameserver {
         //  newAction.addInitOperation(op);
     }    
     return validator.getAction();
-    }
+  }
 
+  /*****
+  Returns an action which only contains validated game operations  
+  ******/
     private Action validateGameAction(Action ac, int pid) {
       OperationValidator validator = new OperationValidator(pid, gameMap);
       for (MoveOperation op : ac.getMoveOperations()) {
@@ -209,9 +244,11 @@ public class Gameserver {
       }
       return validator.getAction();
     }
-    
-    // Initialize units of each territories
-    private void initializeUnits() {
+
+   /*****
+   Initialize units of each territories
+    ******/    
+   private void initializeUnits() {
     // send total units and initial map to each player
     for (Player p : playerList) {
       p.sendInt(UNIT_PER_PLAYER);
@@ -238,18 +275,24 @@ public class Gameserver {
     displayer.displayMap(gameMap);
     
     }
-    
+
+    /****
+    Game initialization, including binding to socket, accept players, initialize map, initialize unit   
+    ****/
     private void initializeGame() {
     
-    bindSocket(); 
-    acceptPlayers();
-    initializeMap(playerNum);
-    initializeUnits();
+      bindSocket(); 
+      acceptPlayers();
+      initializeMap(playerNum);
+      initializeUnits();
     
     }
 
 
-    // TODO
+    /****
+    Recv actions from active players and validate them then handle action
+    Server will exit the program if all players are disconnected
+    *****/
     private void recvAndHandleGameAction() {
       Action gameAction = new Action();
       int count = 0;
@@ -274,6 +317,9 @@ public class Gameserver {
       gameMap = handler.handleAction(gameMap, gameAction);
     }
 
+    /*****
+    Return true if the game is over, else return false    
+     *****/
     private boolean isGameOver() {
       int winner = gameMap.get(0).getOwnership();
       for (int i = 1; i < gameMap.size(); i++) {
@@ -283,13 +329,19 @@ public class Gameserver {
       }
       return true;
     }
-
+  
+    /****
+    Each territory in the game map adds one unit     
+    *****/
     private void mapUnitPlusOne() {
       for (Territory t : gameMap) {
         t.addDefender(1);
       }
     }
 
+    /*****
+    Check if the player with the given pid owns no territory    
+     *****/
     private boolean noTerritoryForPlayer(int pid) {
       boolean noT = true;
       for (Territory t : gameMap) {
@@ -300,6 +352,9 @@ public class Gameserver {
       return noT;
     }
 
+    /****
+    Mark any active player to be inactive if the player no longer owns any territory    
+    ******/
     private void markInactivePlayers() {
       for (Player p : playerList) {
         if (p.isActive() && noTerritoryForPlayer(p.getPid())) {
@@ -308,7 +363,10 @@ public class Gameserver {
       }
     }
     
-    // TODO: change later
+    /******
+    Regular game flow that in each turn, server send map to player, then recv action from them and apply changes 
+    Game is over when only one player is active, then close the program   
+    ******/
     private void playGame() {
     while (true) {    // keep running each turn
       // send map to all players
@@ -323,9 +381,6 @@ public class Gameserver {
       if (!isGameOver()) {
         // update map, map is sent in next turn 
         mapUnitPlusOne();
-        // for (Player p : playerList) {
-        //  p.sendObject(gameMap);
-        // }
       } else {
         // send map to players and break
         for (Player p : playerList) {
@@ -336,6 +391,10 @@ public class Gameserver {
     } // while
   }
 
+  /****
+  For each player in playerlist, close its socket and input/outputstream 
+  Also close the serversocket  
+  *****/
   private void closeSockets() {
     for (Player p : playerList) {
       p.closeSocket();
@@ -343,10 +402,12 @@ public class Gameserver {
     try {
       mySocket.close();
     } catch (IOException e) {
-      System.out.println("Failed to close server socket");
     }
   }
-  
+
+  /****
+  Run the game  
+  *****/
   public void runGame() {
     initializeGame();
     playGame();
@@ -354,13 +415,7 @@ public class Gameserver {
   }
   
   public static void main(String[] args) {
-    /****
-    // test properties
-    Config config = new Config("config.properties");
-    System.out.println(config.readProperty("hostname"));
-    System.out.println(config.readProperty("port"));
-    ****/
-    // game
+    // run the game
     Gameserver server = new Gameserver();
     server.runGame();
   }
