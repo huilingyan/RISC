@@ -151,8 +151,7 @@ public class Gameserver {
       Socket newSocket = mySocket.accept();
       return newSocket;
     } catch (IOException e) {
-      System.out.println("IOException when accept()");
-    }
+     }
     return null;
   }
 
@@ -162,10 +161,8 @@ public class Gameserver {
   private void acceptPlayer(int pid) {
     Socket newSocket;
     while ((newSocket = acceptConnection()) == null) {}  // loops until accept one connection
-    System.out.println("Accepts player connection");
     String playerName = PLAYER_NAME_LIST[pid];
     playerList.add(new Player(pid, playerName, newSocket));
-    System.out.println("added player");
   }
 
   /***
@@ -179,7 +176,6 @@ public class Gameserver {
     // send player id
     Player firstPlayer = playerList.get(0);
     firstPlayer.sendInt(0);  // send pid to first player
-    System.out.println("sent pid 0");
     // receive player num
     firstPlayer.setUpInputStream();
     playerNum = firstPlayer.recvPosInt();
@@ -189,7 +185,6 @@ public class Gameserver {
       playerList.remove(0);
       return false;
     }
-    System.out.println("Received player num: " + playerNum);
     return true;
   }
 
@@ -407,7 +402,6 @@ public class Gameserver {
     try {
       mySocket.close();
     } catch (IOException e) {
-      System.out.println("Failed to close server socket");
     }
   }
 
