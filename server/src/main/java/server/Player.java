@@ -34,7 +34,6 @@ public class Player {
     out = new ObjectOutputStream(clientSocket.getOutputStream());
     out.flush();
     } catch (IOException e) {
-      e.printStackTrace();
       connected = false;
     }
 
@@ -49,7 +48,6 @@ public class Player {
     try{
     in  = new ObjectInputStream(clientSocket.getInputStream());
     } catch(IOException e){
-      e.printStackTrace();
       connected = false;
     }
     }
@@ -62,7 +60,6 @@ public class Player {
     try {
       out.close();   // close outputstream will also close the socket and inputstream
     } catch (IOException e) {
-      System.out.println("IOException when closing outputstream");
     }
   }
 
@@ -74,7 +71,6 @@ public class Player {
       try {
         out.writeObject(obj);
       } catch (IOException e) {
-        System.out.println("IOException: send object failed\n");
         connected = false;
       }
     }
@@ -90,11 +86,9 @@ public class Player {
         return in.readObject();
       } catch (IOException e) {
         //IOException - Any of the usual Input/Output related exceptions.
-        System.out.println("IOException: recv object failed\n");
         connected = false;
       } catch (ClassNotFoundException e) {
         //ClassNotFoundException - Class of a serialized object cannot be found.
-        System.out.println("ClassNotFoundException: recv object failed\n");
       }
     }
     return null;//may need to change to other type
@@ -109,7 +103,6 @@ public class Player {
         out.writeInt(val);
         out.flush();
       } catch (IOException e) {
-        System.out.println("IOException: send int failed\n");
         connected = false;
       }
     }
@@ -125,13 +118,11 @@ public class Player {
         return in.readInt();
       } catch (EOFException e) {
         //EOFException - If end of file is reached.
-        System.out.println("EOFException: recv int failed\n");
         connected = false;
       }
 
       catch (IOException e) {
         //IOException - If other I/O error has occurred.
-        System.out.println("IOException: recv int failed\n");
         connected = false;
       }
     }
