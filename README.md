@@ -10,5 +10,8 @@ The server hostname and port are stored in shared/src/main/resources/config.prop
 
 Please change the host information as needed before starting the Gameserver program.
 
+## Evolution 1
+Commit ID: 5b74d244
+
 ## Coverage
 [Detailed coverage](https://ll199.pages.oit.duke.edu/ece651-spr20-g2/dashboard.html)
