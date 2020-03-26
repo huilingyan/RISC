@@ -1,0 +1,14 @@
+package server;
+
+public class Gameserver {
+
+
+  public void runGame() {
+
+  }
+  
+  public static void main(String[] args) {
+    Gameserver server = new Gameserver();
+    server.runGame();
+  }
+}
