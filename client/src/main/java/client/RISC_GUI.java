@@ -9,6 +9,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 
+import client.controller.*;
+
 public class RISC_GUI extends Application {
 
     @Override
