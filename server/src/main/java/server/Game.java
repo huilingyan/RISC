@@ -1,10 +1,6 @@
 package server;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import shared.*;
@@ -16,7 +12,8 @@ public class Game {
     private int playerNum;
     private int stage;
     private Map map;
-    private HashMap<Integer, Player> playerList;
+    private ArrayList<Player> playerList;  
+    private HashMap<Integer, Action> tempActionList;
 
     public static final int WAIT_FOR_PLAYERS = 0;
     public static final int INITIALIZE_UNITS = 1;
@@ -29,8 +26,55 @@ public class Game {
         playerNum = player_num;
         stage = WAIT_FOR_PLAYERS;
         map = m;
-        playerList = new HashMap<Integer, Player>();
-        playerList.put(0, first_player);  // put the first player into playerlist
-
+        playerList = new ArrayList<Player>();
+        playerList.add(first_player);  // put the first player into playerlist
+        tempActionList = new HashMap<Integer, Action>();  // empty action list
     }
+
+    public int getGid(){
+        return gid;
+    }
+
+    public int getPlayerNum(){
+        return playerNum;
+    }
+
+    public Map getMap(){
+        return map;
+    }
+
+    public void setMap(Map m){
+        map = m;
+    }
+
+    public int getStage(){
+        return stage;
+    }
+
+    public void setStage(int s){
+        stage = s;
+    }
+
+    public synchronized void addPlayer(Player p){
+        playerList.add(p);
+    }
+
+    public boolean isFull(){
+        return playerNum == playerList.size();
+    }
+
+    public void addTempAction(int pid, Action ac){
+        tempActionList.put(pid, ac);
+    }
+
+    public void clearTempActions(){
+        tempActionList.clear();
+    }
+
+    public int getPidByName(int pid){
+        PlayerStat p = map.getPlayerStatByPid(pid);
+        return p.getPid();
+    }
+
+
 }
