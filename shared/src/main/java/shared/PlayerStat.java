@@ -12,6 +12,7 @@ public class PlayerStat implements Serializable {
     private int maxTechLvl; // max tech level, start at 1, can be upgraded up to 6
     private int territoryNum; // territory number owned by the player
 
+    // constructor that set default maxTechLvl (1)
     public PlayerStat(int p_id, String p_name, int init_food, int init_gold, int init_territoryNum) {
         pid = p_id;
         name = p_name;
@@ -19,6 +20,16 @@ public class PlayerStat implements Serializable {
         gold = init_gold;
         maxTechLvl = 1; // start with level 1, could be upgraded up to 6
         territoryNum = init_territoryNum;
+    }
+
+    // copy constructor
+    public PlayerStat(PlayerStat rhs){
+        pid = rhs.getPid();
+        name = rhs.getPName();
+        food = rhs.getFood();
+        gold = rhs.getGold();
+        maxTechLvl = rhs.getMaxTechLvl();
+        territoryNum = rhs.getTerritoryNum();
     }
 
     public int getPid() {
@@ -52,6 +63,10 @@ public class PlayerStat implements Serializable {
     // upgrade max tech level by 1
     public void upgradeMaxTechLvl() {
         maxTechLvl++;
+    }
+
+    public void setMaxTechLvl(int l){
+        maxTechLvl = l;
     }
 
     public void setTerritoryNum(int num) {
