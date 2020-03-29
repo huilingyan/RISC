@@ -25,7 +25,7 @@ repositories {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'RISC_GUI'
+    mainClassName = 'client.RISC_GUI'
 }
 
 run{
