@@ -25,8 +25,7 @@ repositories {
 
 application {
     // Define the main class for the application.
-    // mainClassName = 'client.Gameclient'
-    mainClassName = 'HelloFx'
+    mainClassName = 'RISC_GUI'
 }
 
 run{
