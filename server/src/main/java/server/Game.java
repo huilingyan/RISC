@@ -15,16 +15,12 @@ public class Game {
     private ArrayList<Player> playerList;  
     private HashMap<Integer, Action> tempActionList;
 
-    public static final int WAIT_FOR_PLAYERS = 0;
-    public static final int INITIALIZE_UNITS = 1;
-    public static final int GAME_PLAY = 2;
-    public static final int GAME_OVER = 3;
-
+    
     // initialize a game
     public Game(int g_id, int player_num, Map m, Player first_player){
         gid = g_id;
         playerNum = player_num;
-        stage = WAIT_FOR_PLAYERS;
+        stage = GameMessage.WAIT_FOR_PLAYERS;
         map = m;
         playerList = new ArrayList<Player>();
         playerList.add(first_player);  // put the first player into playerlist

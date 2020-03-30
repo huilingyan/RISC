@@ -1,6 +1,5 @@
 package shared;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class UserMessage implements Serializable {
 
