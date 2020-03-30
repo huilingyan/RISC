@@ -14,8 +14,7 @@ import shared.*;
  ***/
 public class Gameserver {
 
-  public static final int UNIT_PER_PLAYER = 50;
-
+  
   private ServerSocket mySocket; // server socket
   private ArrayList<Player> userList; // list of Player
   private ArrayList<Game> gameList; // list of games
@@ -27,7 +26,7 @@ public class Gameserver {
   }
 
   // run the server
-  public void runGame() {
+  public void run() {
     bindSocket(); // initialize server socket
     // accept connection and assign to a ClientWorker
     while (true) {
@@ -93,7 +92,7 @@ public class Gameserver {
   public ArrayList<Room> gatherRooms(String name) {
     ArrayList<Room> rooms = new ArrayList<Room>();
     for (Game g : gameList) {
-      if (g.hasPlayer(name)) {
+      if (g.hasPlayer(name) && g.getStage() < GameMessage.GAME_OVER) {
         rooms.add(new Room(g.getGid(), g.getPlayerNum(), g.isFull()));
       }
     }
@@ -122,13 +121,15 @@ public class Gameserver {
     // TODO: generate new map
     Map m = new Map();
     Game g = new Game(currentGid, playerNum, m, firstP);
+    addGame(g);
     currentGid++;
     return g;
   }
 
-  public boolean hasGame(int gid){
+  // return true if the game exists and is active
+  public boolean hasActiveGame(int gid){
     for (Game g: gameList){
-      if (g.getGid()==gid){
+      if (g.getGid()==gid && g.getStage() < GameMessage.GAME_OVER){
         return true;
       }
     }
@@ -147,7 +148,7 @@ public class Gameserver {
   public static void main(String[] args) {
     // run the game
     Gameserver server = new Gameserver();
-    server.runGame();
+    server.run();
   }
 
 }

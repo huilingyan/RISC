@@ -32,7 +32,7 @@ public class ClientWorker extends Thread {
                 if (gid >= 2 && gid <= 5) {
                     g = createNewGame(gid);  // here gid is the num of players
                     waitOnGame(g);
-                } else if (boss.hasGame(gid)) {  // game exists
+                } else if (boss.hasActiveGame(gid)) {  // game exists
                     g = boss.getGame(gid);
                     updateOnGame(g, clientMsg);      
                     waitOnGame(g);
@@ -44,6 +44,7 @@ public class ClientWorker extends Thread {
             }
 
         }  // while connected
+        // thread exits if player disconnected
     }
 
     private void updateOnGame(Game g, ClientMessage msg){

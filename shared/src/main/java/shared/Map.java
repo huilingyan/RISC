@@ -13,6 +13,12 @@ public class Map implements Serializable {
     private ArrayList<Territory> territories;
     private ArrayList<PlayerStat> playerStats;
 
+    public static final int INIT_UNIT = 50; // initial unit per player
+    public static final int INIT_FOOD = 50; // initial food resource per player
+    public static final int INIT_GOLD = 50; // initial gold/technology resource per player
+    public static final String[] COLOR_LIST = {"Blue", "Red", "Green", "Yellow", "Purple"};  // hardcoded color list
+
+
     // default constructor
     public Map() {
         territories = new ArrayList<Territory>();
