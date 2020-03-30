@@ -106,4 +106,6 @@ public class InitController extends SceneController {
         return this.startgamebtn;
     }
 
+public void ll(){}
+
 }
