@@ -1,6 +1,9 @@
 package shared;
 import java.io.Serializable;
 
+/***
+ * A Room class that contains gameID, player number, and whether the room is full
+ */
 public class Room implements Serializable {
 
     private int gid;

@@ -5,17 +5,18 @@ import java.util.HashMap;
 
 import shared.*;
 
-
+/***
+ * A Game class that used to store game states on the server side
+ */
 public class Game {
 
-    private int gid;
-    private int playerNum;
-    private int stage;
-    private Map map;
-    private ArrayList<Player> playerList;  
-    private HashMap<Integer, Action> tempActionList;
+    private int gid;  // game id
+    private int playerNum;  // number of players
+    private int stage;  // game stage
+    private Map map;  // game map
+    private ArrayList<Player> playerList;  // list of players
+    private HashMap<Integer, Action> tempActionList;  // store temperary actions in each turn
 
-    
     // initialize a game
     public Game(int g_id, int player_num, Map m, Player first_player){
         gid = g_id;

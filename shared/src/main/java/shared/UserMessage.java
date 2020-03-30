@@ -1,6 +1,9 @@
 package shared;
 import java.io.Serializable;
 
+/***
+ * A UserMessage class that contains user login/register info
+ */
 public class UserMessage implements Serializable {
 
     private String username;
