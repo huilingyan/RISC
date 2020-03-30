@@ -37,6 +37,14 @@ public class MainController {
         window.setScene(initController.getCurrScene());
     }
 
+    public void showRoomScene() {
+        
+    }
+
+    public void showGameScene() {
+
+    }
+
     public void showStage() {
         window.show();
     }
