@@ -12,6 +12,7 @@ public abstract class GameMessage implements Serializable {
     protected int stage;  // game stage
 
     // stages
+    public static final int ERROR = -1;
     public static final int WAIT_FOR_PLAYERS = 0;
     public static final int INITIALIZE_UNITS = 1;
     public static final int GAME_PLAY = 2;
