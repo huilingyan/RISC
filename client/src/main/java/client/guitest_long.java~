@@ -1,0 +1,21 @@
+package client;
+
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class guitest_long {
+    @Override
+    public void start(Stage stage) {
+      Lable l = new Label("hello world");
+      Scene s1 = new Scene(new StackPane(l), 1280, 720);
+      stage.setScene(s1);
+      stage.show();
+
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+}

@@ -2,7 +2,7 @@ package client.controller;
 
 import javafx.scene.layout.AnchorPane;
 
-public abstract class PaneController {
+interface PaneController {
 
-    abstract AnchorPane getCurrPane();
+    public AnchorPane getCurrPane();
 }
