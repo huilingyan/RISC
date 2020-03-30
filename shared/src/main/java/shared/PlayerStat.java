@@ -16,15 +16,17 @@ public class PlayerStat implements Serializable {
                       // solder level
     private int maxTechLvl; // max tech level, start at 1, can be upgraded up to 6
     private int territoryNum; // territory number owned by the player
+    private String color; // color of the territories
 
     // constructor that set default maxTechLvl (1)
-    public PlayerStat(int p_id, String p_name, int init_food, int init_gold, int init_territoryNum) {
+    public PlayerStat(int p_id, String p_name, int init_food, int init_gold, int init_territoryNum, String c) {
         pid = p_id;
         name = p_name;
         food = init_food;
         gold = init_gold;
         maxTechLvl = 1; // start with level 1, could be upgraded up to 6
         territoryNum = init_territoryNum;
+        color = c;
     }
 
     // copy constructor
@@ -35,6 +37,11 @@ public class PlayerStat implements Serializable {
         gold = rhs.getGold();
         maxTechLvl = rhs.getMaxTechLvl();
         territoryNum = rhs.getTerritoryNum();
+        color = rhs.getColor();
+    }
+
+    public String getColor() {
+        return color;
     }
 
     public int getPid() {
