@@ -8,6 +8,7 @@ public class ClientMessage extends GameMessage {
     private Action action;
 
     // gid 2-5 means to start a new game, with player number of gid value
+    // gid 0 means switch out
     public ClientMessage(int gid, int s, Action ac){
         gameId = gid;
         stage = s;
