@@ -17,6 +17,9 @@ public class ClientWorker extends Thread {
     // run the thread
     public void run() {
         acceptUser();  // accept user info from client
+        while (player.isConnected()){
+            // receive ClientMessage and process
+        }
     }
 
     private void acceptUser(){
@@ -40,14 +43,16 @@ public class ClientWorker extends Thread {
                 if (!boss.hasUser(name)) { 
                     // successfully registered
                     player.setUpUserInfo(name, password);
-                    // add user info to list
                     boss.addUser(player); // synchronized
-                    // send success message
-                    msg = new RoomMessage(true);
+                    // success message
+                    msg = new RoomMessage(true);  // empty room list for new user
                     success = true;
                 }
             } // login or register
             player.sendObject(msg);
+            if (!player.isConnected()){
+                return;
+            }
         } // while
     }
 
