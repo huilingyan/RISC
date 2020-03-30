@@ -142,6 +142,13 @@ public class Player {
     return -1;
   }
 
+  public void updateSocketandStreams(Player p){
+    clientSocket = p.getSocket();
+    in = p.getInputStream();
+    out = p.getOutputStream();
+    connected = true;   // is connected
+  }
+
   public void setUsername(String p_name) {
     username = p_name;
   }
@@ -172,6 +179,14 @@ public class Player {
 
   public Socket getSocket() {
     return clientSocket;
+  }
+
+  public ObjectInputStream getInputStream(){
+    return in;
+  }
+
+  public ObjectOutputStream getOutputStream(){
+    return out;
   }
 
   public void setConnected(boolean bool) {
