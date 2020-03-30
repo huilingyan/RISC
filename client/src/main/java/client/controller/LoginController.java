@@ -14,7 +14,7 @@ public class LoginController extends SceneController {
 
     private Button loginbtn = new Button("Log In");
 
-    public Button getLoginbtn() {
+    public Button getLoginBtn() {
         return this.loginbtn;
     }
 

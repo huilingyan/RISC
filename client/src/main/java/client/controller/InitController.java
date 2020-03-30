@@ -13,14 +13,15 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 import java.util.HashMap;
-import java.util.Map;
 import java.lang.Integer;
 import java.lang.String;
-import java.util.ArrayList;
+import javafx.geometry.Pos;
 
 public class InitController extends SceneController {
 
-    private HashMap<Integer, String> territorylist = new HashMap<Integer, String>();
+    public static final HashMap<Integer, String> TERRITORY_LIST = new HashMap<Integer, String>();
+    private Button startgamebtn = new Button("Start Game");
+
 
     @Override
     public Scene getCurrScene() {
@@ -30,16 +31,25 @@ public class InitController extends SceneController {
         // set top
         Label l = new Label("Below is the map:");
         root.setTop(l);
+        l.setStyle("-fx-font: 24 arial;");
+        BorderPane.setMargin(l, new Insets(10, 10, 10, 10));
+        BorderPane.setAlignment(l, Pos.CENTER);
 
         // set left
         Pane leftpane = new Pane();
         leftpane.setPadding(new Insets(10, 10, 10, 10));
         root.setLeft(leftpane);
-        
+        //show map
         Group buttongroup = generateMap();
         leftpane.getChildren().add(buttongroup);
+        leftpane.setStyle("-fx-background-color: #A9A9A9;");
 
-        root.setLeft(leftpane);
+        // set bottom
+        root.setBottom(this.startgamebtn);
+        this.startgamebtn.setPadding(new Insets(5, 5, 5, 5));
+        BorderPane.setMargin(this.startgamebtn, new Insets(10, 10, 10, 10));
+        BorderPane.setAlignment(this.startgamebtn, Pos.TOP_RIGHT);
+
   
         // set scene
         Scene mapscene = new Scene(root, 960, 720);
@@ -49,25 +59,25 @@ public class InitController extends SceneController {
     }
 
     private void addTerritoryList() {
-        this.territorylist.put(0, "Pikachu");
-        this.territorylist.put(1, "Ditto");
-        this.territorylist.put(2, "Gengar");
-        this.territorylist.put(3, "Eevee");
+        InitController.TERRITORY_LIST.put(0, "Pikachu");
+        InitController.TERRITORY_LIST.put(1, "Ditto");
+        InitController.TERRITORY_LIST.put(2, "Gengar");
+        InitController.TERRITORY_LIST.put(3, "Eevee");
 
-        this.territorylist.put(4, "Snorlax");
-        this.territorylist.put(5, "Mew");
-        this.territorylist.put(6, "Psyduck");
-        this.territorylist.put(7, "Magneton");
+        InitController.TERRITORY_LIST.put(4, "Snorlax");
+        InitController.TERRITORY_LIST.put(5, "Mew");
+        InitController.TERRITORY_LIST.put(6, "Psyduck");
+        InitController.TERRITORY_LIST.put(7, "Magneton");
 
-        this.territorylist.put(8, "Vulpix");
-        this.territorylist.put(9, "Jumpluff");
-        this.territorylist.put(10, "Bulbasaur");
-        this.territorylist.put(11, "Charmandar");
+        InitController.TERRITORY_LIST.put(8, "Vulpix");
+        InitController.TERRITORY_LIST.put(9, "Jumpluff");
+        InitController.TERRITORY_LIST.put(10, "Bulbasaur");
+        InitController.TERRITORY_LIST.put(11, "Charmandar");
 
-        this.territorylist.put(12, "Squirtle");
-        this.territorylist.put(13, "Pidgey");
-        this.territorylist.put(14, "Caterpie");
-        this.territorylist.put(15, "Rattata");
+        InitController.TERRITORY_LIST.put(12, "Squirtle");
+        InitController.TERRITORY_LIST.put(13, "Pidgey");
+        InitController.TERRITORY_LIST.put(14, "Caterpie");
+        InitController.TERRITORY_LIST.put(15, "Rattata");
     }
 
     private Group generateMap() {
@@ -79,7 +89,7 @@ public class InitController extends SceneController {
         int init_y = 50;
 
         for (int i = 0; i < 16; i++) {
-            Button button = new Button(this.territorylist.get(i));
+            Button button = new Button(InitController.TERRITORY_LIST.get(i));
             button.setPrefWidth(100);
             button.setPrefHeight(100);
             button.setLayoutX(init_x + 75 * (i / 4));
@@ -91,4 +101,9 @@ public class InitController extends SceneController {
 
         return buttongroup;
     }
+
+    public Button getStartGameBtn() {
+        return this.startgamebtn;
+    }
+
 }

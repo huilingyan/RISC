@@ -17,6 +17,7 @@ public class MainController {
 
     private LoginController loginController = new LoginController();
     private InitController initController = new InitController();
+    private GameController gameController = new GameController();
 
     public static MainController getInstance() {
         return INSTANCE;
@@ -28,21 +29,24 @@ public class MainController {
 
     public void showLoginScene() {
         window.setScene(loginController.getCurrScene());
-        loginController.getLoginbtn().setOnAction(e -> {
+        loginController.getLoginBtn().setOnAction(e -> {
                 showInitScene();
-            }); // if login, change to the map scene
+            }); // if login, change to the init scene
+    }
+
+    public void showRoomScene() {
+
     }
 
     public void showInitScene() {
         window.setScene(initController.getCurrScene());
-    }
-
-    public void showRoomScene() {
-        
+        initController.getStartGameBtn().setOnAction(e -> {
+                showGameScene();
+            }); // if start game, change to the game scene
     }
 
     public void showGameScene() {
-
+        window.setScene(gameController.getCurrScene());
     }
 
     public void showStage() {
