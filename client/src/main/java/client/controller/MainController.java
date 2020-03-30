@@ -30,6 +30,11 @@ public class MainController {
     public void showLoginScene() {
         window.setScene(loginController.getCurrScene());
         loginController.getLoginBtn().setOnAction(e -> {
+                String username = loginController.getUsername().getText();
+                String pwd = loginController.getPwd().getText();
+                // debug
+                System.out.println("username: " + username);
+                System.out.println("password: " + pwd);
                 showInitScene();
             }); // if login, change to the init scene
     }

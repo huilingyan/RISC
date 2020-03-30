@@ -9,13 +9,24 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
+import java.io.*;
 
 public class LoginController extends SceneController {
 
     private Button loginbtn = new Button("Log In");
+    private TextField userinput = new TextField();
+    private PasswordField pwdinput = new PasswordField();
 
     public Button getLoginBtn() {
         return this.loginbtn;
+    }
+
+    public TextField getUsername() {
+        return this.userinput;
+    }
+
+    public PasswordField getPwd() {
+        return this.pwdinput;
     }
 
     @Override
@@ -31,18 +42,18 @@ public class LoginController extends SceneController {
         GridPane.setConstraints(usernamelabel, 0, 0);
 
         // username box
-        TextField userinput = new TextField();
-        userinput.setPromptText("username");
-        GridPane.setConstraints(userinput, 1, 0);
+        // TextField userinput = new TextField();
+        this.userinput.setPromptText("username");
+        GridPane.setConstraints(this.userinput, 1, 0);
 
         // password label
         Label pwdlabel = new Label("Password:");
         GridPane.setConstraints(pwdlabel, 0, 1);
 
         // password box
-        PasswordField pwdinput = new PasswordField();
-        pwdinput.setPromptText("password");
-        GridPane.setConstraints(pwdinput, 1, 1);
+        // PasswordField pwdinput = new PasswordField();
+        this.pwdinput.setPromptText("password");
+        GridPane.setConstraints(this.pwdinput, 1, 1);
 
         // Button loginbtn = new Button("Log In");
         GridPane.setConstraints(this.loginbtn, 0, 2);

@@ -106,4 +106,9 @@ public class InitController extends SceneController {
         return this.startgamebtn;
     }
 
+    // for conflict test
+    public void yhl() {
+
+    }
+
 }
