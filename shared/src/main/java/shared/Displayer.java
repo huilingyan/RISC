@@ -1,4 +1,4 @@
-package shared;
+/*package shared;
 
 import java.util.ArrayList;
 import java.io.*;
@@ -38,7 +38,7 @@ public class Displayer {
 
         */   
         // TODO: For version2, visualize it
-
+/*
         for (int i = 0; i < this.num_player; i++) {
             displayOnePlayerMap(i, t_map);
         }
@@ -233,4 +233,4 @@ public class Displayer {
         return null; // not found
     }
 
-}
+}*/
