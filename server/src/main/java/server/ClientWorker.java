@@ -19,6 +19,43 @@ public class ClientWorker extends Thread {
         acceptUser();  // accept user info from client
         while (player.isConnected()){
             // receive ClientMessage and process
+            ClientMessage clientMsg = (ClientMessage) player.recvObject();
+            int gid = clientMsg.getGameID();
+            // switch out
+            if (gid == 0){
+                // change active gid to 0
+                player.setActiveGid(0);
+                // send room message
+                player.sendObject(new RoomMessage(boss.gatherRooms(player.getUsername())));
+            } else {
+                // new game
+                if (gid >= 2 && gid <= 5) {
+                    // TODO: map generation in game server
+                    Game g = boss.startNewGame(gid, player);  // new game
+                    player.setActiveGid(g.getGid());  // set active gid to player
+                    GameWorker gWorker = new GameWorker(g, boss);  // start game worker
+                    // TODO: implement gameworker.run()
+                    gWorker.start();
+                    try {
+                        g.wait();  // wait for gameworker to notify
+                    } catch (InterruptedException e){
+                        System.out.println("InterruptedException while wait()");
+                        e.printStackTrace();
+                    }  
+                    // after gameworker notify, send initial map in servermessage
+                } else if (player.getActiveGid()==0 && boss.hasGame(gid, player.getUsername())) {
+                    // TODO: switch in or join in a game (wait for players stage)
+                } else {
+
+                }
+
+                // TODO: send object after gameworker notify
+
+
+            }
+            
+
+            
         }
     }
 
