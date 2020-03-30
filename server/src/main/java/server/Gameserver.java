@@ -57,6 +57,16 @@ public class Gameserver {
     return rooms;
   }
 
+  public synchronized Player updateUser(String name, Player p){
+    for (Player old: userList){
+      if (p.getUsername().equals(name)){
+        old.updateSocketandStreams(p);
+        return old;
+      }
+    }
+    return null;  // not found, return null
+  }
+
   public synchronized void addUser(Player p){
     userList.add(p);
   }
