@@ -60,17 +60,26 @@ public class Game {
         return playerNum == playerList.size();
     }
 
-    public void addTempAction(int pid, Action ac){
+    public synchronized void addTempAction(int pid, Action ac){
         tempActionList.put(pid, ac);
     }
 
-    public void clearTempActions(){
+    public synchronized void clearTempActions(){
         tempActionList.clear();
     }
 
     public int getPidByName(int pid){
         PlayerStat p = map.getPlayerStatByPid(pid);
         return p.getPid();
+    }
+
+    public boolean hasPlayer(String name){
+        for (Player p: playerList){
+            if (p.getUsername().equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 
 
