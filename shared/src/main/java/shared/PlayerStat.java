@@ -2,6 +2,11 @@ package shared;
 
 import java.io.Serializable;
 
+/***
+ * A class that represents player stats. Contains player id, player name, food
+ * resource, gold (technology) resource, max technology level, and number of
+ * territories owned by the player
+ */
 public class PlayerStat implements Serializable {
 
     private int pid; // player id
@@ -23,7 +28,7 @@ public class PlayerStat implements Serializable {
     }
 
     // copy constructor
-    public PlayerStat(PlayerStat rhs){
+    public PlayerStat(PlayerStat rhs) {
         pid = rhs.getPid();
         name = rhs.getPName();
         food = rhs.getFood();
@@ -65,7 +70,7 @@ public class PlayerStat implements Serializable {
         maxTechLvl++;
     }
 
-    public void setMaxTechLvl(int l){
+    public void setMaxTechLvl(int l) {
         maxTechLvl = l;
     }
 
