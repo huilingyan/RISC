@@ -3,18 +3,12 @@ package shared;
 import java.io.Serializable;
 import java.lang.String;
 
-/* example:
-    Operation op1 = InitOperation(Blue, 8); // deploy 8 units to territory Blue
-    Operation op2 = MoveOperation(Blue, Green, 5); // move 5 units from Blue to Green
-    Operation op3 = AttackOperation(Blue, Red, 6); // deploy 5 units from Blue to attack Red
-
-*/
 
 public class Operation implements Serializable {
     
     //protected int type; // operation type: 0-deployment, 1-move, 2-attack
     protected String dest; // destination territory
-    protected int num; // number of unit operated on
+    protected Army army_deploy; //army to deploy, move to or attack
 
     // public int getType() { // get the operation type
     //     return this.type;
@@ -24,8 +18,8 @@ public class Operation implements Serializable {
         return this.dest;
     }
 
-    public int getNum() { // get the number of units being deployed
-        return this.num;
+    public Army getArmy() { // get army to deploy, move to or attack
+        return this.army_deploy;
     }
 
 }
@@ -35,10 +29,10 @@ class GameOperation extends Operation {
 
     private String src; // source territory
 
-    public GameOperation(String src, String dest, int num) {
+    public GameOperation(String src, String dest, Army army) {
         this.src = src;
         this.dest = dest;
-        this.num = num;
+        this.army_deploy = army;
     }
 
 
