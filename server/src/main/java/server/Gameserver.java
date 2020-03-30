@@ -126,13 +126,22 @@ public class Gameserver {
     return g;
   }
 
-  // TODO
-  public boolean hasGame(int gid, String playerName){
-    for (Game g : gameList) {
-      if (g.getGid()==gid && g.hasPlayer(playerName)) {
-        rooms.add(new Room(g.getGid(), g.getPlayerNum(), g.isFull()));
+  public boolean hasGame(int gid){
+    for (Game g: gameList){
+      if (g.getGid()==gid){
+        return true;
       }
     }
+    return false;
+  }
+
+  public Game getGame(int gid){
+    for (Game g: gameList){
+      if (g.getGid()==gid){
+        return g;
+      }
+    }
+    return null;
   }
 
   public static void main(String[] args) {

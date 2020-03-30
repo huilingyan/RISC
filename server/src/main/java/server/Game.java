@@ -28,6 +28,16 @@ public class Game {
         tempActionList = new HashMap<Integer, Action>();  // empty action list
     }
 
+    // default constuctor: game with gid=0, stage=ERROR
+    public Game(){
+        gid = 0;
+        playerNum = 0;
+        stage = GameMessage.ERROR;
+        map = new Map();
+        playerList = new ArrayList<Player>();
+        tempActionList = new HashMap<Integer, Action>();  // empty action list
+    }
+
     public int getGid(){
         return gid;
     }
@@ -61,6 +71,10 @@ public class Game {
     }
 
     public synchronized void addTempAction(int pid, Action ac){
+        if (tempActionList.containsKey(pid)){
+            System.out.println("Error: pid " + pid + " already wrote to tempActionList");
+            return;
+        }
         tempActionList.put(pid, ac);
     }
 
@@ -68,8 +82,8 @@ public class Game {
         tempActionList.clear();
     }
 
-    public int getPidByName(int pid){
-        PlayerStat p = map.getPlayerStatByPid(pid);
+    public int getPidByName(String name){
+        PlayerStat p = map.getPlayerStatByName(name);
         return p.getPid();
     }
 
