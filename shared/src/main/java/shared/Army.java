@@ -20,6 +20,12 @@ public class Army implements Serializable{
     }
   }
 
+  public Army(int n) {
+    //assign n level 0 soldiers
+    ArrayList<Integer> Soldiers = new ArrayList<Integer>(7);
+    Soldiers.set(0, n);
+    
+  }
   public Army(Army rhs) {//copy constructor
     ArrayList<Integer> Soldiers = new ArrayList<Integer>(7);
     for (int i = 0; i < rhs.Soldiers.size(); i++) {

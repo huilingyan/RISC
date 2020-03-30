@@ -44,7 +44,7 @@ public class Territory implements Serializable{
     ownership = pid;
     tid = t_id;
     name = t_name;
-    defender = new Army();
+    defender = new Army(0);
     neighborList = new ArrayList<Integer>();
     // initialize neighbor list with all null
     for (int i = 0; i < MAX_NEIGHBOR; i++) {
@@ -58,7 +58,7 @@ public class Territory implements Serializable{
     ownership = pid;
     tid = t_id;
     name = t_name;
-    defender = new Army();
+    defender = new Army(0);
     neighborList = new ArrayList<Integer>();
     // initialize neighbor list with all null
     for (int i = 0; i < MAX_NEIGHBOR; i++) {
@@ -94,7 +94,7 @@ public class Territory implements Serializable{
     this.size = rhs.size;
     this.food_resource = rhs.food_resource;
     this.gold_resource = rhs.gold_resource;
-    defender = new Army(rhs.getDefender());
+    defender = new Army(rhs.defender);
     neighborList = new ArrayList<Integer>(rhs.getNeighborList());
     //may need to throw exception here if rhs doesn't have some fields
   }
@@ -136,19 +136,11 @@ public class Territory implements Serializable{
     return gold_resource;
   }
 
-  // public void setDefenderNum(int num) {
-  //   defender.setUnitNumber(num);
-  // }
-
-  // public int getDefenderNum() {//separate method from Army class
-  //   return defender.getUnitNumber();
-  // }
-
-  public void setDefender(Army def){
-    defender = def;
+  public void setDefender(Army rhs) {
+    defender=rhs;
   }
 
-  public Army getDefender(){
+  public Army getDefender() {//separate method from Army class
     return defender;
   }
 
@@ -240,13 +232,13 @@ public class Territory implements Serializable{
     return neighborList.get(index);
   }
 
-  // public void addDefender(int num) {
-  //   defender.addUnits(num);
-  // }
+  public void addDefender(Army rhs) {
+    defender.joinArmy(rhs);;
+  }
 
-  // public void subtractDefender(int num){
-  //   defender.subtractUnits(num);
-  // }
+  public void subtractDefender(Army rhs){
+    defender.subtractArmy(rhs);;
+  }
 
   public int countNeighbors() {
     int cnt = 0;
