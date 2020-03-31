@@ -18,7 +18,7 @@ plugins {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'client.RISC_GUI'
+    mainClassName = 'client.guitest_long'
 }
 
 javafx {
