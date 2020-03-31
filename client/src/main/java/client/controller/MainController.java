@@ -9,15 +9,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
+import shared.Map;
+import shared.MapGenerator;
 
 public class MainController {
 
     private static final MainController INSTANCE = new MainController();
     private Stage window;
-
+    // controller instances
     private LoginController loginController = new LoginController();
-    private InitController initController = new InitController();
-    private GameController gameController = new GameController();
+    private InitController initController;
+    private GameController gameController;
+    // model instances
+    Map worldmap = MapGenerator.initmapGenerator();
 
     public static MainController getInstance() {
         return INSTANCE;
@@ -44,6 +48,7 @@ public class MainController {
     }
 
     public void showInitScene() {
+        this.initController = new InitController(this.worldmap);
         window.setScene(initController.getCurrScene());
         initController.getStartGameBtn().setOnAction(e -> {
                 showGameScene();
@@ -51,6 +56,7 @@ public class MainController {
     }
 
     public void showGameScene() {
+        this.gameController = new GameController(this.worldmap);
         window.setScene(gameController.getCurrScene());
     }
 
