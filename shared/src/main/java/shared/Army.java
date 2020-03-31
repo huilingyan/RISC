@@ -18,7 +18,7 @@ public class Army implements Serializable{
     this.Soldiers = new ArrayList<Integer>();
     for (int i = 0; i < 7; i++) {   // size of solders is 7, 0-6 levels
       if (i <= (arr.size()-1)){
-        Soldiers.add(i, arr.get(i));
+        Soldiers.add(arr.get(i));
       } else {
         Soldiers.add(0);
       }
