@@ -56,7 +56,6 @@ public class ClientWorker extends Thread {
                 System.out.println("player " + player.getUsername() + " joins game " + gid);
                 g.addPlayer(player);
             }
-            // TODO: let gameworker check stage and set playerstats
             player.setActiveGid(gid);
             // debug
             System.out.println("player " + player.getUsername() + " sets active gid to " + gid);
@@ -79,7 +78,6 @@ public class ClientWorker extends Thread {
     private Game createNewGame(int playerNum) {
         // debug
         System.out.println("player " + player.getUsername() + " starts a new game");
-        // TODO: map generation in game server
         Game g = boss.startNewGame(playerNum, player); // new game
         player.setActiveGid(g.getGid()); // set active gid to player
         GameWorker gWorker = new GameWorker(g, boss); // start game worker

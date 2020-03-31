@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Random;
 
 import shared.*;
 
@@ -14,11 +15,10 @@ import shared.*;
  ***/
 public class Gameserver {
 
-  
   private ServerSocket mySocket; // server socket
   private ArrayList<Player> userList; // list of Player
   private ArrayList<Game> gameList; // list of games
-  private int currentGid = 10;  // gid start from 10
+  private int currentGid = 10; // gid start from 10
 
   public Gameserver() {
     userList = new ArrayList<Player>();
@@ -31,7 +31,8 @@ public class Gameserver {
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
-      while ((newSocket = acceptConnection()) == null) {} // loops until accept one connection
+      while ((newSocket = acceptConnection()) == null) {
+      } // loops until accept one connection
       ClientWorker worker = new ClientWorker(newSocket, this);
       worker.start();
     }
@@ -117,28 +118,164 @@ public class Gameserver {
     gameList.add(g);
   }
 
-  public Game startNewGame(int playerNum, Player firstP){
-    // TODO: generate new map
-    Map m = new Map();
+  public Game startNewGame(int playerNum, Player firstP) {
+    // generate a new map with only territory list
+    Map m = new Map(initializeTerritoryList(playerNum));
     Game g = new Game(currentGid, playerNum, m, firstP);
     addGame(g);
     currentGid++;
     return g;
   }
 
+  /***
+   * Generate a random ordered territory name list
+   ****/
+  private ArrayList<String> shuffleTerritoryNames() {
+    ArrayList<String> list = new ArrayList<String>(Arrays.asList(Map.TERRITORY_NAME_LIST));
+    Collections.shuffle(list);
+    return list;
+  }
+
+  /*****
+   * Group territory ids according to player number
+   ****/
+  private ArrayList<ArrayList<Integer>> groupTerritories(int playerNum) {
+    ArrayList<ArrayList<Integer>> list = new ArrayList<ArrayList<Integer>>();
+    switch (playerNum) {
+      case 2:
+        list.add(new ArrayList<Integer>(Arrays.asList(2, 5, 9)));
+        list.add(new ArrayList<Integer>(Arrays.asList(6, 10, 13)));
+        break;
+      case 3:
+        list.add(new ArrayList<Integer>(Arrays.asList(1, 4, 9)));
+        list.add(new ArrayList<Integer>(Arrays.asList(5, 10, 13)));
+        list.add(new ArrayList<Integer>(Arrays.asList(2, 6, 11)));
+        break;
+      case 4:
+        list.add(new ArrayList<Integer>(Arrays.asList(1, 2, 5)));
+        list.add(new ArrayList<Integer>(Arrays.asList(3, 6, 7)));
+        list.add(new ArrayList<Integer>(Arrays.asList(9, 10, 13)));
+        list.add(new ArrayList<Integer>(Arrays.asList(11, 14, 15)));
+        break;
+      case 5:
+        list.add(new ArrayList<Integer>(Arrays.asList(0, 4, 8)));
+        list.add(new ArrayList<Integer>(Arrays.asList(1, 2, 3)));
+        list.add(new ArrayList<Integer>(Arrays.asList(5, 9, 12)));
+        list.add(new ArrayList<Integer>(Arrays.asList(6, 7, 10)));
+        list.add(new ArrayList<Integer>(Arrays.asList(11, 13, 14)));
+        break;
+    }
+    return list;
+  }
+
+  // assign pid, tid and name to territories
+  private ArrayList<Territory> assignTidandName(ArrayList<String> names, ArrayList<Integer> tids) {
+    ArrayList<Territory> newMap = new ArrayList<Territory>();
+    for (int i = 0; i < tids.size(); i++) {
+      int pid = i / Map.INIT_T_NUM; // each player has three territories
+      int tid = tids.get(i);
+      String name = names.get(tid);
+      Territory t = new Territory(pid, tid, name);
+      newMap.add(t); // right now territories ordered as in tids
+    }
+    return newMap;
+  }
+
+  // assign neighbors to territories
+  private void assignNeighborstoTs(ArrayList<Territory> list, ArrayList<Integer> tids) {
+    for (Territory t : list) {
+      for (int j = 0; j < Territory.MAX_NEIGHBOR; j++) {
+        int nbID = t.calcNbID(j);
+        if (nbID >= 0 && tids.contains(nbID)) {
+          t.setNeighbor(j, nbID);
+        }
+      }
+    }
+  }
+
+  // generate a random group of ints with size of 3, and sum equals to total
+  public ArrayList<Integer> generateRandomAttriGroup(int total) {
+    ArrayList<Integer> list = new ArrayList<Integer>();
+    Random ran = new Random();
+    // 1st number: min~total/2
+    int min = Math.max(total / 3 - 1, 1);
+    int max = total / 2;
+    int result = ran.nextInt(max - min + 1) + min;
+    list.add(result);
+    // 2nd number: min~rest-min
+    int rest = total - result;
+    max = rest - min;
+    result = ran.nextInt(Math.max(max, min) - Math.min(max, min) + 1) + Math.min(max, min);
+    list.add(result);
+    // 3rd number: rest
+    rest = rest - result;
+    list.add(rest);
+    // shuffle list
+    Collections.shuffle(list);
+    return list;
+  }
+
+  // assign size, food production, gold production to territories
+  private void assignAttributestoTs(ArrayList<Territory> list) {
+    ArrayList<Integer> sizes = new ArrayList<Integer>(Map.INIT_T_NUM);
+    ArrayList<Integer> foods = new ArrayList<Integer>(Map.INIT_T_NUM);
+    ArrayList<Integer> golds = new ArrayList<Integer>(Map.INIT_T_NUM);
+    for (int index = 0; index < list.size(); index++) {
+      int pos = index % Map.INIT_T_NUM;
+      if (pos == 0) {
+        sizes = generateRandomAttriGroup(Map.INIT_T_SIZE);
+        foods = generateRandomAttriGroup(Map.INIT_FOOD_PROD);
+        golds = generateRandomAttriGroup(Map.INIT_GOLD_PROD);
+      }
+      list.get(index).set_terr_attributes(sizes.get(pos), foods.get(pos), golds.get(pos));
+    }
+
+  }
+
+  /****
+   * Initialize territories according to ordered territory names and tid groups
+   ***/
+  private ArrayList<Territory> initializeTerritories(ArrayList<String> names, ArrayList<ArrayList<Integer>> tidGroups) {
+    // append all tids into a new list
+    ArrayList<Integer> tids = new ArrayList<Integer>();
+    for (ArrayList<Integer> group : tidGroups) {
+      tids.addAll(group);
+    }
+    // assign pid, tid and name to territories
+    ArrayList<Territory> newMap = assignTidandName(names, tids);
+    // assign size, food production, gold production
+    assignAttributestoTs(newMap);
+    // set neighbors
+    assignNeighborstoTs(newMap, tids);
+    return newMap;
+
+  }
+
+  // Initialize a territory list for a new game, given the number of players
+  private ArrayList<Territory> initializeTerritoryList(int playerNum) {
+    // randomize the territory name order
+    ArrayList<String> nameList = shuffleTerritoryNames();
+    // group the tids according to player num
+    ArrayList<ArrayList<Integer>> tidGroups = groupTerritories(playerNum);
+    // assign group of territories to player id
+    Collections.shuffle(tidGroups);
+    // initialize territories
+    return initializeTerritories(nameList, tidGroups);
+  }
+
   // return true if the game exists and is active
-  public boolean hasActiveGame(int gid){
-    for (Game g: gameList){
-      if (g.getGid()==gid && g.getStage() < GameMessage.GAME_OVER){
+  public boolean hasActiveGame(int gid) {
+    for (Game g : gameList) {
+      if (g.getGid() == gid && g.getStage() < GameMessage.GAME_OVER) {
         return true;
       }
     }
     return false;
   }
 
-  public Game getGame(int gid){
-    for (Game g: gameList){
-      if (g.getGid()==gid){
+  public Game getGame(int gid) {
+    for (Game g : gameList) {
+      if (g.getGid() == gid) {
         return g;
       }
     }

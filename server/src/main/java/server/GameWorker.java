@@ -21,9 +21,10 @@ public class GameWorker extends Thread {
                     System.out.println("Error: Game " + game.getGid() + " is on error state");
                     break;
                 case (GameMessage.WAIT_FOR_PLAYERS): // wait for players
-                    // TODO
                     // wait until all players join
                     while (!game.isFull()) {}
+                    // debug
+                    System.out.println("All players joined game " + game.getGid());
                     // set player stats
                     game.setPlayerStats();
                     // change stage to initialize units

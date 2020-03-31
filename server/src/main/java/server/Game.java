@@ -21,7 +21,7 @@ public class Game {
     public Game(int g_id, int player_num, Map m, Player first_player) {
         gid = g_id;
         playerNum = player_num;
-        stage = GameMessage.WAIT_FOR_PLAYERS;
+        stage = GameMessage.WAIT_FOR_PLAYERS;  // game start at stage 0
         map = m;
         playerList = new ArrayList<Player>();
         playerList.add(first_player); // put the first player into playerlist
@@ -50,7 +50,7 @@ public class Game {
         return map;
     }
 
-    public void setMap(Map m) {
+    public synchronized void setMap(Map m) {
         map = m;
     }
 
@@ -58,7 +58,7 @@ public class Game {
         return stage;
     }
 
-    public void setStage(int s) {
+    public synchronized void setStage(int s) {
         stage = s;
     }
 
@@ -96,9 +96,18 @@ public class Game {
         return false;
     }
 
-    // TODO
-    public synchronized void setPlayerStats() {
-
+    // set PlayerStats according to playerList
+    public void setPlayerStats() {
+        ArrayList<PlayerStat> playerStats = new ArrayList<PlayerStat>();
+        for (int i = 0; i < playerNum; i++){
+            Player p = playerList.get(i);
+            PlayerStat pStat = new PlayerStat(i, p.getUsername(), Map.INIT_FOOD, Map.INIT_GOLD, Map.INIT_T_NUM, Map.COLOR_LIST[i]);
+            playerStats.add(pStat);
+        }
+        synchronized (this){
+            map.setPlayerStats(playerStats);
+        }
+        
     }
 
 }
