@@ -2,35 +2,38 @@ package shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Army implements Serializable{
-  private ArrayList<Integer> Soldiers;
+  private ArrayList<Integer> Soldiers;  // size of 7
   //Soldiers[0] or Soldiers.get(0) indicates the number of lv 0 soldiers
 
   public Army() {
-    ArrayList<Integer> Soldiers = new ArrayList<Integer>(7);
+    this.Soldiers = new ArrayList<Integer>(Arrays.asList(0,0,0,0,0,0,0));
     //level 0 - level 6
     //may need to handle exceptions if outbound
   }
 
   public Army(ArrayList<Integer> arr){//constructor
-    ArrayList<Integer> Soldiers = new ArrayList<Integer>(7);
-    for (int i = 0; i < arr.size(); i++) {
-      Soldiers.add(i, arr.get(i));
+    this.Soldiers = new ArrayList<Integer>();
+    for (int i = 0; i < 7; i++) {   // size of solders is 7, 0-6 levels
+      if (i <= (arr.size()-1)){
+        Soldiers.add(i, arr.get(i));
+      } else {
+        Soldiers.add(0);
+      }
+      
     }
   }
 
   public Army(int n) {
     //assign n level 0 soldiers
-    ArrayList<Integer> Soldiers = new ArrayList<Integer>(7);
-    Soldiers.set(0, n);
+    this.Soldiers = new ArrayList<Integer>(Arrays.asList(0,0,0,0,0,0,0));
+    this.Soldiers.set(0, n);
     
   }
   public Army(Army rhs) {//copy constructor
-    ArrayList<Integer> Soldiers = new ArrayList<Integer>(7);
-    for (int i = 0; i < rhs.Soldiers.size(); i++) {
-      Soldiers.add(i, rhs.Soldiers.get(i));
-    }
+    this.Soldiers = new ArrayList<Integer>(rhs.Soldiers);
     
   }
   
