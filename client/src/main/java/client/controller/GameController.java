@@ -8,19 +8,21 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
-import java.util.HashMap;
-import java.lang.Integer;
-import java.lang.String;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
+import shared.Map;
 
 public class GameController extends SceneController {
 
+    private Map worldmap;
     // private HashMap<Integer, String> territorylist = new HashMap<Integer, String>();
+
+    // constructor
+    public GameController(Map m) {
+        this.worldmap = m;
+    }
 
     @Override
     public Scene getCurrScene() {
@@ -48,10 +50,10 @@ public class GameController extends SceneController {
         Pane leftpane = new Pane();
         leftpane.setPadding(new Insets(10, 10, 10, 10));
         root.setLeft(leftpane);
-        //show map
+
         Group buttongroup = generateMap();
         leftpane.getChildren().add(buttongroup);
-        leftpane.setStyle("-fx-background-color: #A9A9A9;");
+        leftpane.setStyle("-fx-background-color: #d0d0d0;");
   
         // set scene
         Scene mapscene = new Scene(root, 960, 720);
@@ -68,8 +70,8 @@ public class GameController extends SceneController {
         int init_x = 50;
         int init_y = 50;
 
-        for (int i = 0; i < 16; i++) {
-            Button button = new Button(InitController.TERRITORY_LIST.get(i));
+        for (int i = 0; i < 9; i++) {
+            Button button = new Button(this.worldmap.getTerritories().get(i).getName());
             button.setPrefWidth(100);
             button.setPrefHeight(100);
             button.setLayoutX(init_x + 75 * (i / 4));

@@ -6,22 +6,26 @@ import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 import java.util.HashMap;
 import java.lang.Integer;
 import java.lang.String;
 import javafx.geometry.Pos;
+import shared.Map;
 
 public class InitController extends SceneController {
 
     public static final HashMap<Integer, String> TERRITORY_LIST = new HashMap<Integer, String>();
     private Button startgamebtn = new Button("Start Game");
-
+    private Map worldmap;
+    private InfoPaneController infopanecontroller;
+    
+    // constructor
+    public InitController(Map m) {
+        this.worldmap = m;
+        this.infopanecontroller = new InfoPaneController(m);
+    }
 
     @Override
     public Scene getCurrScene() {
@@ -39,10 +43,16 @@ public class InitController extends SceneController {
         Pane leftpane = new Pane();
         leftpane.setPadding(new Insets(10, 10, 10, 10));
         root.setLeft(leftpane);
+        BorderPane.setMargin(leftpane, new Insets(10, 10, 10, 10));
         //show map
         Group buttongroup = generateMap();
         leftpane.getChildren().add(buttongroup);
-        leftpane.setStyle("-fx-background-color: #A9A9A9;");
+        leftpane.setStyle("-fx-background-color: #d0d0d0;");
+
+        // set right
+        AnchorPane rightpane = infopanecontroller.getCurrPane();
+        root.setRight(rightpane);
+        BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
 
         // set bottom
         root.setBottom(this.startgamebtn);
@@ -82,14 +92,15 @@ public class InitController extends SceneController {
 
     private Group generateMap() {
 
-        this.addTerritoryList();
+        // this.addTerritoryList();
 
         Group buttongroup = new Group();
         int init_x = 50;
         int init_y = 50;
 
-        for (int i = 0; i < 16; i++) {
-            Button button = new Button(InitController.TERRITORY_LIST.get(i));
+        for (int i = 0; i < 9; i++) {
+            // Button button = new Button(InitController.TERRITORY_LIST.get(i));
+            Button button = new Button(this.worldmap.getTerritories().get(i).getName());
             button.setPrefWidth(100);
             button.setPrefHeight(100);
             button.setLayoutX(init_x + 75 * (i / 4));
@@ -105,14 +116,5 @@ public class InitController extends SceneController {
     public Button getStartGameBtn() {
         return this.startgamebtn;
     }
-
-
-public void ll(){}
-
-    // for conflict test
-    public void yhl() {
-
-    }
-
 
 }
