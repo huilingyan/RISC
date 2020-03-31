@@ -28,15 +28,6 @@ public class MapGenerator {
       tList.add(t);  // right now territories ordered as in tids
     }
 
-    for (Territory t: tList) {
-      for (int j = 0; j < Territory.MAX_NEIGHBOR; j++) {
-        int nbID = t.calcNbID(j);
-        if (nbID >= 0 && tids.contains(nbID)) {
-          t.setNeighbor(j, nbID);
-        }
-      }
-    }
-
     Map m = new Map(tList, psList);
     return m;
   }
