@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import shared.*;
 
 public abstract class Handler {
-  abstract ArrayList<Territory> handleAction(
-      ArrayList<Territory> map, Action action);
+  abstract Map handleAction(
+      Map WorldMap, Action action);
   //takes a map and a list of operations, apply operations to map and return updated map
 	public Territory findTerritorybyString(ArrayList<Territory> map, String tname) {
     for (int j = 0; j < map.size(); j++) {
@@ -29,13 +29,23 @@ public abstract class Handler {
     return null;
   }
   */
-  public ArrayList<Territory> copyMap(ArrayList<Territory> oldmap){
-	  	ArrayList<Territory> newmap = new ArrayList<Territory>();
-		for (int m = 0; m < oldmap.size(); m++) {
-		  Territory t = new Territory(oldmap.get(m));
-		  //deep copy, do not affect original map
-		  newmap.add(t);
-		}
-    	return newmap;
+  public ArrayList<Territory> copyMap(ArrayList<Territory> oldmap) {
+    ArrayList<Territory> newmap = new ArrayList<Territory>();
+    for (int m = 0; m < oldmap.size(); m++) {
+      Territory t = new Territory(oldmap.get(m));
+      //deep copy, do not affect original map
+      newmap.add(t);
     }
+    return newmap;
+  }
+
+  public ArrayList<PlayerStat> copyPlayerStats(ArrayList<PlayerStat> oldstats) {
+    ArrayList<PlayerStat> newstats = new ArrayList<PlayerStat>();
+    for (int p = 0; p < oldstats.size(); p++) {
+      PlayerStat t = new PlayerStat(oldstats.get(p));
+      //deep copy, do not affect original stat
+      newstats.add(t);
+    }
+    return newstats;
+  }
 }

@@ -233,11 +233,11 @@ public class Territory implements Serializable{
   }
 
   public void addDefender(Army rhs) {
-    defender.joinArmy(rhs);;
+    defender.joinArmy(rhs);
   }
 
   public void subtractDefender(Army rhs){
-    defender.subtractArmy(rhs);;
+    defender.subtractArmy(rhs);
   }
 
   public int countNeighbors() {
