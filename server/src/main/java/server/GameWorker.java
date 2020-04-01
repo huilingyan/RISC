@@ -137,9 +137,12 @@ public class GameWorker extends Thread {
     private Action validateAllGameOperations(HashMap<Integer, Action> actionList, Map gamemap) {
         Action action = new Action();
         for (HashMap.Entry<Integer, Action> entry: actionList.entrySet()){
+            // skip the action sent by already losed player
             int pid = entry.getKey();
-            Action ac = entry.getValue();
-            action.concatGameOperation(validateGameAction(ac, pid, gamemap));
+            if (gamemap.getPlayerStatByPid(pid).hasTerritory()){
+                Action ac = entry.getValue();
+                action.concatGameOperation(validateGameAction(ac, pid, gamemap));
+            }     
         }
         return action;
     }
