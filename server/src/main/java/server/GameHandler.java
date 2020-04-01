@@ -194,7 +194,7 @@ public class GameHandler extends Handler {
     //combat: roll 2 dices, one for attacker, one for defender
     for (Map.Entry<String, HashMap<Integer, Army>> t_entry : combinedAttackMap.entrySet()) {
       //locate the territory being attacked
-      Territory t_defender = findTerritorybyString(WorldMap.getTerritories(), t_entry.getKey());
+      Territory t_defender = WorldMap.getTerritoryByName(t_entry.getKey());
       int defender_id = t_defender.getOwnership();
       Army defender_army = t_defender.getDefender();
       //initialize winner
