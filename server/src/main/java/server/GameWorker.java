@@ -61,8 +61,6 @@ public class GameWorker extends Thread {
         // call init handler
         InitHandler handler = new InitHandler();
         Map newMap = handler.handleAction(gameMap, ac);
-        // update map
-        // updateUnitandResource(newMap);   // game stage only
         // set new map
         game.setMap(newMap);
         // clear tempActionList
