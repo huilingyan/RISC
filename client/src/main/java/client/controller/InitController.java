@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.lang.Integer;
 import java.lang.String;
 import javafx.geometry.Pos;
+import shared.InitOperation;
 import shared.Map;
 
 public class InitController extends SceneController {
@@ -19,17 +20,45 @@ public class InitController extends SceneController {
     public static final HashMap<Integer, String> TERRITORY_LIST = new HashMap<Integer, String>();
     private Button startgamebtn = new Button("Start Game");
     private Map worldmap;
-    private InfoPaneController infopanecontroller;
+    private BorderPane root;
+    private String mastername;
+    private int masterpid;
+    private int totalnofsoldiers;
     
     // constructor
-    public InitController(Map m) {
-        this.worldmap = m;
-        this.infopanecontroller = new InfoPaneController(m);
+  public InitController(Map m) {
+    this.worldmap = m;
+    this.totalnofsoldiers = 20;//hard coded, need adjust
+    this.root = new BorderPane();
     }
 
+    public void setMaster(int pid) {
+      this.masterpid = pid;
+    }
+  
+    public Map getWorldmap() {
+      return worldmap;
+    }
+
+    public int getPid() {
+      return masterpid;
+    }
+
+    public int getnofSoldiers() {
+      return totalnofsoldiers;
+    }
+
+    public void loseSoldiers(int n) {
+      //lose n soldiers due to initialization
+      totalnofsoldiers -= n;
+    }
+  
+    public void addInitOP(InitOperation iop) {
+      //to be implemented
+    }
+  
     @Override
     public Scene getCurrScene() {
-        BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
@@ -50,7 +79,7 @@ public class InitController extends SceneController {
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
 
         // set right
-        AnchorPane rightpane = infopanecontroller.getCurrPane();
+        AnchorPane rightpane = new InfoPaneController(worldmap).getCurrPane();
         root.setRight(rightpane);
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
 
@@ -100,12 +129,14 @@ public class InitController extends SceneController {
 
         for (int i = 0; i < 9; i++) {
             // Button button = new Button(InitController.TERRITORY_LIST.get(i));
-            Button button = new Button(this.worldmap.getTerritories().get(i).getName());
+            String t_name = this.worldmap.getTerritories().get(i).getName();
+            Button button = new Button(t_name);
             button.setPrefWidth(100);
             button.setPrefHeight(100);
             button.setLayoutX(init_x + 75 * (i / 4));
             button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
             button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\";");
+            button.setOnAction(e -> showInitOPPane(t_name));
             
             buttongroup.getChildren().addAll(button);
         }
@@ -115,6 +146,20 @@ public class InitController extends SceneController {
 
     public Button getStartGameBtn() {
         return this.startgamebtn;
+    }
+
+    public void showInitOPPane(String t_name) {
+      InitOpPaneController iopPC = new InitOpPaneController(t_name);
+      iopPC.setInitController(this);
+      updateRightPane(iopPC);
+    }
+
+    public void showInfoPane() {
+      updateRightPane(new InfoPaneController(worldmap));
+    }
+
+    public void updateRightPane(PaneController pc) {
+      root.setRight(pc.getCurrPane());
     }
 
 }
