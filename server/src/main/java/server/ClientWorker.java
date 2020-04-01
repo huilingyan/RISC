@@ -110,6 +110,7 @@ public class ClientWorker extends Thread {
             RoomMessage msg = new RoomMessage(false); // default to false (not succeed)
             if (userMsg.isLogin()) { // log in
                 // validate login info
+                // username exists, password matches, and the user is disconnected
                 if (boss.isValidUser(name, password)) {
                     // find available rooms and update msg
                     msg = new RoomMessage(boss.gatherRooms(name));

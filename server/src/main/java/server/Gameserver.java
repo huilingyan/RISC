@@ -78,12 +78,13 @@ public class Gameserver {
     return false;
   }
 
+  // check if username exists, password matches, and the user is currently disconnected
   public boolean isValidUser(String name, String password) {
     if (!hasUser(name)) {
       return false;
     }
     for (Player p : userList) {
-      if (p.getUsername().equals(name) && p.getPassword().equals(password)) {
+      if (p.getUsername().equals(name) && p.getPassword().equals(password) && (!p.isConnected())) {
         return true;
       }
     }
