@@ -9,8 +9,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
+import shared.*;
 import shared.Map;
 import shared.MapGenerator;
+import shared.Action;
 
 public class MainController {
 
@@ -22,6 +24,7 @@ public class MainController {
     private GameController gameController;
     // model instances
     Map worldmap = MapGenerator.initmapGenerator();
+    Action action = new Action();
 
     public static MainController getInstance() {
         return INSTANCE;
@@ -48,16 +51,29 @@ public class MainController {
     }
 
     public void showInitScene() {
-        this.initController = new InitController(this.worldmap);
-        window.setScene(initController.getCurrScene());
-        initController.getStartGameBtn().setOnAction(e -> {
-                showGameScene();
-            }); // if start game, change to the game scene
+        this.initController = new InitController(this.worldmap, this.action);
+        this.initController.setMainController(this);
+        updateCurrScene(this.initController);
+        // window.setScene(initController.getCurrScene());
+        // initController.getStartGameBtn().setOnAction(e -> {
+        //         showGameScene();
+        //     }); // if start game, change to the game scene
     }
 
     public void showGameScene() {
-        this.gameController = new GameController(this.worldmap);
-        window.setScene(gameController.getCurrScene());
+        this.gameController = new GameController(this.worldmap, this.action);
+        this.gameController.setMainController(this);
+        updateCurrScene(this.gameController);
+        // debug
+        for (InitOperation initop : this.action.getInitOperations()) {
+            System.out.println("dest: " + initop.getDest());
+            System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
+        }
+        // window.setScene(gameController.getCurrScene());
+    }
+
+    public void updateCurrScene(SceneController sc) {
+        window.setScene(sc.getCurrScene());
     }
 
     public void showStage() {

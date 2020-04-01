@@ -12,53 +12,68 @@ import java.util.HashMap;
 import java.lang.Integer;
 import java.lang.String;
 import javafx.geometry.Pos;
+
 import shared.InitOperation;
-import shared.Map;
+import shared.*;
 
 public class InitController extends SceneController {
 
+    public MainController mc;
+    // models
     public static final HashMap<Integer, String> TERRITORY_LIST = new HashMap<Integer, String>();
-    private Button startgamebtn = new Button("Start Game");
     private Map worldmap;
     private BorderPane root;
     private String mastername;
     private int masterpid;
     private int totalnofsoldiers;
+    private Action action;
     
     // constructor
-  public InitController(Map m) {
-    this.worldmap = m;
-    this.totalnofsoldiers = 20;//hard coded, need adjust
-    this.root = new BorderPane();
+    public InitController(Map m, Action action) {
+      this.worldmap = m;
+      this.action = action;
+      this.totalnofsoldiers = 20;//hard coded, need adjust
+      this.root = new BorderPane();
+    }
+
+    public void setMainController(MainController mainC) {
+        this.mc = mainC;
     }
 
     public void setMaster(int pid) {
-      this.masterpid = pid;
+        this.masterpid = pid;
     }
   
     public Map getWorldmap() {
-      return worldmap;
+        return worldmap;
     }
 
     public int getPid() {
-      return masterpid;
+        return masterpid;
     }
 
     public int getnofSoldiers() {
-      return totalnofsoldiers;
+        return totalnofsoldiers;
     }
 
-    public void loseSoldiers(int n) {
+    public void subtSoldiers(int n) {
       //lose n soldiers due to initialization
-      totalnofsoldiers -= n;
+        totalnofsoldiers -= n;
+    }
+
+    public Action getAction() {
+        return this.action;
     }
   
-    public void addInitOP(InitOperation iop) {
-      //to be implemented
-    }
+    // public void addInitOP(InitOperation iop) {
+    //   //to be implemented
+    // }
   
     @Override
     public Scene getCurrScene() {
+        // hard-coded master pid for test
+        setMaster(0);
+
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
@@ -84,10 +99,14 @@ public class InitController extends SceneController {
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
 
         // set bottom
-        root.setBottom(this.startgamebtn);
-        this.startgamebtn.setPadding(new Insets(5, 5, 5, 5));
-        BorderPane.setMargin(this.startgamebtn, new Insets(10, 10, 10, 10));
-        BorderPane.setAlignment(this.startgamebtn, Pos.TOP_RIGHT);
+        Button startgamebtn = new Button("Start Game");
+        root.setBottom(startgamebtn);
+        startgamebtn.setPadding(new Insets(5, 5, 5, 5));
+        startgamebtn.setOnAction(e -> {
+            this.mc.showGameScene();
+        });
+        BorderPane.setMargin(startgamebtn, new Insets(10, 10, 10, 10));
+        BorderPane.setAlignment(startgamebtn, Pos.TOP_RIGHT);
 
   
         // set scene
@@ -121,8 +140,6 @@ public class InitController extends SceneController {
 
     private Group generateMap() {
 
-        // this.addTerritoryList();
-
         Group buttongroup = new Group();
         int init_x = 50;
         int init_y = 50;
@@ -131,21 +148,31 @@ public class InitController extends SceneController {
             // Button button = new Button(InitController.TERRITORY_LIST.get(i));
             String t_name = this.worldmap.getTerritories().get(i).getName();
             Button button = new Button(t_name);
+            // get the button colour according to player
+            int pid = this.worldmap.getTerritories().get(i).getOwnership();
+            String color = this.worldmap.getPlayerStatByPid(pid).getColor();
             button.setPrefWidth(100);
             button.setPrefHeight(100);
             button.setLayoutX(init_x + 75 * (i / 4));
             button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
-            button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\";");
-            button.setOnAction(e -> showInitOPPane(t_name));
+            button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
+                            + "-fx-background-color: #" + color + ";");
+            if (pid != this.masterpid) { // if territory don't belong to player
+                button.setDisable(true); // disable button
+            }
+            button.setOnAction(e -> {
+              showInitOPPane(t_name);
+              // // debug
+              // for (InitOperation initop : this.action.getInitOperations()) {
+              //   System.out.println("dest: " + initop.getDest());
+              //   System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
+              // }
+            });
             
             buttongroup.getChildren().addAll(button);
         }
 
         return buttongroup;
-    }
-
-    public Button getStartGameBtn() {
-        return this.startgamebtn;
     }
 
     public void showInitOPPane(String t_name) {

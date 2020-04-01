@@ -13,19 +13,35 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import shared.Map;
+import shared.Action;
 
 public class GameController extends SceneController {
 
+    public MainController mc;
+    // models
     private Map worldmap;
-    // private HashMap<Integer, String> territorylist = new HashMap<Integer, String>();
+    private int masterpid;
+    private Action action;
 
     // constructor
-    public GameController(Map m) {
+    public GameController(Map m, Action action) {
         this.worldmap = m;
+        this.action = action;
     }
+
+    public void setMainController(MainController mainC) {
+        this.mc = mainC;
+    }
+
+    public void setMaster(int pid) {
+        this.masterpid = pid;
+      }
 
     @Override
     public Scene getCurrScene() {
+        // hard-coded master pid for test
+        setMaster(0);
+
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
 
@@ -64,19 +80,26 @@ public class GameController extends SceneController {
 
     private Group generateMap() {
 
-        // this.addTerritoryList();
-
         Group buttongroup = new Group();
         int init_x = 50;
         int init_y = 50;
 
         for (int i = 0; i < 9; i++) {
-            Button button = new Button(this.worldmap.getTerritories().get(i).getName());
+            // Button button = new Button(InitController.TERRITORY_LIST.get(i));
+            String t_name = this.worldmap.getTerritories().get(i).getName();
+            Button button = new Button(t_name);
+            // get the button colour according to player
+            int pid = this.worldmap.getTerritories().get(i).getOwnership();
+            String color = this.worldmap.getPlayerStatByPid(pid).getColor();
             button.setPrefWidth(100);
             button.setPrefHeight(100);
             button.setLayoutX(init_x + 75 * (i / 4));
             button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
-            button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\";");
+            button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
+                            + "-fx-background-color: #" + color + ";");
+            if (pid != this.masterpid) { // if territory don't belong to player
+                button.setDisable(true); // disable button
+            }
             
             buttongroup.getChildren().addAll(button);
         }
