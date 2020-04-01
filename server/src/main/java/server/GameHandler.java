@@ -17,7 +17,7 @@ public class GameHandler extends Handler {
     shared.Map map_moved = handleMove(map_upgraded, action);
     shared.Map map_attacked = handleAttack(map_moved, action);
     shared.Map map_techlv_upgraded = handleMaxTechLvUpgrade(map_attacked, action);
-    return map_attacked;
+    return map_techlv_upgraded;
   }
   
    public shared.Map handleUpgrade(
