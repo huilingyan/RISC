@@ -97,9 +97,9 @@ public class GameController extends SceneController {
             button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
             button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
                             + "-fx-background-color: #" + color + ";");
-            if (pid != this.masterpid) { // if territory don't belong to player
-                button.setDisable(true); // disable button
-            }
+            // if (pid != this.masterpid) { // if territory don't belong to player
+            //     button.setDisable(true); // disable button
+            // }
             
             buttongroup.getChildren().addAll(button);
         }
