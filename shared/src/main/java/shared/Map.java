@@ -127,7 +127,7 @@ public class Map implements Serializable {
     // add 1 base unit to each territory
     private void updateUnit(){
         for (Territory t : territories) {
-            t.addDefender(new Army(new ArrayList<Integer>(Arrays.asList(1))));
+            t.addDefender(new Army(1));
           }
     }
 
