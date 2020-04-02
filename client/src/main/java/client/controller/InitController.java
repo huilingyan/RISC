@@ -36,6 +36,7 @@ public class InitController extends SceneController {
       this.root = new BorderPane();
     }
 
+    @Override
     public void setMainController(MainController mainC) {
         this.mc = mainC;
     }
@@ -73,7 +74,6 @@ public class InitController extends SceneController {
     public Scene getCurrScene() {
         // hard-coded master pid for test
         setMaster(0);
-
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
@@ -82,22 +82,18 @@ public class InitController extends SceneController {
         l.setStyle("-fx-font: 24 arial;");
         BorderPane.setMargin(l, new Insets(10, 10, 10, 10));
         BorderPane.setAlignment(l, Pos.CENTER);
-
         // set left
         Pane leftpane = new Pane();
         leftpane.setPadding(new Insets(10, 10, 10, 10));
         root.setLeft(leftpane);
-        BorderPane.setMargin(leftpane, new Insets(10, 10, 10, 10));
-        //show map
-        Group buttongroup = generateMap();
-        leftpane.getChildren().add(buttongroup);
+        BorderPane.setMargin(leftpane, new Insets(10, 10, 10, 10));      
+        Group buttongroup = generateMap(); //show map
+        leftpane.getChildren().add(buttongroup); 
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
-
         // set right
         AnchorPane rightpane = new InfoPaneController(worldmap).getCurrPane();
         root.setRight(rightpane);
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
-
         // set bottom
         Button startgamebtn = new Button("Start Game");
         root.setBottom(startgamebtn);
@@ -107,8 +103,7 @@ public class InitController extends SceneController {
         });
         BorderPane.setMargin(startgamebtn, new Insets(10, 10, 10, 10));
         BorderPane.setAlignment(startgamebtn, Pos.TOP_RIGHT);
-
-  
+ 
         // set scene
         Scene mapscene = new Scene(root, 960, 720);
 
@@ -157,16 +152,8 @@ public class InitController extends SceneController {
             button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
             button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
                             + "-fx-background-color: #" + color + ";");
-            // if (pid != this.masterpid) { // if territory don't belong to player
-            //     button.setDisable(true); // disable button
-            // }
             button.setOnAction(e -> {
-              showInitOPPane(t_name);
-              // // debug
-              // for (InitOperation initop : this.action.getInitOperations()) {
-              //   System.out.println("dest: " + initop.getDest());
-              //   System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
-              // }
+                showInitOPPane(t_name);
             });
             
             buttongroup.getChildren().addAll(button);

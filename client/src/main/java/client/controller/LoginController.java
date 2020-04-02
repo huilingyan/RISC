@@ -13,20 +13,11 @@ import java.io.*;
 
 public class LoginController extends SceneController {
 
-    private Button loginbtn = new Button("Log In");
-    private TextField userinput = new TextField();
-    private PasswordField pwdinput = new PasswordField();
+    public MainController mc;
 
-    public Button getLoginBtn() {
-        return this.loginbtn;
-    }
-
-    public TextField getUsername() {
-        return this.userinput;
-    }
-
-    public PasswordField getPwd() {
-        return this.pwdinput;
+    @Override
+    public void setMainController(MainController mainC) {
+        this.mc = mainC;
     }
 
     @Override
@@ -42,21 +33,29 @@ public class LoginController extends SceneController {
         GridPane.setConstraints(usernamelabel, 0, 0);
 
         // username box
-        // TextField userinput = new TextField();
-        this.userinput.setPromptText("username");
-        GridPane.setConstraints(this.userinput, 1, 0);
+        TextField userinput = new TextField();
+        userinput.setPromptText("username");
+        GridPane.setConstraints(userinput, 1, 0);
 
         // password label
         Label pwdlabel = new Label("Password:");
         GridPane.setConstraints(pwdlabel, 0, 1);
 
         // password box
-        // PasswordField pwdinput = new PasswordField();
-        this.pwdinput.setPromptText("password");
-        GridPane.setConstraints(this.pwdinput, 1, 1);
+        PasswordField pwdinput = new PasswordField();
+        pwdinput.setPromptText("password");
+        GridPane.setConstraints(pwdinput, 1, 1);
 
-        // Button loginbtn = new Button("Log In");
-        GridPane.setConstraints(this.loginbtn, 0, 2);
+        Button loginbtn = new Button("Log In");
+        GridPane.setConstraints(loginbtn, 0, 2);
+        loginbtn.setOnAction(e -> {
+            String username = userinput.getText();
+            String pwd = pwdinput.getText();
+            // debug
+            System.out.println("username: " + username);
+            System.out.println("password: " + pwd);
+            this.mc.showRoomScene();
+        });
 
 
         Button signupbtn = new Button("Sign Up");

@@ -20,6 +20,7 @@ public class MainController {
     private Stage window;
     // controller instances
     private LoginController loginController = new LoginController();
+    private RoomController roomController = new RoomController();
     private InitController initController;
     private GameController gameController;
     // model instances
@@ -35,29 +36,19 @@ public class MainController {
     }
 
     public void showLoginScene() {
-        window.setScene(loginController.getCurrScene());
-        loginController.getLoginBtn().setOnAction(e -> {
-                String username = loginController.getUsername().getText();
-                String pwd = loginController.getPwd().getText();
-                // debug
-                System.out.println("username: " + username);
-                System.out.println("password: " + pwd);
-                showInitScene();
-            }); // if login, change to the init scene
+        this.loginController.setMainController(this);
+        updateCurrScene(this.loginController);
     }
 
     public void showRoomScene() {
-
+        this.roomController.setMainController(this);
+        updateCurrScene(this.roomController);
     }
 
     public void showInitScene() {
         this.initController = new InitController(this.worldmap, this.action);
         this.initController.setMainController(this);
         updateCurrScene(this.initController);
-        // window.setScene(initController.getCurrScene());
-        // initController.getStartGameBtn().setOnAction(e -> {
-        //         showGameScene();
-        //     }); // if start game, change to the game scene
     }
 
     public void showGameScene() {
