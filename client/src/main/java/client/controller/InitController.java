@@ -24,15 +24,14 @@ public class InitController extends SceneController {
     private Map worldmap;
     private BorderPane root;
     private String mastername;
-    private int room_num;
-    private int masterpid;
+    private int room_num; // id of current room
+    private int masterpid; // id of the player
     private int totalnofsoldiers;
     private Action action;
     
     // constructor
-    public InitController(Map m, Action action) {
+    public InitController(Map m) {
       this.worldmap = m;
-      this.action = action;
       this.totalnofsoldiers = 20;//hard coded, need adjust
       this.root = new BorderPane();
     }
@@ -164,17 +163,17 @@ public class InitController extends SceneController {
     }
 
     public void showInitOPPane(String t_name) {
-      InitOpPaneController iopPC = new InitOpPaneController(t_name);
-      iopPC.setInitController(this);
-      updateRightPane(iopPC);
+        InitOpPaneController iopPC = new InitOpPaneController(t_name);
+        iopPC.setInitController(this);
+        updateRightPane(iopPC);
     }
 
     public void showInfoPane() {
-      updateRightPane(new InfoPaneController(worldmap));
+        updateRightPane(new InfoPaneController(worldmap));
     }
 
     public void updateRightPane(PaneController pc) {
-      root.setRight(pc.getCurrPane());
+        root.setRight(pc.getCurrPane());
     }
 
 }

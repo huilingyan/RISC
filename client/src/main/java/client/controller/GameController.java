@@ -24,9 +24,8 @@ public class GameController extends SceneController {
     private Action action;
 
     // constructor
-    public GameController(Map m, Action action) {
+    public GameController(Map m) {
         this.worldmap = m;
-        this.action = action;
     }
 
     public void setMainController(MainController mainC) {

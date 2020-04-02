@@ -95,6 +95,6 @@ public class InitOpPaneController implements PaneController {
         }
         
         return anchorP;
-	}
+	  }
 
 }
