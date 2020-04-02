@@ -12,7 +12,7 @@ public class InfoLayoutGenerator {
     grid.setVgap(10);
 
     grid.add(new Text("Name:"), 0, 0);
-    grid.add(new Text("Owner:"), 0, 1);
+    grid.add(new Text("Owner ID:"), 0, 1);
     grid.add(new Text("Size:"), 0, 2);
     grid.add(new Text("Food Production:"), 0, 3);
     grid.add(new Text("Gold Porduction:"), 0, 4);
