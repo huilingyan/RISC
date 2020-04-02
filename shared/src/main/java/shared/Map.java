@@ -142,16 +142,6 @@ public class Map implements Serializable {
         }
     }
 
-    // check if game is over
-    public boolean isGameOver(){
-        int total = territories.size();
-        for (PlayerStat ps: playerStats){
-            // check if the player owns all territory
-            if (ps.getTerritoryNum()==total){
-                return true;
-            }
-        }
-        return false;
-    }
+    
 
 }

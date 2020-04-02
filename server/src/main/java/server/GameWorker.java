@@ -52,6 +52,18 @@ public class GameWorker extends Thread {
           // gameover, gameworker exits
     }
 
+    // check if game is over
+    private boolean isGameOver(Map map){
+        int total = map.getTerritories().size();
+        for (PlayerStat ps: map.getPlayerStats()){
+            // check if the player owns all territory
+            if (ps.getTerritoryNum()==total){
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void initializeGameUnits(){
         // debug
         System.out.println("All players placed units in game " + game.getGid());
@@ -81,7 +93,7 @@ public class GameWorker extends Thread {
         // check game over
         // if yes, update game stage
         // if no, update map
-        if (newMap.isGameOver()){
+        if (isGameOver(newMap)){
             game.setStage(GameMessage.GAME_OVER);
         } else {
             newMap.updateUnitandResource();
