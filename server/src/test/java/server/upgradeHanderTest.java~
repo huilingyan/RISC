@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import shared.*;
 
-public class initHandlerTest {
+public class upgradeHandlerTest {
   @Test
-  public void testInitHandler() {
+  public void testUpgradeHandler() {
     
     Territory t0 = new Territory(0, 0, "Red");
     Territory t1 = new Territory(0, 1, "Blue");

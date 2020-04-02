@@ -70,6 +70,10 @@ public class Action implements Serializable {
   public void addAttackOperation(AttackOperation aop) {
     this.attackOperations.add(aop);
   }
+  
+  public void addUpgradeOperation(UpgradeOperation uop) {
+    this.upgradeOperations.add(uop);
+  }
 
   public void concatInitOperation(Action clientaction) {
     this.initOperations.addAll(clientaction.initOperations);
