@@ -9,12 +9,12 @@ public class InitHandler extends Handler {
 
   @Override
   public Map handleAction(
-         Map WorldMap, Action action){
+         Map worldmap, Action action){
     
     ArrayList<Territory> newmap = copyMap(WorldMap.getTerritories());
     ArrayList<PlayerStat> newstats = copyPlayerStats(WorldMap.getPlayerStats());
     //deep copy
-    Map NewMap = new Map(newmap, newstats);
+    Map new_worldmap = new Map(newmap, newstats);
     
     List<InitOperation> initList = action.getInitOperations();
     for (int i = 0; i < initList.size(); i++) {
@@ -22,13 +22,13 @@ public class InitHandler extends Handler {
       String dest = initOp.getDest();
       Army army_depoly = initOp.getArmy();
       //System.out.println("dest:" + dest + " num:" + num);
-      Territory t_dest = NewMap.getTerritoryByName(dest);
+      Territory t_dest = new_worldmap.getTerritoryByName(dest);
       if (t_dest != null) {
         t_dest.addDefender(army_depoly);
       }
      }
 
 
-    return NewMap;
+    return new_worldmap;
   }
 }

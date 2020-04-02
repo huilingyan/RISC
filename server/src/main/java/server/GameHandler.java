@@ -11,9 +11,9 @@ import shared.*;
 public class GameHandler extends Handler {
   @Override
   public shared.Map handleAction(
-      shared.Map WorldMap, Action action) {
+      shared.Map worldmap, Action action) {
     
-    shared.Map map_upgraded = handleUpgrade(WorldMap, action);
+    shared.Map map_upgraded = handleUpgrade(worldmap, action);
     shared.Map map_moved = handleMove(map_upgraded, action);
     shared.Map map_attacked = handleAttack(map_moved, action);
     shared.Map map_techlv_upgraded = handleMaxTechLvUpgrade(map_attacked, action);
@@ -21,11 +21,10 @@ public class GameHandler extends Handler {
   }
   
    public shared.Map handleUpgrade(
-       shared.Map WorldMap, Action action) {
-     ArrayList<Territory> newmap = copyMap(WorldMap.getTerritories());
-     ArrayList<PlayerStat> newstats = copyPlayerStats(WorldMap.getPlayerStats());
+       shared.Map worldmap, Action action) {
+ 
      //deep copy
-     shared.Map NewMap = new shared.Map(newmap, newstats);
+     shared.Map new_worldmap = new shared.Map(worldmap);
      
      List<UpgradeOperation> upgradeList = action.getUpgradeOperations();
     for (int i = 0; i < upgradeList.size(); i++) {
@@ -36,7 +35,7 @@ public class GameHandler extends Handler {
       
       System.out.println("dest:" + dest + " num:" + army_to_upgrade.getTotalSoldiers());
       
-      Territory t_dest = NewMap.getTerritoryByName(dest);
+      Territory t_dest = new_worldmap.getTerritoryByName(dest);
       if (t_dest != null) {
         t_dest.subtractDefender(army_to_upgrade);//remove soldiers to upgrade
         t_dest.addDefender(army_upgraded);//add back upgraded soldiers
@@ -44,14 +43,14 @@ public class GameHandler extends Handler {
         int upgrade_cost = calculateUpgradeCost(army_to_upgrade, army_upgraded);
         int playerid = t_dest.getOwnership();
         
-        System.out.println("gold before upgrade:" + NewMap.getPlayerStatByPid(playerid).getGold());
+        System.out.println("gold before upgrade:" + new_worldmap.getPlayerStatByPid(playerid).getGold());
 
-        NewMap.getPlayerStatByPid(playerid).subtractGold(upgrade_cost);
+        new_worldmap.getPlayerStatByPid(playerid).subtractGold(upgrade_cost);
 
-        System.out.println("gold after upgrade:" + NewMap.getPlayerStatByPid(playerid).getFood());
+        System.out.println("gold after upgrade:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
       }
     }
-     return NewMap;
+     return new_worldmap;
    }
 
    public int calculateUpgradeCost(Army army1, Army army2) {
@@ -83,11 +82,10 @@ public class GameHandler extends Handler {
    }
   
   public shared.Map handleMove(
-      shared.Map WorldMap, Action action) {
-    ArrayList<Territory> newmap = copyMap(WorldMap.getTerritories());
-    ArrayList<PlayerStat> newstats = copyPlayerStats(WorldMap.getPlayerStats());
+      shared.Map worldmap, Action action) {
+    
     //deep copy
-    shared.Map NewMap = new shared.Map(newmap, newstats);
+    shared.Map new_worldmap = new shared.Map(worldmap);
 
     List<MoveOperation> moveList = action.getMoveOperations();
     for (int i = 0; i < moveList.size(); i++) {
@@ -96,8 +94,8 @@ public class GameHandler extends Handler {
       String dest = moveOp.getDest();
       Army army_move = moveOp.getArmy();
       System.out.println("dest:" + dest + " num:" + army_move.getTotalSoldiers());
-      Territory t_src = NewMap.getTerritoryByName(src);
-      Territory t_dest = NewMap.getTerritoryByName(dest);
+      Territory t_src = new_worldmap.getTerritoryByName(src);
+      Territory t_dest = new_worldmap.getTerritoryByName(dest);
       if (t_src != null && t_dest != null) {
         t_src.subtractDefender(army_move);//src territory - unit
         t_dest.addDefender(army_move);//dest territory + unit
@@ -105,22 +103,20 @@ public class GameHandler extends Handler {
         //TODO: call minimum path finder which returns total size of the path
         int move_cost = 10 * army_move.getTotalSoldiers();
         int playerid = t_src.getOwnership();
-        System.out.println("food before move:" + NewMap.getPlayerStatByPid(playerid).getFood());
+        System.out.println("food before move:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
+        new_worldmap.getPlayerStatByPid(playerid).subtractFood(move_cost);
 
-        NewMap.getPlayerStatByPid(playerid).subtractFood(move_cost);
-
-        System.out.println("food after move:" + NewMap.getPlayerStatByPid(playerid).getFood());
+        System.out.println("food after move:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
       }
     }
-    return NewMap;
+    return new_worldmap;
   }
 
   public shared.Map handleAttack(
-    shared.Map WorldMap, Action action) {
-    ArrayList<Territory> newmap = copyMap(WorldMap.getTerritories());
-    ArrayList<PlayerStat> newstats = copyPlayerStats(WorldMap.getPlayerStats());
+    shared.Map worldmap, Action action) {
+    
     //deep copy
-    shared.Map NewMap = new shared.Map(newmap, newstats);
+    shared.Map new_worldmap = new shared.Map(worldmap);
 
     //if player A attacks territory X with units from multiple of her own
     //territories, they count as a single combined force
@@ -137,8 +133,8 @@ public class GameHandler extends Handler {
       Army army_attack = attackOp.getArmy();
 
       System.out.println("dest:" + dest + " num:" + army_attack.getTotalSoldiers());
-      Territory t_src = NewMap.getTerritoryByName(src);
-      Territory t_dest = NewMap.getTerritoryByName(dest);
+      Territory t_src = new_worldmap.getTerritoryByName(src);
+      Territory t_dest = new_worldmap.getTerritoryByName(dest);
       if (t_src != null && t_dest != null) {
         t_src.subtractDefender(army_attack);//src territory - unit
         //attack op immediately result in all attackers leaving home territory
@@ -146,11 +142,11 @@ public class GameHandler extends Handler {
         int attack_cost = 1 * army_attack.getTotalSoldiers();
         //An attack order now costs 1 food per unit attacking
         int playerid = t_src.getOwnership();
-        System.out.println("food before attack:" + NewMap.getPlayerStatByPid(playerid).getFood());
+        System.out.println("food before attack:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
 
-        NewMap.getPlayerStatByPid(playerid).subtractFood(attack_cost);
+        new_worldmap.getPlayerStatByPid(playerid).subtractFood(attack_cost);
 
-        System.out.println("food after attack:" + NewMap.getPlayerStatByPid(playerid).getFood());
+        System.out.println("food after attack:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
         
         combinedAttackMap.putIfAbsent(dest, new HashMap<Integer, Army>());
         //add territory if attack map do not contain it yet
@@ -178,93 +174,49 @@ public class GameHandler extends Handler {
               p_entry : t_entry.getValue().entrySet()) {         
          System.out.println("player " + p_entry.getKey() + " with " + p_entry.getValue().getTotalSoldiers() + " units");
        }
-     }
-    
-    
+     }   
     //execute each attack order on newmap
-    Combat(combinedAttackMap, NewMap);
-   
-    
-    return NewMap;
+    Combat(combinedAttackMap, new_worldmap);
+      
+    return new_worldmap;
   }
 
-  public void Combat(HashMap<String, HashMap<Integer, Army>> combinedAttackMap, shared.Map WorldMap) {
-    Dice atk_dice = new Dice(20);
-    Dice def_dice = new Dice(20);
-    //combat: roll 2 dices, one for attacker, one for defender
-    for (Map.Entry<String, HashMap<Integer, Army>> t_entry : combinedAttackMap.entrySet()) {
+  public void Combat(HashMap<String, HashMap<Integer, Army>> combinedAttackMap, shared.Map worldmap) {
+    
+    for (HashMap.Entry<String, HashMap<Integer, Army>> t_entry : combinedAttackMap.entrySet()) {
       //locate the territory being attacked
-      Territory t_defender = WorldMap.getTerritoryByName(t_entry.getKey());
+      Territory t_defender = worldmap.getTerritoryByName(t_entry.getKey());
       int defender_id = t_defender.getOwnership();
       Army defender_army = t_defender.getDefender();
       //initialize winner
       int winner_id = defender_id;
       Army winner_army = defender_army;
-
-      //if multiple players attack the same territory,
-      //each attack is resolved sequentially
-      //first pick a random attacker, fights with current defender
-      //then pick second random attack fights with winner of first attack
-      //until all attack are handled
+      //initialize loser
+      int loser_id = defender_id;
         
       // Get all the entries in the map into a list
-      List<Map.Entry<Integer, Army>> entry = new ArrayList<>(t_entry.getValue().entrySet());
- 
+      List<HashMap.Entry<Integer, Army>> entry = new ArrayList<>(t_entry.getValue().entrySet());
       // Shuffle the list, randomize attack sequence
       Collections.shuffle(entry);
- 
       // Insert them all into a LinkedHashMap
-      //Map<Integer, Integer> shuffledmap = new LinkedHashMap<>();
-      for (Map.Entry<Integer, Army> p_entry : entry) {
-        //execute combat calculation 
+      for (Map.Entry<Integer, Army> p_entry : entry) {         
         int attacker_id = p_entry.getKey();
-        Army attacker_army = p_entry.getValue();
+        Army attacker_army = p_entry.getValue();//get attacker info
         System.out.println("On territory:" + t_defender.getName());
         System.out.println("player " + attacker_id + " with " + attacker_army.getTotalSoldiers() + " units"
             + " ATTACKS player " + defender_id + " with " + defender_army.getTotalSoldiers() + " units");
-        
-        while ((attacker_army.getTotalSoldiers() > 0) &&
-            (defender_army.getTotalSoldiers() > 0)) {
 
-          //one with lower points (take bonus into account) loses 1 unit
-          //(in a tie defender wins)
-
-          //first pick out soldier with highest and lowest bonus(level) for both attacker and defender
-          //(if one side only has one soldier, the soldier can fight twice if he wins the first round)
-
-          //attacker’s highest bonus fights defender’s lowest bonus
-          int atk_value = atk_dice.rollDice() + attacker_army.getHighestBonus();
-          int def_value = def_dice.rollDice() + defender_army.getLowestBonus();
-          if (atk_value > def_value) {
-            //remove losing soldier from Army
-            defender_army.subtractSoldiers(defender_army.getLowestLevel(), 1);
-          } else {
-            attacker_army.subtractSoldiers(attacker_army.getHighestLevel(), 1);
-          }
-          if ((attacker_army.getTotalSoldiers() <= 0) ||
-              (defender_army.getTotalSoldiers() <= 0)) {
-            //check if any side has no more soldiers
-            break;
-          }
-
-          //defender’s highest bonus fights attacker’s lowest bonus
-          atk_value = atk_dice.rollDice() + attacker_army.getLowestBonus();
-          def_value = def_dice.rollDice() + defender_army.getHighestBonus();
-          if (atk_value > def_value) {
-            //remove losing soldier from Army
-            defender_army.subtractSoldiers(defender_army.getHighestLevel(), 1);
-          } else {
-            attacker_army.subtractSoldiers(attacker_army.getLowestLevel(), 1);
-          }
-
-        }
+        //execute combat calculation
+        calculateCombatResult(attacker_id, attacker_army, defender_id, defender_army);
         
         if (attacker_army.getTotalSoldiers() <= 0) {
           winner_id = defender_id;
           winner_army = defender_army;
+          loser_id = attacker_id;
         } else {
           winner_id = attacker_id;
           winner_army = attacker_army;
+          loser_id = defender_id;
           //attacker becomes defender for possible upcoming attacks
           defender_id = winner_id;
           defender_army = winner_army;
@@ -277,15 +229,61 @@ public class GameHandler extends Handler {
       //winner take over the territory and change ownership
       t_defender.setOwnership(winner_id);
       t_defender.setDefender(winner_army);
+      //update territoryNum in PlayerStat of the winner and the loser 
+      worldmap.getPlayerStatByPid(winner_id).addTerritoryNum(1);
+      worldmap.getPlayerStatByPid(loser_id).subtractTerritoryNum(1);
+    }
+  }
+
+  public void calculateCombatResult(int attacker_id, Army attacker_army,
+                                    int defender_id, Army defender_army){
+    
+
+    Dice atk_dice = new Dice(20);
+    Dice def_dice = new Dice(20);
+    //combat: roll 2 dices, one for attacker, one for defende
+    while ((attacker_army.getTotalSoldiers() > 0) &&
+           (defender_army.getTotalSoldiers() > 0)) {
+
+          
+      //first pick out soldier with highest and lowest bonus(level) for both attacker and defender
+      //(if one side only has one soldier, the soldier can fight twice if he wins the first round)
+
+      //attacker’s highest bonus fights defender’s lowest bonus
+      int atk_value = atk_dice.rollDice() + attacker_army.getHighestBonus();
+      int def_value = def_dice.rollDice() + defender_army.getLowestBonus();
+      if (atk_value > def_value) {
+        //one with lower points (take bonus into account) loses 1 unit
+        //(in a tie defender wins)
+
+        //remove losing soldier from Army
+        defender_army.subtractSoldiers(defender_army.getLowestLevel(), 1);
+      } else {
+        attacker_army.subtractSoldiers(attacker_army.getHighestLevel(), 1);
+      }
+      if ((attacker_army.getTotalSoldiers() <= 0) ||
+          (defender_army.getTotalSoldiers() <= 0)) {
+        //check if any side has no more soldiers
+        break;
+      }
+
+      //defender’s highest bonus fights attacker’s lowest bonus
+      atk_value = atk_dice.rollDice() + attacker_army.getLowestBonus();
+      def_value = def_dice.rollDice() + defender_army.getHighestBonus();
+      if (atk_value > def_value) {
+        //remove losing soldier from Army
+        defender_army.subtractSoldiers(defender_army.getHighestLevel(), 1);
+      } else {
+        attacker_army.subtractSoldiers(attacker_army.getLowestLevel(), 1);
+      }
     }
   }
 
   public shared.Map handleMaxTechLvUpgrade(
-       shared.Map WorldMap, Action action) {
-     ArrayList<Territory> newmap = copyMap(WorldMap.getTerritories());
-     ArrayList<PlayerStat> newstats = copyPlayerStats(WorldMap.getPlayerStats());
+       shared.Map worldmap, Action action) {
+    ;
      //deep copy
-     shared.Map NewMap = new shared.Map(newmap, newstats);
+     shared.Map new_worldmap = new shared.Map(worldmap);
      
      //upgrade max tech lv is executed after all other orders were executed
      //so that its effect are available starting next turn
@@ -299,23 +297,23 @@ public class GameHandler extends Handler {
      //3 ->4 125
      //4 ->5 200
      //5 ->6 300
-     for (Map.Entry<Integer, Boolean>
+     for (HashMap.Entry<Integer, Boolean>
               entry : upgrade_map.entrySet()) {
        
          System.out.println("player " + entry.getKey() + " upgrade max tech lv: " + entry.getValue());
          
-         int tech_lv = NewMap.getPlayerStatByPid(entry.getKey()).getMaxTechLvl();
+         int tech_lv = new_worldmap.getPlayerStatByPid(entry.getKey()).getMaxTechLvl();
          if (tech_lv >= 6){
            // cannot exceed lv 6
            continue;
          }
          //deduct resource for upgrade
          int cost = upgrade_cost_list.get(tech_lv);
-         NewMap.getPlayerStatByPid(entry.getKey()).subtractGold(cost);
+         new_worldmap.getPlayerStatByPid(entry.getKey()).subtractGold(cost);
          //maxTechLvl+1
-         NewMap.getPlayerStatByPid(entry.getKey()).upgradeMaxTechLvl();
+         new_worldmap.getPlayerStatByPid(entry.getKey()).upgradeMaxTechLvl();
        }
 
-     return NewMap;
+     return new_worldmap;
   }
 }
