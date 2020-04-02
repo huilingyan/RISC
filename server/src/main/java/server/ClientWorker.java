@@ -45,6 +45,7 @@ public class ClientWorker extends Thread {
 
         }  // while connected
         // thread exits if player disconnected
+        player.closeSocket();
     }
 
     private void updateOnGame(Game g, ClientMessage msg){
@@ -62,7 +63,6 @@ public class ClientWorker extends Thread {
         } else {  // player is in game
             if (g.hasPlayer(player.getUsername()) && player.getActiveGid() == gid) { 
                 // normal game play, has action
-                // TODO: let gameworker validate actions
                 int pid = g.getPidByName(player.getUsername());
                 g.addTempAction(pid, msg.getAction());
                 // debug
@@ -81,7 +81,6 @@ public class ClientWorker extends Thread {
         Game g = boss.startNewGame(playerNum, player); // new game
         player.setActiveGid(g.getGid()); // set active gid to player
         GameWorker gWorker = new GameWorker(g, boss); // start game worker
-        // TODO: implement gameworker.run()
         gWorker.start();
         return g;
     }
@@ -110,6 +109,7 @@ public class ClientWorker extends Thread {
             RoomMessage msg = new RoomMessage(false); // default to false (not succeed)
             if (userMsg.isLogin()) { // log in
                 // validate login info
+                // username exists, password matches, and the user is disconnected
                 if (boss.isValidUser(name, password)) {
                     // find available rooms and update msg
                     msg = new RoomMessage(boss.gatherRooms(name));
