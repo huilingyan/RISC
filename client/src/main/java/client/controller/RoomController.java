@@ -19,13 +19,22 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 
+import shared.*;
+
 public class RoomController extends SceneController {
 
     public MainController mc;
+    // models
+    private RoomMessage roomMsg;
+    String playername;
 
     @Override
     public void setMainController(MainController mainC) {
         this.mc = mainC;
+    }
+
+    public void setRoomMessage(RoomMessage rmsg) {
+        this.roomMsg = rmsg;
     }
 
     @Override
@@ -56,6 +65,14 @@ public class RoomController extends SceneController {
         Label room_available = new Label("Available rooms:");
         room_available.setStyle("-fx-font: 18 arial; -fx-font-weight: bold;");
         room_list.getChildren().addAll(room_available);
+        // list available rooms
+        for (Room room : this.roomMsg.getRooms()) {
+            if (!(room.isFull())) {
+                Label room_id = new Label();
+                room_id.setText(String.valueOf(room.getGid()));
+                room_list.getChildren().addAll(room_id);
+            }
+        }
         // set right
         GridPane enter_room = new GridPane();
         enter_room.setHgap(10);

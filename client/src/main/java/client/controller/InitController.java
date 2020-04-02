@@ -24,6 +24,7 @@ public class InitController extends SceneController {
     private Map worldmap;
     private BorderPane root;
     private String mastername;
+    private int room_num;
     private int masterpid;
     private int totalnofsoldiers;
     private Action action;

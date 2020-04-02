@@ -5,11 +5,14 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import shared.RoomMessage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 import java.io.*;
+
+import client.RoomMsgGenerator;
 
 public class LoginController extends SceneController {
 
@@ -49,12 +52,20 @@ public class LoginController extends SceneController {
         Button loginbtn = new Button("Log In");
         GridPane.setConstraints(loginbtn, 0, 2);
         loginbtn.setOnAction(e -> {
-            String username = userinput.getText();
-            String pwd = pwdinput.getText();
-            // debug
-            System.out.println("username: " + username);
-            System.out.println("password: " + pwd);
-            this.mc.showRoomScene();
+            /* this.mc.gclient.connectToServer(); 
+            this.mc.gclient.sendObject(new UserMessage(userinput.getText(), pwdinput.getText(), true));
+            this.mc.gclient.setupInputStream();
+            RoomMessage room_msg = (RoomMessage)this.mc.gclient.recvObject();
+            if (room_msg.isValid()) {
+            */
+            // dummy roommsg model for test
+            RoomMessage room_msg = RoomMsgGenerator.generateRooms();
+            this.mc.showRoomScene(room_msg);
+            /*}
+            else {
+                // TODO: pop up alert box
+            }
+            */
         });
 
 
