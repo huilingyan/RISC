@@ -1,0 +1,9 @@
+package client;
+
+import shared.Army;
+
+public class ArmySlider {
+  public ArmySlider(Army army) {
+    
+  }
+}
