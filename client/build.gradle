@@ -18,8 +18,8 @@ plugins {
 
 application {
     // Define the main class for the application.
-     mainClassName = 'client.guitest_long'
-    //mainClassName = 'client.RISC_GUI'
+    //  mainClassName = 'client.guitest_long'
+    mainClassName = 'client.RISC_GUI'
 }
 
 javafx {
@@ -28,5 +28,5 @@ javafx {
 }
 
 run{
-standardInput=System.in
+    standardInput = System.in
 }

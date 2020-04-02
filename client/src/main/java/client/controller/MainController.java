@@ -24,7 +24,9 @@ public class MainController {
     private InitController initController;
     private GameController gameController;
     // model instances
-    Map worldmap = MapGenerator.initmapGenerator();
+    // TODO: add model map, validator
+    String player_name;
+    Map worldmap = MapGenerator.initmapGenerator(); // dummy model
     Action action = new Action();
 
     public static MainController getInstance() {
@@ -40,8 +42,9 @@ public class MainController {
         updateCurrScene(this.loginController);
     }
 
-    public void showRoomScene() {
+    public void showRoomScene(RoomMessage rmsg) {
         this.roomController.setMainController(this);
+        this.roomController.setRoomMessage(rmsg);
         updateCurrScene(this.roomController);
     }
 
