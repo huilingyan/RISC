@@ -22,7 +22,7 @@ public class guitest_long extends Application{
        InitOpPaneController iopPC = new InitOpPaneController("Ditto");
        InfoPaneController iPC = new InfoPaneController(worldmap);
        ModeSelectPaneController msPC = new ModeSelectPaneController("Ditto");
-       InitController iC = new InitController(worldmap,new Action());
+       InitController iC = new InitController(worldmap);
        iC.setMaster(0);
        Scene s1 = new Scene(msPC.getCurrPane(), 1280, 720);
        stage.setScene(s1);

@@ -27,7 +27,6 @@ public class MainController {
     // TODO: add model map, validator
     String player_name;
     Map worldmap = MapGenerator.initmapGenerator(); // dummy model
-    Action action = new Action();
 
     public static MainController getInstance() {
         return INSTANCE;
@@ -49,20 +48,15 @@ public class MainController {
     }
 
     public void showInitScene() {
-        this.initController = new InitController(this.worldmap, this.action);
+        this.initController = new InitController(this.worldmap);
         this.initController.setMainController(this);
         updateCurrScene(this.initController);
     }
 
     public void showGameScene() {
-        this.gameController = new GameController(this.worldmap, this.action);
+        this.gameController = new GameController(this.worldmap);
         this.gameController.setMainController(this);
         updateCurrScene(this.gameController);
-        // debug
-        for (InitOperation initop : this.action.getInitOperations()) {
-            System.out.println("dest: " + initop.getDest());
-            System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
-        }
         // window.setScene(gameController.getCurrScene());
     }
 
