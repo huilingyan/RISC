@@ -7,6 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import shared.MapGenerator;
 import shared.Territory;
 
@@ -34,6 +35,7 @@ public class ModeSelectPaneController implements PaneController {
       Button moveBtn = new Button("Move");
       Button atkBtn = new Button("Attack");
       Button cancelBtn = new Button("Cancel");
+      Text upgradeNotification = new Text("Please upgrade your army first before any move or attack orders.\nOnce moved or attacked, you can no longer upgrade your army.");
       upgradeBtn.setOnAction(e -> {
         System.out.println("upgrade");
       });
@@ -54,7 +56,7 @@ public class ModeSelectPaneController implements PaneController {
       vb.setAlignment(Pos.CENTER);
       if (showmodeBtn) {
         if (hasmoved == false) {
-          vb.getChildren().add(upgradeBtn);
+          vb.getChildren().addAll(upgradeNotification,upgradeBtn);
         }
         vb.getChildren().addAll(moveBtn, atkBtn);
       }
