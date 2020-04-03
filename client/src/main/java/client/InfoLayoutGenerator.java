@@ -37,16 +37,16 @@ public class InfoLayoutGenerator {
     grid.setHgap(10);
     grid.setVgap(10);
 
-    grid.add(new Text("Each unit upgrade will cost the following gold:"), 0, 0);
+    grid.addRow(0,new Text("Each unit upgrade will cost the following gold:"));
     for (int i = 0; i < 6; i++) {
-      grid.add(new Text("Lv"+i+" to "+(i+1)), i, 1);
+      grid.add(new Text("Lv"+i+" to "+(i+1)), i+1, 1);
     }
-    grid.add(new Text("3"), 0, 2);
-    grid.add(new Text("8"), 1, 2);
-    grid.add(new Text("19"), 2, 2);
-    grid.add(new Text("25"), 3, 2);
-    grid.add(new Text("35"), 4, 2);
-    grid.add(new Text("50"), 5, 2);
+    grid.add(new Text("3"), 1, 2);
+    grid.add(new Text("8"), 2, 2);
+    grid.add(new Text("19"), 3, 2);
+    grid.add(new Text("25"), 4, 2);
+    grid.add(new Text("35"), 5, 2);
+    grid.add(new Text("50"), 6, 2);
 
     return grid;
   }

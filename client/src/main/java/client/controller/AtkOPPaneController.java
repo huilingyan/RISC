@@ -1,5 +1,7 @@
 package client.controller;
 
+import java.util.ArrayList;
+
 import client.ArmySlider;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -8,7 +10,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import shared.MapGenerator;
+import shared.AttackOperation;
 import shared.Territory;
 
 public class AtkOPPaneController implements PaneController {
@@ -25,25 +27,28 @@ public class AtkOPPaneController implements PaneController {
 
 	@Override
 	public AnchorPane getCurrPane() {
-	  Territory terr = MapGenerator.gamemapGenerator().getTerritories().get(0);
+	  Territory terr = gc.getWorldmap().getTerritoryByName(terrName);
 
     Text costNotification = new Text("Attack will cost food = number of soldiers dispatched.");
     Text selectArmy = new Text("Move the slider to select how many soldiers you want to dispatch:");
     ArmySlider amsld = new ArmySlider(terr.getDefender());
     Text selectDest = new Text("Select the destination where the army will attack:");
     ChoiceBox<String> chBox = new ChoiceBox<>();
-    chBox.getItems().add("Ditto");
-    chBox.getItems().add("Squirtle");
-    chBox.setValue("Ditto");
+    ArrayList<String> enermyTnames = gc.getWorldmap().getEnermyTerritoryListName(gc.getPid());
+    chBox.getItems().addAll(enermyTnames);
+    chBox.setValue(enermyTnames.get(0));
 
     Button proceedBtn = new Button("Proceed");
     Button cancelBtn = new Button("Cancel");
     ButtonBar BtnBar = new ButtonBar();
     BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
     proceedBtn.setOnAction(e -> {
-        System.out.println(amsld.getArmy().getSoldierNumber(0));
+        gc.addAtkOP(new AttackOperation(terrName, chBox.getValue(), amsld.getArmy()));
+        
         System.out.println(chBox.getValue());
+        gc.showInfoPane();
       });
+    cancelBtn.setOnAction(e -> gc.showInfoPane());
 
     VBox vb = new VBox();
     vb.setAlignment(Pos.CENTER);

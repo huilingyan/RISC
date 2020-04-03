@@ -13,7 +13,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import shared.Map;
+import shared.MoveOperation;
+import shared.UpgradeOperation;
 import shared.Action;
+import shared.AttackOperation;
 
 public class GameController extends SceneController {
 
@@ -22,10 +25,15 @@ public class GameController extends SceneController {
     private Map worldmap;
     private int masterpid;
     private Action action;
+  private BorderPane root;
+  private boolean ismoved;
 
     // constructor
     public GameController(Map m) {
         this.worldmap = m;
+        this.root = new BorderPane();
+        this.action = new Action();
+        this.ismoved = false;
     }
 
     public void setMainController(MainController mainC) {
@@ -36,12 +44,39 @@ public class GameController extends SceneController {
         this.masterpid = pid;
       }
 
+  public Map getWorldmap() {
+    return worldmap;
+  }
+
+    public int getPid() {
+        return masterpid;
+    }
+
+    public void addMoveOP(MoveOperation mop) {
+      action.addMoveOperation(mop);
+    }
+
+    public void addAtkOP(AttackOperation aop) {
+      action.addAttackOperation(aop);
+    }
+
+    public void addUpOP(UpgradeOperation uop) {
+      //TO DO
+    }
+
+    public boolean isMoved() {
+      return ismoved;
+    }
+
+    public void moved() {
+      this.ismoved = true;
+    }
+  
     @Override
     public Scene getCurrScene() {
         // hard-coded master pid for test
         setMaster(0);
 
-        BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
@@ -99,11 +134,45 @@ public class GameController extends SceneController {
             // if (pid != this.masterpid) { // if territory don't belong to player
             //     button.setDisable(true); // disable button
             // }
+            button.setOnAction(e -> {
+                showModePane(t_name);
+            });
             
             buttongroup.getChildren().addAll(button);
         }
 
         return buttongroup;
+    }
+  public void showModePane(String t_name) {
+    ModeSelectPaneController msPC=new ModeSelectPaneController(t_name);
+    msPC.setGameController(this);
+    updateRightPane(msPC);
+    }
+
+    public void showMovePane(String t_name) {
+      MoveOPPaneController mopPC=new MoveOPPaneController(t_name);
+      mopPC.setGameController(this);
+      updateRightPane(mopPC);
+    }
+
+  public void showAtkPane(String t_name) {
+      AtkOPPaneController aopPC=new AtkOPPaneController(t_name);
+      aopPC.setGameController(this);
+      updateRightPane(aopPC);
+    }
+
+  public void showUpgradePane(String t_name) {
+      UpOPPaneController uopPC=new UpOPPaneController(t_name);
+      uopPC.setGameController(this);
+      updateRightPane(uopPC);
+    }
+
+  public void showInfoPane() {
+        updateRightPane(new InfoPaneController(worldmap));
+    }
+
+  public void updateRightPane(PaneController pc) {
+        root.setRight(pc.getCurrPane());
     }
 
     

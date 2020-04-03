@@ -34,6 +34,7 @@ public class InitController extends SceneController {
       this.worldmap = m;
       this.totalnofsoldiers = 20;//hard coded, need adjust
       this.root = new BorderPane();
+      this.action = new Action();
     }
 
     @Override
@@ -57,7 +58,11 @@ public class InitController extends SceneController {
         return totalnofsoldiers;
     }
 
-    public void subtSoldiers(int n) {
+    public void addInitOP(InitOperation iop) {
+      action.addInitOperation(iop);
+    }
+
+    public void subSoldiers(int n) {
       //lose n soldiers due to initialization
         totalnofsoldiers -= n;
     }

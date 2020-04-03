@@ -1,6 +1,7 @@
 package client;
 
 import client.controller.AtkOPPaneController;
+import client.controller.GameController;
 import client.controller.InfoPaneController;
 import client.controller.InitController;
 import client.controller.InitOpPaneController;
@@ -21,21 +22,20 @@ public class guitest_long extends Application{
        stage.setTitle("guitest");
        Label l = new Label("hello world");
        Map worldmap=MapGenerator.initmapGenerator();
+       Map gamemap=MapGenerator.gamemapGenerator();
 
        InitOpPaneController iopPC = new InitOpPaneController("Ditto");
        InfoPaneController iPC = new InfoPaneController(worldmap);
        ModeSelectPaneController msPC = new ModeSelectPaneController("Ditto");
-<<<<<<< HEAD
        MoveOPPaneController mopPC = new MoveOPPaneController("Ditto");
        AtkOPPaneController aopPC = new AtkOPPaneController("Ditto");
        UpOPPaneController uopPC = new UpOPPaneController("Ditto");
-       InitController iC = new InitController(worldmap,new Action());
-=======
+       
        InitController iC = new InitController(worldmap);
->>>>>>> 0cb3c069ef87420bcc89e93671ad8b502a9b0155
        iC.setMaster(0);
-       Scene s1 = new Scene(uopPC.getCurrPane(), 1280, 720);
-       stage.setScene(s1);
+       GameController gC = new GameController(gamemap);
+       //Scene s1 = new Scene(uopPC.getCurrPane(), 1280, 720);
+       stage.setScene(gC.getCurrScene());
        stage.show();
 
     }

@@ -118,4 +118,28 @@ public class Map implements Serializable {
         return null;
     }
 
+    public ArrayList<String> getOwnTerritoryListName(int pid) {
+      ArrayList<String> list = new ArrayList<>();
+      for (Territory t : territories) {
+            if (t.getOwnership() == pid) {
+              list.add(t.getName());
+            }
+        }
+        return list;
+    }
+
+  public ArrayList<String> getEnermyTerritoryListName(int pid) {
+      ArrayList<String> list = new ArrayList<>();
+      for (Territory t : territories) {
+            if (t.getOwnership() != pid) {
+              list.add(t.getName());
+            }
+        }
+        return list;
+    }
+
+    public int CostofShortestPath(String src, String dest) {
+
+      return -1;//no path found
+    }
 }

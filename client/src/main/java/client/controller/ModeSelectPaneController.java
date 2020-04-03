@@ -25,9 +25,9 @@ public class ModeSelectPaneController implements PaneController {
   
 	@Override
 	public AnchorPane getCurrPane() {
-      Territory terr = MapGenerator.gamemapGenerator().getTerritories().get(0);
-      boolean showmodeBtn = true;
-      boolean hasmoved = false;
+    Territory terr = gc.getWorldmap().getTerritoryByName(terrName);
+      boolean showmodeBtn = (terr.getOwnership() == gc.getPid());//decide if show the selection buttons
+      boolean hasmoved = gc.isMoved();//decide if show the upgrade button
 
       GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr);//text info about this territory
 
@@ -38,15 +38,19 @@ public class ModeSelectPaneController implements PaneController {
       Text upgradeNotification = new Text("Please upgrade your army first before any move or attack orders.\nOnce moved or attacked, you can no longer upgrade your army.");
       upgradeBtn.setOnAction(e -> {
         System.out.println("upgrade");
+        gc.showUpgradePane(terrName);
       });
 
       moveBtn.setOnAction(e -> {
         System.out.println("move");
+        gc.showMovePane(terrName);
       });
 
       atkBtn.setOnAction(e -> {
         System.out.println("attack");
+        gc.showAtkPane(terrName);
       });
+      cancelBtn.setOnAction(e -> gc.showInfoPane());
 
       VBox vb = new VBox();
       //TilePane vb = new TilePane();

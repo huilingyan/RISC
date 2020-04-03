@@ -57,14 +57,14 @@ public class InitOpPaneController implements PaneController {
             int n = (int) NofArmySlider.getValue();
             Army army = new Army(n);
             // validate operation
-            ic.getAction().addInitOperation(new InitOperation(terrName, army));
+            ic.addInitOP(new InitOperation(terrName, army));
             // // debug
             // for (InitOperation initop : ic.getAction().getInitOperations()) {
             //     System.out.println("dest: " + initop.getDest());
             //     System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
             // }
             
-            ic.subtSoldiers(n);
+            ic.subSoldiers(n);
             System.out.println(n);
             ic.showInfoPane();
         });

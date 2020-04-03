@@ -1,5 +1,7 @@
 package client.controller;
 
+import java.util.ArrayList;
+
 import client.ArmySlider;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -9,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import shared.MapGenerator;
+import shared.MoveOperation;
 import shared.Territory;
 
 public class MoveOPPaneController implements PaneController {
@@ -25,25 +28,28 @@ public class MoveOPPaneController implements PaneController {
 
 	@Override
 	public AnchorPane getCurrPane() {
-	  Territory terr = MapGenerator.gamemapGenerator().getTerritories().get(0);
+	  Territory terr =gc.getWorldmap().getTerritoryByName(terrName);
 
-    Text costNotification = new Text("Move will cost food = the sum of territory sizes the path travelled including the destination x number of soldiers moved.");
+    Text costNotification = new Text("Move will cost food = the sum of territory sizes the path travelled including the destination\n x number of soldiers moved.");
     Text selectArmy = new Text("Move the slider to select how many soldiers you want to move:");
     ArmySlider amsld = new ArmySlider(terr.getDefender());
     Text selectDest = new Text("Select the destination where the army will go:");
     ChoiceBox<String> chBox = new ChoiceBox<>();
-    chBox.getItems().add("Ditto");
-    chBox.getItems().add("Squirtle");
-    chBox.setValue("Ditto");
+    ArrayList<String> ownTnames = gc.getWorldmap().getOwnTerritoryListName(gc.getPid());
+    chBox.getItems().addAll(ownTnames);
+    chBox.setValue(ownTnames.get(0));
 
     Button proceedBtn = new Button("Proceed");
     Button cancelBtn = new Button("Cancel");
     ButtonBar BtnBar = new ButtonBar();
     BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
     proceedBtn.setOnAction(e -> {
+        gc.addMoveOP(new MoveOperation(terrName, chBox.getValue(), amsld.getArmy()));
         System.out.println(amsld.getArmy().getSoldierNumber(0));
         System.out.println(chBox.getValue());
+        gc.showInfoPane();
       });
+    cancelBtn.setOnAction(e -> gc.showInfoPane());
 
     VBox vb = new VBox();
     vb.setAlignment(Pos.CENTER);

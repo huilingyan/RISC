@@ -1,6 +1,8 @@
 package client.controller;
 
-import client.ArmySlider;
+import java.util.ArrayList;
+
+import client.ArmySliderPlusLvSel;
 import client.InfoLayoutGenerator;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -9,8 +11,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import shared.MapGenerator;
+import shared.Army;
 import shared.Territory;
+import shared.UpgradeOperation;
 
 public class UpOPPaneController implements PaneController {
   public GameController gc;
@@ -26,18 +29,23 @@ public class UpOPPaneController implements PaneController {
 
 	@Override
 	public AnchorPane getCurrPane() {
-    Territory terr = MapGenerator.gamemapGenerator().getTerritories().get(0);
+    Territory terr = gc.getWorldmap().getTerritoryByName(terrName);
     
     GridPane costTable = InfoLayoutGenerator.generateUpgradeTable();
     Text selectUpgrade = new Text("Move the slider to select number of soldiers and pick the target level you want to upgrade them to.");
-    ArmySlider amsld = new ArmySlider(terr.getDefender());
+    ArmySliderPlusLvSel amsld = new ArmySliderPlusLvSel(terr.getDefender());
     Button proceedBtn = new Button("Proceed");
     Button cancelBtn = new Button("Cancel");
     ButtonBar BtnBar = new ButtonBar();
     BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
     proceedBtn.setOnAction(e -> {
-        System.out.println(amsld.getTargetLv());
+      Army oldArmy = amsld.getArmy();
+      Army newArmy = upgradeArmy(oldArmy, amsld.getTargetLv());
+      gc.addUpOP(new UpgradeOperation(terrName, oldArmy, newArmy));
+      System.out.println(amsld.getTargetLv());
+      gc.showInfoPane();
     });
+    cancelBtn.setOnAction(e -> gc.showInfoPane());
 
     VBox vb = new VBox();
     vb.setAlignment(Pos.CENTER);
@@ -53,4 +61,11 @@ public class UpOPPaneController implements PaneController {
     return anchorP;
 	}
 
+    public Army upgradeArmy(Army oldarmy, ArrayList<Integer> targetLv) {
+      Army newarmy = new Army();
+      for (int i = 0; i < targetLv.size(); i++) {
+        newarmy.addSoldiers(targetLv.get(i), oldarmy.getSoldierNumber(i));
+      }
+      return newarmy;
+    }
 }
