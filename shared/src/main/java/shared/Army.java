@@ -38,6 +38,13 @@ public class Army implements Serializable{
     this.Soldiers = new ArrayList<Integer>(rhs.Soldiers);
     
   }
+  public int getTotalSoldiers(){
+  	int total_soldier_num = 0;
+  	for (int i = 0; i < Soldiers.size(); i++) {
+      total_soldier_num += Soldiers.get(i);
+    }
+    return total_soldier_num;
+  }
   
   public void joinArmy(Army rhs) {
     //join two armies into one combined army
@@ -85,57 +92,57 @@ public class Army implements Serializable{
     }
     Soldiers.set(lv, Soldiers.get(lv) - num);
   }
-
-  public int getHighestBonus() {
-    for (int i = Soldiers.size() - 1; i >= 0; i--) {
+  
+  public int getHighestLevel(){
+  	for (int i = Soldiers.size() - 1; i >= 0; i--) {
       if (Soldiers.get(i) > 0) {
-        return getBonus(i);
+        return i;
       }
     }
     //empty army
-    return getBonus(0);
+    return 0;
+  }
+  
+  public int getLowestLevel(){
+  	for (int i = 0; i < Soldiers.size(); i++) {
+      if (Soldiers.get(i) > 0) {
+        return i;
+      }
+    }
+    //empty army
+    return 0;
+  }  
+  public int getHighestBonus() {
+    return getBonus(getHighestLevel());
   }
   
   public int getLowestBonus(){
-    for (int i = 0; i < Soldiers.size(); i++) {
-      if (Soldiers.get(i) > 0) {
-        return getBonus(i);
-      }
-    }
-    //empty army
-    return getBonus(0);
+    return getBonus(getLowestLevel());
   }
 
   public int getBonus(int lv) {
-    //match each level with a predefined bonus
-    int bonus = 0;
-    switch (lv) {
-    case 0:
-      bonus = 0;
-      break;
-    case 1:
-      bonus = 1;
-      break;
-    case 2:
-      bonus = 3;
-      break;
-    case 3:
-      bonus = 5;
-      break;
-    case 4:
-      bonus = 8;
-      break;
-    case 5:
-      bonus = 11;
-      break;
-    case 6:
-      bonus = 15;
-      break;
-    default:
-      bonus = 0;
-      break;
-    }
-    return bonus;
+    //match each level with a predefined bonusList
+    ArrayList<Integer> bonusList = new ArrayList<Integer>(Arrays.asList(0,1,3,5,8,11,15));    
+    return bonusList.get(lv);
   }
-
+  
+  public void subtractSoldiersFromHighestLv(int num){
+  	int total_soldiers = getTotalSoldiers();
+  	if(total_soldiers <= num){
+      for (int i = Soldiers.size() - 1; i >= 0; i--) {
+        //remove all soldiers
+      	subtractSoldiers(i, getSoldierNumber(i));
+      }
+    } else {
+  	  for (int i = Soldiers.size() - 1; i >= 0; i--) {
+  	  	if (num > getSoldierNumber(i)){
+      	  subtractSoldiers(i, getSoldierNumber(i));
+      	  num -= getSoldierNumber(i);
+      	} else {
+      	  subtractSoldiers(i, num);
+      	  break;
+      	}
+      }
+  	}
+  }
 }

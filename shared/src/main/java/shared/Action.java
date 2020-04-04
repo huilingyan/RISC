@@ -3,7 +3,6 @@ package shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
 import java.util.Collections;
 
@@ -81,7 +80,7 @@ public class Action implements Serializable {
     this.attackOperations.addAll(clientaction.attackOperations);
     this.upgradeOperations.addAll(clientaction.upgradeOperations);
     //if any player choose to upgrade his max tech level, set it to true
-    for (Map.Entry<Integer, Boolean> entry :
+    for (HashMap.Entry<Integer, Boolean> entry :
     clientaction.getUpgradeMaxTechHashMap().entrySet()) {
       if (entry.getValue() == true) {//untested
         upgradeMaxTechLv.replace(entry.getKey(), entry.getValue());

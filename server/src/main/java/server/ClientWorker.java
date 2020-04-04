@@ -45,6 +45,8 @@ public class ClientWorker extends Thread {
 
         }  // while connected
         // thread exits if player disconnected
+        player.setLoggedin(false);  // login set to false
+        player.closeSocket();
     }
 
     private void updateOnGame(Game g, ClientMessage msg){
@@ -62,7 +64,6 @@ public class ClientWorker extends Thread {
         } else {  // player is in game
             if (g.hasPlayer(player.getUsername()) && player.getActiveGid() == gid) { 
                 // normal game play, has action
-                // TODO: let gameworker validate actions
                 int pid = g.getPidByName(player.getUsername());
                 g.addTempAction(pid, msg.getAction());
                 // debug
@@ -81,7 +82,6 @@ public class ClientWorker extends Thread {
         Game g = boss.startNewGame(playerNum, player); // new game
         player.setActiveGid(g.getGid()); // set active gid to player
         GameWorker gWorker = new GameWorker(g, boss); // start game worker
-        // TODO: implement gameworker.run()
         gWorker.start();
         return g;
     }
@@ -95,13 +95,9 @@ public class ClientWorker extends Thread {
         }
     }
 
-    // accept a just connected user, validate login/register and modify the userlist
-    // in server
-    private void acceptUser() {
-        // debug
-        System.out.println("ClientWorker accepts a user");
-        player = new Player(socket);
-        player.setUpInputStream(); // ready to receive from client
+
+    // validate login/register and modify the userlist in server
+    private void userLogin(){
         boolean success = false;
         while (!success) {
             UserMessage userMsg = (UserMessage) player.recvObject(); // recv UserMessage
@@ -110,11 +106,13 @@ public class ClientWorker extends Thread {
             RoomMessage msg = new RoomMessage(false); // default to false (not succeed)
             if (userMsg.isLogin()) { // log in
                 // validate login info
+                // username exists, password matches, and the user is not logged in
                 if (boss.isValidUser(name, password)) {
                     // find available rooms and update msg
                     msg = new RoomMessage(boss.gatherRooms(name));
-                    // update the old player
+                    // update the old player's socket and set as player field
                     player = boss.updateUser(name, player);
+                    player.setLoggedin(true);   // successfully logged in
                     success = true;
                 }
             } else {
@@ -122,10 +120,10 @@ public class ClientWorker extends Thread {
                 if (!boss.hasUser(name)) {
                     // successfully registered
                     player.setUpUserInfo(name, password);
-                    boss.addUser(player); // add to list, synchronized
+                    boss.addUser(player); // add to list, synchronized, player is copied and set disconnected and not logged in
                     // success message
                     msg = new RoomMessage(true); // empty room list for new user
-                    success = true;
+                    // success = true;   // success is still false to let the loop run
                 }
             } // login or register
             player.sendObject(msg);
@@ -134,7 +132,19 @@ public class ClientWorker extends Thread {
             }
         } // while
         // debug
+        System.out.println("loggedin is " + player.isLoggedin());
         System.out.println("player " + player.getUsername() + " successfully logged in");
+    }
+
+    // accept a just connected user, validate login/register and modify the userlist
+    // in server
+    private void acceptUser() {
+        // debug
+        System.out.println("ClientWorker accepts a user");
+        player = new Player(socket);
+        player.setUpInputStream(); // ready to receive from client
+        userLogin();
+        
     }
 
 }

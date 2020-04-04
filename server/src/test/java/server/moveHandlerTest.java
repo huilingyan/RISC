@@ -9,8 +9,7 @@ import shared.*;
 public class moveHandlerTest {
   @Test
   public void testMoveHandler() {
-    Displayer displayer = Displayer.getInstance();
-    displayer.setNumOfPlayer(3);
+
     Territory t0 = new Territory(0, 0, "Red");
     Territory t1 = new Territory(0, 1, "Blue");
     Territory t2 = new Territory(1, 2, "Green");
@@ -18,11 +17,11 @@ public class moveHandlerTest {
     Territory t4 = new Territory(2, 4, "Purple");
 
     // set number of defenders
-    t0.setDefenderNum(1);
-    t1.setDefenderNum(9);
-    t2.setDefenderNum(2);
-    t3.setDefenderNum(3);
-    t4.setDefenderNum(6);
+    t0.setDefender(new Army(1));
+    t1.setDefender(new Army(9));
+    t2.setDefender(new Army(2));
+    t3.setDefender(new Army(3));
+    t4.setDefender(new Army(6));
 
     t0.setNeighbor(0, 1);
     t1.setNeighbor(0, 0);
@@ -41,30 +40,29 @@ public class moveHandlerTest {
     t_map.add(t2);
     t_map.add(t3);
     t_map.add(t4);
-
+    shared.Map worldmap = new shared.Map(t_map);
     
 
     //------------------------------------------------------
     //set up a init operation list
     Action moveAction = new Action();
-    MoveOperation move1 = new MoveOperation("Blue", "Red", 2);
-    MoveOperation move2 = new MoveOperation("Yellow", "Purple", 3);
-    MoveOperation move3 = new MoveOperation("NULL1", "Purple", 3);
+    MoveOperation move1 = new MoveOperation("Blue", "Red", new Army(2));
+    MoveOperation move2 = new MoveOperation("Yellow", "Purple", new Army(3));
+    MoveOperation move3 = new MoveOperation("NULL1", "Purple", new Army(3));
     moveAction.addMoveOperation(move1);
     moveAction.addMoveOperation(move2);
     moveAction.addMoveOperation(move3);
     //-----------------------------------
     //instance of initHandler
     GameHandler h1 = new GameHandler();
-    ArrayList<Territory> newmap = h1.handleMove(t_map, moveAction);
-    assert (newmap.get(0).getDefenderNum() == 3);
-    assert (newmap.get(1).getDefenderNum() == 7);
-    assert (newmap.get(2).getDefenderNum() == 2);
-    assert (newmap.get(3).getDefenderNum() == 0);
-    assert (newmap.get(4).getDefenderNum() == 9);
+    shared.Map new_worldmap = h1.handleMove(worldmap, moveAction);
+    assert (new_worldmap.getTerritoryByTid(0).getDefender().getTotalSoldiers() == 3);
+    assert (new_worldmap.getTerritoryByTid(1).getDefender().getTotalSoldiers() == 7);
+    assert (new_worldmap.getTerritoryByTid(2).getDefender().getTotalSoldiers() == 2);
+    assert (new_worldmap.getTerritoryByTid(3).getDefender().getTotalSoldiers() == 0);
+    assert (new_worldmap.getTerritoryByTid(4).getDefender().getTotalSoldiers() == 9);
     System.out.println("moveHandler test passed");
-    //displayer.displayMap(t_map);
-    //displayer.displayMap(newmap);
+
 
   }
 

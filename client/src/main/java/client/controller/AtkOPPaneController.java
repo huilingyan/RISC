@@ -44,7 +44,7 @@ public class AtkOPPaneController implements PaneController {
         BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
         proceedBtn.setOnAction(e -> {
             gc.addAtkOP(new AttackOperation(terrName, chBox.getValue(), amsld.getArmy()));
-            
+            gc.moved();
             System.out.println(chBox.getValue());
             gc.showInfoPane();
         });
