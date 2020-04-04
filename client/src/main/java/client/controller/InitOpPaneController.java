@@ -57,18 +57,18 @@ public class InitOpPaneController implements PaneController {
             int n = (int) NofArmySlider.getValue();
             Army army = new Army(n);
             // validate operation
-            ic.addInitOP(new InitOperation(terrName, army));
+            this.ic.addInitOP(new InitOperation(terrName, army));
             // // debug
             // for (InitOperation initop : ic.getAction().getInitOperations()) {
             //     System.out.println("dest: " + initop.getDest());
             //     System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
             // }
             
-            ic.subSoldiers(n);
+            this.ic.subSoldiers(n);
             System.out.println(n);
-            ic.showInfoPane();
+            this.ic.showInfoPane();
         });
-        cancelBtn.setOnAction(e -> ic.showInfoPane());
+        cancelBtn.setOnAction(e -> this.ic.showInfoPane());
         
         GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr);//text info about this territory
         

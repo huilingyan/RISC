@@ -2,13 +2,13 @@ package client.controller;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import shared.RoomMessage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
 import javafx.geometry.Insets;
 import java.io.*;
 
@@ -17,6 +17,7 @@ import client.RoomMsgGenerator;
 public class LoginController extends SceneController {
 
     public MainController mc;
+    // Usermessage usrmsg;
 
     @Override
     public void setMainController(MainController mainC) {
@@ -49,8 +50,15 @@ public class LoginController extends SceneController {
         pwdinput.setPromptText("password");
         GridPane.setConstraints(pwdinput, 1, 1);
 
+        // set buttons
         Button loginbtn = new Button("Log In");
+        Button signupbtn = new Button("Sign Up");
         GridPane.setConstraints(loginbtn, 0, 2);
+        GridPane.setConstraints(signupbtn, 1, 2);
+
+        gpane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, loginbtn, signupbtn);
+
+
         loginbtn.setOnAction(e -> {
             /* this.mc.gclient.connectToServer(); 
             this.mc.gclient.sendObject(new UserMessage(userinput.getText(), pwdinput.getText(), true));
@@ -68,14 +76,12 @@ public class LoginController extends SceneController {
             */
         });
 
-
-        Button signupbtn = new Button("Sign Up");
-        GridPane.setConstraints(signupbtn, 1, 2);
-
-        gpane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, loginbtn, signupbtn);
+        signupbtn.setOnAction(e -> {
+            // TODO:  switch to signupscene
+            this.mc.showSignupScene();
+        });
 
         Scene loginscene = new Scene(gpane, 300, 200);
-
         return loginscene;
     }
 

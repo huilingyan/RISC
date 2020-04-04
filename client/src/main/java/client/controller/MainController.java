@@ -20,6 +20,7 @@ public class MainController {
     private Stage window;
     // controller instances
     private LoginController loginController = new LoginController();
+    private SignUpController signupController = new SignUpController();
     private RoomController roomController = new RoomController();
     private InitController initController;
     private GameController gameController;
@@ -39,6 +40,11 @@ public class MainController {
     public void showLoginScene() {
         this.loginController.setMainController(this);
         updateCurrScene(this.loginController);
+    }
+
+    public void showSignupScene() {
+        this.signupController.setMainController(this);
+        updateCurrScene(this.signupController);
     }
 
     public void showRoomScene(RoomMessage rmsg) {

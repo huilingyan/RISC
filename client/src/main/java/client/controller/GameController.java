@@ -25,8 +25,8 @@ public class GameController extends SceneController {
     private Map worldmap;
     private int masterpid;
     private Action action;
-  private BorderPane root;
-  private boolean ismoved;
+    private BorderPane root;
+    private boolean ismoved;
 
     // constructor
     public GameController(Map m) {
@@ -44,9 +44,9 @@ public class GameController extends SceneController {
         this.masterpid = pid;
       }
 
-  public Map getWorldmap() {
-    return worldmap;
-  }
+    public Map getWorldmap() {
+      return worldmap;
+    }
 
     public int getPid() {
         return masterpid;
@@ -136,42 +136,41 @@ public class GameController extends SceneController {
             // }
             button.setOnAction(e -> {
                 showModePane(t_name);
-            });
-            
+            });           
             buttongroup.getChildren().addAll(button);
-        }
-
+        }        
         return buttongroup;
     }
-  public void showModePane(String t_name) {
-    ModeSelectPaneController msPC=new ModeSelectPaneController(t_name);
-    msPC.setGameController(this);
-    updateRightPane(msPC);
+
+    public void showModePane(String t_name) {
+        ModeSelectPaneController msPC = new ModeSelectPaneController(t_name);
+        msPC.setGameController(this);
+        updateRightPane(msPC);
     }
 
     public void showMovePane(String t_name) {
-      MoveOPPaneController mopPC=new MoveOPPaneController(t_name);
-      mopPC.setGameController(this);
-      updateRightPane(mopPC);
+        MoveOPPaneController mopPC = new MoveOPPaneController(t_name);
+        mopPC.setGameController(this);
+        updateRightPane(mopPC);
     }
 
-  public void showAtkPane(String t_name) {
-      AtkOPPaneController aopPC=new AtkOPPaneController(t_name);
-      aopPC.setGameController(this);
-      updateRightPane(aopPC);
+    public void showAtkPane(String t_name) {
+        AtkOPPaneController aopPC=new AtkOPPaneController(t_name);
+        aopPC.setGameController(this);
+        updateRightPane(aopPC);
     }
 
-  public void showUpgradePane(String t_name) {
-      UpOPPaneController uopPC=new UpOPPaneController(t_name);
-      uopPC.setGameController(this);
-      updateRightPane(uopPC);
+    public void showUpgradePane(String t_name) {
+        UpOPPaneController uopPC = new UpOPPaneController(t_name);
+        uopPC.setGameController(this);
+        updateRightPane(uopPC);
     }
 
-  public void showInfoPane() {
+    public void showInfoPane() {
         updateRightPane(new InfoPaneController(worldmap));
     }
 
-  public void updateRightPane(PaneController pc) {
+    public void updateRightPane(PaneController pc) {
         root.setRight(pc.getCurrPane());
     }
 
