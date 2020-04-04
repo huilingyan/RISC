@@ -126,6 +126,7 @@ public class Gameserver {
 
   private synchronized void addGame(Game g) {
     gameList.add(g);
+    currentGid++;   // increment gid counter
   }
 
   public Game startNewGame(int playerNum, Player firstP) {
@@ -133,7 +134,6 @@ public class Gameserver {
     Map m = new Map(initializeTerritoryList(playerNum));
     Game g = new Game(currentGid, playerNum, m, firstP);
     addGame(g);
-    currentGid++;
     return g;
   }
 
