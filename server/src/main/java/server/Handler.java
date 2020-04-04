@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import shared.*;
 
 public abstract class Handler {
-  abstract ArrayList<Territory> handleAction(
-      ArrayList<Territory> map, Action action);
+  abstract Map handleAction(
+      Map worldmap, Action action);
   //takes a map and a list of operations, apply operations to map and return updated map
+  
+  
+  //ev2: these methods now implemented in shared.Map
+  /*
 	public Territory findTerritorybyString(ArrayList<Territory> map, String tname) {
     for (int j = 0; j < map.size(); j++) {
       //System.out.println("name:" + newmap.get(i).getName());
@@ -18,7 +22,7 @@ public abstract class Handler {
     }
     return null;
   }
-  /*
+  
   public Territory findTerritorybyTid(ArrayList<Territory> map, int tid) {
     for (int j = 0; j < map.size(); j++) {
       //System.out.println("name:" + newmap.get(i).getName());
@@ -29,13 +33,5 @@ public abstract class Handler {
     return null;
   }
   */
-  public ArrayList<Territory> copyMap(ArrayList<Territory> oldmap){
-	  	ArrayList<Territory> newmap = new ArrayList<Territory>();
-		for (int m = 0; m < oldmap.size(); m++) {
-		  Territory t = new Territory(oldmap.get(m));
-		  //deep copy, do not affect original map
-		  newmap.add(t);
-		}
-    	return newmap;
-    }
+
 }

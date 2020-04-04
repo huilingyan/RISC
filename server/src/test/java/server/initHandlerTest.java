@@ -10,8 +10,7 @@ import shared.*;
 public class initHandlerTest {
   @Test
   public void testInitHandler() {
-    Displayer displayer = Displayer.getInstance();
-    displayer.setNumOfPlayer(3);
+    
     Territory t0 = new Territory(0, 0, "Red");
     Territory t1 = new Territory(0, 1, "Blue");
     Territory t2 = new Territory(1, 2, "Green");
@@ -19,11 +18,11 @@ public class initHandlerTest {
     Territory t4 = new Territory(2, 4, "Purple");
 
     // set number of defenders
-    t0.setDefenderNum(0);
-    t1.setDefenderNum(-1);
-    t2.setDefenderNum(2);
-    t3.setDefenderNum(3);
-    t4.setDefenderNum(6);
+    t0.setDefender(new Army(0));
+    t1.setDefender(new Army(-1));
+    t2.setDefender(new Army(2));
+    t3.setDefender(new Army(3));
+    t4.setDefender(new Army(6));
 
     t0.setNeighbor(0, 1);
     t1.setNeighbor(0, 0);
@@ -42,16 +41,16 @@ public class initHandlerTest {
     t_map.add(t2);
     t_map.add(t3);
     t_map.add(t4);
-
+    shared.Map worldmap = new shared.Map(t_map);
     
 
     //------------------------------------------------------
     //set up a init operation list
     Action initAction = new Action();
-    InitOperation init1 = new InitOperation("Blue", 8);
-    InitOperation init2 = new InitOperation("Red", 2);
-    InitOperation init3 = new InitOperation("Green", 5);
-    InitOperation init4 = new InitOperation("NULL", 1);
+    InitOperation init1 = new InitOperation("Blue", new Army(8));
+    InitOperation init2 = new InitOperation("Red", new Army(2));
+    InitOperation init3 = new InitOperation("Green", new Army(5));
+    InitOperation init4 = new InitOperation("NULL", new Army(1));
     initAction.addInitOperation(init1);
     initAction.addInitOperation(init2);
     initAction.addInitOperation(init3);
@@ -59,13 +58,12 @@ public class initHandlerTest {
     //-----------------------------------
     //instance of initHandler
     InitHandler h1 = new InitHandler();
-    ArrayList<Territory> newmap = h1.handleAction(t_map, initAction);
-    assert (newmap.get(0).getDefenderNum() == 2);
-    assert (newmap.get(1).getDefenderNum() == 7);
-    assert (newmap.get(2).getDefenderNum() == 7);
+    shared.Map new_worldmap = h1.handleAction(worldmap, initAction);
+    assert (new_worldmap.getTerritoryByName("Red").getDefender().getTotalSoldiers() == 2);
+    assert (new_worldmap.getTerritoryByName("Blue").getDefender().getTotalSoldiers() == 7);
+    assert (new_worldmap.getTerritoryByName("Green").getDefender().getTotalSoldiers() == 7);
     System.out.println("initHandler test passed");
-    //displayer.displayMap(t_map);
-    //displayer.displayMap(newmap);
+    
     
   }
 

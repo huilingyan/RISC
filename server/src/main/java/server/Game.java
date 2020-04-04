@@ -38,6 +38,10 @@ public class Game {
         tempActionList = new HashMap<Integer, Action>(); // empty action list
     }
 
+    public HashMap<Integer, Action> getTempActionList(){
+        return tempActionList;
+    }
+
     public int getGid() {
         return gid;
     }
@@ -72,7 +76,7 @@ public class Game {
 
     public synchronized void addTempAction(int pid, Action ac) {
         if (tempActionList.containsKey(pid)) {
-            System.out.println("Error: pid " + pid + " already wrote to tempActionList");
+            System.out.println("Error: pid " + pid + " already wrote to tempActionList in game " + gid);
             return;
         }
         tempActionList.put(pid, ac);
@@ -108,6 +112,20 @@ public class Game {
             map.setPlayerStats(playerStats);
         }
         
+    }
+
+    // return true if all active player has sent action to server,
+    // which means one turn just finished
+    public boolean turnFinished(){
+        for (Player p: playerList){
+            if (p.isConnected() && p.isLoggedin() && p.getActiveGid()==gid){
+                int pid = getPidByName(p.getUsername());
+                if (!tempActionList.containsKey(pid)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }

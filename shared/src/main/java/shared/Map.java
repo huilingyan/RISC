@@ -3,6 +3,7 @@ package shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 
 
 /***
@@ -195,4 +196,30 @@ public class Map implements Serializable {
 
       return s;
     }
+}
+    public void updateUnitandResource(){
+        updateUnit();
+        updateResource();
+    }
+
+    // add 1 base unit to each territory
+    private void updateUnit(){
+        for (Territory t : territories) {
+            t.addDefender(new Army(1));
+          }
+    }
+
+    // add each territory's resource production to its owner
+    private void updateResource(){
+        for (Territory t: territories){
+            PlayerStat ps = getPlayerStatByPid(t.getOwnership());
+            // food
+            ps.addFood(t.getFood());
+            // gold
+            ps.addGold(t.getGold());
+        }
+    }
+
+    
+
 }
