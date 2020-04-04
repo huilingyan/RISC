@@ -10,11 +10,8 @@ public class InitHandler extends Handler {
   @Override
   public Map handleAction(
          Map worldmap, Action action){
-    
-    ArrayList<Territory> newmap = copyMap(WorldMap.getTerritories());
-    ArrayList<PlayerStat> newstats = copyPlayerStats(WorldMap.getPlayerStats());
     //deep copy
-    Map new_worldmap = new Map(newmap, newstats);
+    Map new_worldmap = new Map(worldmap);
     
     List<InitOperation> initList = action.getInitOperations();
     for (int i = 0; i < initList.size(); i++) {
