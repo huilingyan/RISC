@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import shared.*;
-
+/*
 class ServerTest {
     @Test void testhandler() {
         ArrayList<Territory> map = new ArrayList<Territory>();
@@ -18,3 +18,4 @@ class ServerTest {
         map.get(0).setDefenderNum(10);
     }
 }
+*/
