@@ -2,16 +2,11 @@ package client.controller;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
-import java.io.*;
 
 public class SignUpController extends SceneController {
 
@@ -61,6 +56,7 @@ public class SignUpController extends SceneController {
         Button registerbtn = new Button("Register");
         GridPane.setConstraints(registerbtn, 1, 3);
         registerbtn.setOnAction(e -> {
+            // this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), false));
             this.mc.showLoginScene(); // return to the login scene
         });
 

@@ -8,32 +8,41 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import shared.Map;
-import shared.MoveOperation;
-import shared.UpgradeOperation;
-import shared.Action;
-import shared.AttackOperation;
+import client.RoomMsgGenerator;
+import shared.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class GameController extends SceneController {
 
     public MainController mc;
+    // fields
+    private BorderPane root;
+    private boolean ismoved;
     // models
     private Map worldmap;
     private int masterpid;
     private Action action;
-    private BorderPane root;
-    private boolean ismoved;
-
+    private String player_name;
+    private int room_num; // id of current room
+    
     // constructor
-    public GameController(Map m) {
+    public GameController(Map m, String pname, int room_num, int pid) {
         this.worldmap = m;
         this.root = new BorderPane();
         this.action = new Action();
         this.ismoved = false;
+        this.player_name = pname;
+        this.room_num = room_num;
+        this.masterpid = pid;
     }
 
     public void setMainController(MainController mainC) {
@@ -52,20 +61,24 @@ public class GameController extends SceneController {
         return masterpid;
     }
 
+    public void UpgTechOP(int pid) {
+        this.action.upgradeMaxTechLv(pid);
+    }
+
     public void addMoveOP(MoveOperation mop) {
-      action.addMoveOperation(mop);
+        this.action.addMoveOperation(mop);
     }
 
     public void addAtkOP(AttackOperation aop) {
-      action.addAttackOperation(aop);
+        this.action.addAttackOperation(aop);
     }
 
     public void addUpOP(UpgradeOperation uop) {
-      //TO DO
+        this.action.addUpgradeOperation(uop);
     }
 
     public boolean isMoved() {
-      return ismoved;
+        return ismoved;
     }
 
     public void moved() {
@@ -104,6 +117,56 @@ public class GameController extends SceneController {
         Group buttongroup = generateMap();
         leftpane.getChildren().add(buttongroup);
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
+
+        // set bottom
+        Button switchoutbtn = new Button("Switch out");
+        switchoutbtn.setStyle("-fx-font-weight: bold;");
+        switchoutbtn.setOnAction(e -> {
+            /*
+            this.mc.switchoutMsg(); // send switchout message to server
+            RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
+            */
+            // dummy roommsg model for test
+            RoomMessage room_msg = RoomMsgGenerator.generateRooms();
+            this.mc.showRoomScene(room_msg);            
+
+        });
+        Button upgradeMaxTechbtn = new Button("Upgrade Max Tech Lv");
+        upgradeMaxTechbtn.setOnAction(e -> {
+            UpgTechOP(this.masterpid);
+            upgradeTechSucceed(); // pop up alert box
+        });
+        Button endTurnbtn = new Button("End Turn");
+        endTurnbtn.setOnAction(e -> {
+            /*
+            this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.action)); // commit order
+            ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
+            if (servermsg.stage == 3) { // if game over
+                // TODO: pop out alert box
+                this.mc.gameOverAlertBox(this.player_name, servermsg);
+            }
+            else if ((servermsg.stage == 0) || (servermsg.stage == 1)) {
+                System.out.println("Unexpected game stage!");
+            }
+            else {
+                this.mc.setWorldMap(servermsg.getMap());  
+                int pid = servermsg.getMap().getPidByName(this.player_name);
+                int room_num = servermsg.gid;
+            */
+                // dummy model for test
+                int pid = 0;
+                this.mc.showGameScene(102, pid);
+            /*
+            }
+            */
+        });
+
+        FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn, endTurnbtn);
+        bottompane.setHgap(5); 
+        root.setBottom(bottompane);
+        bottompane.setPadding(new Insets(10, 10, 10, 10));       
+        BorderPane.setMargin(bottompane, new Insets(10, 10, 10, 10));
+        BorderPane.setAlignment(bottompane, Pos.TOP_LEFT);
   
         // set scene
         Scene mapscene = new Scene(root, 960, 720);
@@ -131,9 +194,6 @@ public class GameController extends SceneController {
             button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
             button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
                             + "-fx-background-color: #" + color + ";");
-            // if (pid != this.masterpid) { // if territory don't belong to player
-            //     button.setDisable(true); // disable button
-            // }
             button.setOnAction(e -> {
                 showModePane(t_name);
             });           
@@ -174,5 +234,14 @@ public class GameController extends SceneController {
         root.setRight(pc.getCurrPane());
     }
 
+    public void upgradeTechSucceed() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Success");
+
+        alert.setHeaderText(null);
+        alert.setContentText("Maximum Tech Level upgraded successfully!");
+ 
+        alert.showAndWait();
+    }
     
 }

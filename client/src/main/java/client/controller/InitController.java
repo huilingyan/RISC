@@ -14,6 +14,7 @@ import java.lang.String;
 import javafx.geometry.Pos;
 
 import shared.InitOperation;
+import client.RoomMsgGenerator;
 import shared.*;
 
 public class InitController extends SceneController {
@@ -23,18 +24,21 @@ public class InitController extends SceneController {
     public static final HashMap<Integer, String> TERRITORY_LIST = new HashMap<Integer, String>();
     private Map worldmap;
     private BorderPane root;
-    private String mastername;
+    private String player_name;
     private int room_num; // id of current room
     private int masterpid; // id of the player
     private int totalnofsoldiers;
     private Action action;
     
     // constructor
-    public InitController(Map m) {
+    public InitController(Map m, String pname, int room_num, int pid) {
       this.worldmap = m;
       this.totalnofsoldiers = 20;//hard coded, need adjust
       this.root = new BorderPane();
       this.action = new Action();
+      this.player_name = pname;
+      this.room_num = room_num;
+      this.masterpid = pid;
     }
 
     @Override
@@ -71,9 +75,6 @@ public class InitController extends SceneController {
         return this.action;
     }
   
-    // public void addInitOP(InitOperation iop) {
-    //   //to be implemented
-    // }
   
     @Override
     public Scene getCurrScene() {
@@ -87,6 +88,7 @@ public class InitController extends SceneController {
         l.setStyle("-fx-font: 24 arial;");
         BorderPane.setMargin(l, new Insets(10, 10, 10, 10));
         BorderPane.setAlignment(l, Pos.CENTER);
+
         // set left
         Pane leftpane = new Pane();
         leftpane.setPadding(new Insets(10, 10, 10, 10));
@@ -95,19 +97,52 @@ public class InitController extends SceneController {
         Group buttongroup = generateMap(); //show map
         leftpane.getChildren().add(buttongroup); 
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
+
         // set right
         AnchorPane rightpane = new InfoPaneController(worldmap).getCurrPane();
         root.setRight(rightpane);
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
+        
         // set bottom
+        Button switchoutbtn = new Button("Switch out");
+        switchoutbtn.setStyle("-fx-font-weight: bold;");
+        switchoutbtn.setPadding(new Insets(5, 5, 5, 5));
+        switchoutbtn.setOnAction(e -> { 
+            /*
+            this.mc.switchoutMsg(); // send switchout message to server
+            RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
+            */
+            // dummy roommsg model for test
+            RoomMessage room_msg = RoomMsgGenerator.generateRooms();
+            this.mc.showRoomScene(room_msg);
+            
+        });
         Button startgamebtn = new Button("Start Game");
-        root.setBottom(startgamebtn);
         startgamebtn.setPadding(new Insets(5, 5, 5, 5));
         startgamebtn.setOnAction(e -> {
-            this.mc.showGameScene();
+            /*
+            this.mc.sendToServer(new ClientMessage(this.room_num, 1, this.action)); // initialize units
+            ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
+            if ((servermsg.stage == 0) || (servermsg.stage == 1) || (servermsg.stage == 3)) {
+                System.out.println("Unexpected game stage!");
+            }
+            this.mc.setWorldMap(servermsg.getMap()); 
+            int pid = servermsg.getMap().getPidByName(this.player_name);
+            int room_num = servermsg.gid;
+            */
+                // dummy model for test
+                int pid = 0;
+                this.mc.showGameScene(102, pid);
+            /*
+            }
+            */
         });
-        BorderPane.setMargin(startgamebtn, new Insets(10, 10, 10, 10));
-        BorderPane.setAlignment(startgamebtn, Pos.TOP_RIGHT);
+        AnchorPane bottompane = new AnchorPane(switchoutbtn, startgamebtn);
+        root.setBottom(bottompane);
+        AnchorPane.setLeftAnchor(switchoutbtn, 10.0);
+        AnchorPane.setRightAnchor(startgamebtn, 10.0);
+        BorderPane.setMargin(bottompane, new Insets(10, 10, 10, 10));
+        // BorderPane.setAlignment(startgamebtn, Pos.TOP_RIGHT);
  
         // set scene
         Scene mapscene = new Scene(root, 960, 720);

@@ -7,10 +7,9 @@ import shared.RoomMessage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.AnchorPane;
 import javafx.geometry.Insets;
-import java.io.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 import client.RoomMsgGenerator;
 
@@ -58,12 +57,12 @@ public class LoginController extends SceneController {
 
         gpane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, loginbtn, signupbtn);
 
-
         loginbtn.setOnAction(e -> {
+            this.mc.setPlayerName(userinput.getText());
             /* this.mc.gclient.connectToServer(); 
-            this.mc.gclient.sendObject(new UserMessage(userinput.getText(), pwdinput.getText(), true));
+            this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), true));
             this.mc.gclient.setupInputStream();
-            RoomMessage room_msg = (RoomMessage)this.mc.gclient.recvObject();
+            RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
             if (room_msg.isValid()) {
             */
             // dummy roommsg model for test
@@ -71,18 +70,27 @@ public class LoginController extends SceneController {
             this.mc.showRoomScene(room_msg);
             /*}
             else {
-                // TODO: pop up alert box
+                invalidLogin(); // pop up alert box
             }
             */
         });
 
         signupbtn.setOnAction(e -> {
-            // TODO:  switch to signupscene
             this.mc.showSignupScene();
         });
 
         Scene loginscene = new Scene(gpane, 300, 200);
         return loginscene;
+    }
+
+    public void invalidLogin() {
+        Alert alert = new Alert(AlertType.ERROR);
+ 
+        alert.setTitle("Error");
+        alert.setHeaderText("Invalid Account");
+        alert.setContentText("Invalid username or password! Please try again.");
+        
+        alert.showAndWait();
     }
 
 }

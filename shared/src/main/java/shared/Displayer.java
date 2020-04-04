@@ -37,7 +37,6 @@ public class Displayer {
                 Next to: UNC, Cornell, CMU, G-Tech
 
         */   
-        // TODO: For version2, visualize it
 /*
         for (int i = 0; i < this.num_player; i++) {
             displayOnePlayerMap(i, t_map);

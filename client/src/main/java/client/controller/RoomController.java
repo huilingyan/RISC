@@ -1,23 +1,20 @@
 package client.controller;
 
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.Scene;
-import javafx.scene.Group;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
-import java.util.HashMap;
-import java.lang.Integer;
 import java.lang.String;
+import java.util.Optional;
 import javafx.geometry.Pos;
-import javafx.scene.layout.Region;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 import shared.*;
 
@@ -35,6 +32,10 @@ public class RoomController extends SceneController {
 
     public void setRoomMessage(RoomMessage rmsg) {
         this.roomMsg = rmsg;
+    }
+
+    public RoomController(String pname) {
+        this.playername = pname;
     }
 
     @Override
@@ -90,7 +91,32 @@ public class RoomController extends SceneController {
         Button enterbtn = new Button("Join");
         GridPane.setConstraints(enterbtn, 0, 3);
         enterbtn.setOnAction(e -> {
-            this.mc.showInitScene();
+            /*
+            this.mc.sendToServer(new ClientMessage(room_num.getText(), 0, new Action()));
+            ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
+            if (servermsg.stage == 3) { // if game over
+                this.mc.gameOverAlertBox(this.playername, servermsg);
+            }
+            else if (servermsg.stage == 1) { // waiting for players
+                System.out.println("Unexpected game stage!");
+            }
+            else {
+                this.mc.setWorldMap(servermsg.getMap()); 
+                int pid = servermsg.getMap().getPidByName(this.player_name);
+                int room_num = servermsg.gid;
+                if (servermsg.stage == 1) { // initialize
+                    this.mc.showInitScene(room_num, pid);
+                }
+                else if (servermsg.stage == 2) { // game play
+                    this.mc.showGameScene(room_num, pid);
+                }
+            */
+                // dummy model for test
+                int pid = 0;
+                this.mc.showInitScene(102, pid);
+            /*
+            }
+            */
         });
         enter_room.getChildren().addAll(enter, input_room_num, room_num, enterbtn);
 
@@ -115,8 +141,21 @@ public class RoomController extends SceneController {
         Button createbtn = new Button("Create");
         GridPane.setConstraints(createbtn, 0, 3);
         createbtn.setOnAction(e -> {
-            // TODO: model
-            this.mc.showInitScene();
+            // TODO： repeated code
+            /*
+            this.mc.sendToServer(new ClientMessage(player_num_field.getText(), 0, new Action()));
+            ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
+            // TODO: how to deal with wait_for_player_mode
+            else { 
+                int pid = servermsg.getMap().getPidByName(this.player_name);
+                int room_num = servermsg.gid;
+                */
+                // dummy model for test
+                int pid = 0;
+                this.mc.showInitScene(102, pid);
+            /*
+            }
+            */
         });
         new_room_pane.getChildren().addAll(player_num_label, player_num_field, createbtn);
 
@@ -125,5 +164,5 @@ public class RoomController extends SceneController {
 
         return roomscene;
     }
-
+    
 }
