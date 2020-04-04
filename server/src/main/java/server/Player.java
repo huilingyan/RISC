@@ -110,12 +110,16 @@ public class Player {
   public Object recvObject() {// receive object from this player
     if (connected) {
       try {
-        return in.readObject();
+        Object ob = in.readObject();
+        System.out.println(ob.toString());
+        return ob;
       } catch (IOException e) {
         // IOException - Any of the usual Input/Output related exceptions.
+        System.out.println("IOException when recv");
         connected = false;
       } catch (ClassNotFoundException e) {
         // ClassNotFoundException - Class of a serialized object cannot be found.
+        System.out.println("ClassNotFoundException when recv");
       }
     }
     return null;// may need to change to other type
