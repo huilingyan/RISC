@@ -10,11 +10,11 @@ public class moveHandlerTest {
   @Test
   public void testMoveHandler() {
 
-    Territory t0 = new Territory(0, 0, "Red");
-    Territory t1 = new Territory(0, 1, "Blue");
-    Territory t2 = new Territory(1, 2, "Green");
-    Territory t3 = new Territory(2, 3, "Yellow");
-    Territory t4 = new Territory(2, 4, "Purple");
+    Territory t0 = new Territory(0, 0, "Red", 1, 10, 10);
+    Territory t1 = new Territory(0, 1, "Blue", 2, 10, 10);
+    Territory t2 = new Territory(1, 2, "Green", 3, 10, 10);
+    Territory t3 = new Territory(2, 3, "Yellow", 4, 10, 10);
+    Territory t4 = new Territory(2, 4, "Purple", 5, 10, 10);
 
     // set number of defenders
     t0.setDefender(new Army(1));
@@ -40,7 +40,16 @@ public class moveHandlerTest {
     t_map.add(t2);
     t_map.add(t3);
     t_map.add(t4);
-    shared.Map worldmap = new shared.Map(t_map);
+
+    
+    PlayerStat p0 = new PlayerStat(0, "test_player0", 999, 999, 2, "87CEFA");
+    PlayerStat p1 = new PlayerStat(1, "test_player1", 999, 999, 1, "87CEFB");
+    PlayerStat p2 = new PlayerStat(2, "test_player2", 999, 999, 2, "87CEFC");
+    ArrayList<PlayerStat> p_list = new ArrayList<PlayerStat>();
+    p_list.add(p0);
+    p_list.add(p1);
+    p_list.add(p2);
+    shared.Map worldmap = new shared.Map(t_map, p_list);
     
 
     //------------------------------------------------------
