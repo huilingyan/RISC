@@ -118,7 +118,7 @@ public class Game {
     // which means one turn just finished
     public boolean turnFinished(){
         for (Player p: playerList){
-            if (p.isConnected() && p.getActiveGid()==gid){
+            if (p.isConnected() && p.isLoggedin() && p.getActiveGid()==gid){
                 int pid = getPidByName(p.getUsername());
                 if (!tempActionList.containsKey(pid)){
                     return false;

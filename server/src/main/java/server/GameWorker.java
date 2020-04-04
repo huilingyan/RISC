@@ -108,32 +108,36 @@ public class GameWorker extends Thread {
     /****
      * Returns an action which only contains validated init operations
      ****/
+    // TODO: uncomment validator code
     private Action validateInitAction(Action ac, int pid, Map gameMap) {
-        OperationValidator validator = new OperationValidator(pid, gameMap);
-        for (InitOperation op : ac.getInitOperations()) {
-            validator.isValidInitOperation(op, Map.INIT_UNIT);
-        }
-        return validator.getAction();
+        // OperationValidator validator = new OperationValidator(pid, gameMap);
+        // for (InitOperation op : ac.getInitOperations()) {
+        //     validator.isValidInitOperation(op, Map.INIT_UNIT);
+        // }
+        // return validator.getAction();
+        return ac;  // not validated
     }
 
     /*****
      * Returns an action which only contains validated game operations and upgrade max tech level or not
      ******/
+    // TODO: uncomment validator code
     private Action validateGameAction(Action ac, int pid, Map gameMap) {
-        OperationValidator validator = new OperationValidator(pid, gameMap);  // TODO
-        for (MoveOperation op : ac.getMoveOperations()) {
-            validator.isValidMoveOperation(op);
-        }
-        for (AttackOperation op : ac.getAttackOperations()) {
-            validator.isValidAttackOperation(op);
-        }
-        for (UpgradeOperation: ac.getUpgradeOperations()){
-            validator.isValidUpdateOperation(op);  // TODO
-        }
-        if (ac.getUpgradeMaxTechHashMap().containsKey(pid) && ac.getUpgradeMaxTechHashMap().get(pid)==true){
-            validator.isValidUpgradeMaxTech();  // TODO
-        }
-        return validator.getAction();
+        // OperationValidator validator = new OperationValidator(pid, gameMap);  // TODO
+        // for (MoveOperation op : ac.getMoveOperations()) {
+        //     validator.isValidMoveOperation(op);
+        // }
+        // for (AttackOperation op : ac.getAttackOperations()) {
+        //     validator.isValidAttackOperation(op);
+        // }
+        // for (UpgradeOperation: ac.getUpgradeOperations()){
+        //     validator.isValidUpdateOperation(op);  // TODO
+        // }
+        // if (ac.getUpgradeMaxTechHashMap().containsKey(pid) && ac.getUpgradeMaxTechHashMap().get(pid)==true){
+        //     validator.isValidUpgradeMaxTech();  // TODO
+        // }
+        // return validator.getAction();
+        return ac;  // not validated
     }
 
     private Action validateAllInitOperations(HashMap<Integer, Action> actionList, Map gamemap) {

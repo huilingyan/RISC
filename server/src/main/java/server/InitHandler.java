@@ -10,7 +10,6 @@ public class InitHandler extends Handler {
   @Override
   public Map handleAction(
          Map worldmap, Action action){
-
     //deep copy
     Map new_worldmap = new Map(worldmap);
     
