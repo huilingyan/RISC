@@ -95,13 +95,9 @@ public class ClientWorker extends Thread {
         }
     }
 
-    // accept a just connected user, validate login/register and modify the userlist
-    // in server
-    private void acceptUser() {
-        // debug
-        System.out.println("ClientWorker accepts a user");
-        player = new Player(socket);
-        player.setUpInputStream(); // ready to receive from client
+
+    // validate login/register and modify the userlist in server
+    private void userLogin(){
         boolean success = false;
         while (!success) {
             UserMessage userMsg = (UserMessage) player.recvObject(); // recv UserMessage
@@ -110,7 +106,7 @@ public class ClientWorker extends Thread {
             RoomMessage msg = new RoomMessage(false); // default to false (not succeed)
             if (userMsg.isLogin()) { // log in
                 // validate login info
-                // username exists, password matches, and the user is disconnected
+                // username exists, password matches, and the user is not logged in
                 if (boss.isValidUser(name, password)) {
                     // find available rooms and update msg
                     msg = new RoomMessage(boss.gatherRooms(name));
@@ -138,6 +134,17 @@ public class ClientWorker extends Thread {
         // debug
         System.out.println("loggedin is " + player.isLoggedin());
         System.out.println("player " + player.getUsername() + " successfully logged in");
+    }
+
+    // accept a just connected user, validate login/register and modify the userlist
+    // in server
+    private void acceptUser() {
+        // debug
+        System.out.println("ClientWorker accepts a user");
+        player = new Player(socket);
+        player.setUpInputStream(); // ready to receive from client
+        userLogin();
+        
     }
 
 }
