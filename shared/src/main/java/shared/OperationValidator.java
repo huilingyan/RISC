@@ -101,7 +101,7 @@ public class OperationValidator {
 
     // 3 check if resource is enough
     int gold_remain = temp_map.getPlayerStatByPid(player_id).getGold();
-    int upgrade_cost = calculateUpgradeCost(army_to_upgrade, army_upgraded);
+    int upgrade_cost = army_to_upgrade.calculateUpgradeCost(army_upgraded);
 
     if (gold_remain < upgrade_cost) {
       return NOT_ENOUGH_GOLD;
@@ -360,31 +360,4 @@ public class OperationValidator {
     return true;
   }
 
-  public int calculateUpgradeCost(Army army1, Army army2) {
-     int cost = 0;
-     ArrayList<Integer> upgrade_cost_list =
-         new ArrayList<Integer>(Arrays.asList(0, 3, 11, 30, 55, 90, 140));
-     Army army_to_upgrade = new Army(army1);
-     Army army_upgraded = new Army(army2);
-     
-     while (army_upgraded.getTotalSoldiers() != 0) {
-       //calculate number of soldiers to upgrade for highest level
-       int upgrade_num = army_upgraded.getSoldierNumber(army_upgraded.getHighestLevel());
-       System.out.println("number of soliders:" + upgrade_num);
-       System.out.println("upgrade from lv " + army_to_upgrade.getHighestLevel() + " to lv " + army_upgraded.getHighestLevel());
-       //get cost difference from level difference
-       //e.g. cost for lv1-->lv3 = (30-0) - (3-0)
-       int cost_difference = upgrade_cost_list.get(army_upgraded.getHighestLevel())
-           - upgrade_cost_list.get(army_to_upgrade.getHighestLevel());
-       //cumulatively add cost for upgrade
-        cost += cost_difference * upgrade_num;
-       System.out.println("upgrade cost " + cost);
-       //remove calculated soldiers from army
-        army_upgraded.subtractSoldiers(army_upgraded.getHighestLevel(), upgrade_num);
-       
-        army_to_upgrade.subtractSoldiersFromHighestLv(upgrade_num);
-     }
-     
-     return cost;
-   }
 }

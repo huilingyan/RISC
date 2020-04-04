@@ -41,9 +41,7 @@ public class GameHandler extends Handler {
         t_dest.addDefender(army_upgraded);//add back upgraded soldiers
         
         int playerid = t_dest.getOwnership();
-        //instance of OperationValidator   
-        OperationValidator ov = new OperationValidator(playerid, new_worldmap);
-        int upgrade_cost = ov.calculateUpgradeCost(army_to_upgrade, army_upgraded);
+        int upgrade_cost = army_to_upgrade.calculateUpgradeCost(army_upgraded);
         
         System.out.println("gold before upgrade:" + new_worldmap.getPlayerStatByPid(playerid).getGold());
 
@@ -152,12 +150,12 @@ public class GameHandler extends Handler {
        }
      }   
     //execute each attack order on newmap
-    Combat(combinedAttackMap, new_worldmap);
+    executeAttackOrders(combinedAttackMap, new_worldmap);
       
     return new_worldmap;
   }
 
-  public void Combat(HashMap<String, HashMap<Integer, Army>> combinedAttackMap, shared.Map worldmap) {
+  public void executeAttackOrders(HashMap<String, HashMap<Integer, Army>> combinedAttackMap, shared.Map worldmap) {
     
     for (HashMap.Entry<String, HashMap<Integer, Army>> t_entry : combinedAttackMap.entrySet()) {
       //locate the territory being attacked
