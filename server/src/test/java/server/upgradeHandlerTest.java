@@ -41,11 +41,16 @@ public class upgradeHandlerTest {
     t_map.add(t2);
     t_map.add(t3);
     t_map.add(t4);
-
-    PlayerStat p0 = new PlayerStat(0, "test_player0", 999, 999, 2, "87CEFA");
+    
+	PlayerStat p0 = new PlayerStat(0, "test_player0", 999, 999, 2, "87CEFA");
+    PlayerStat p1 = new PlayerStat(1, "test_player1", 999, 999, 1, "87CEFB");
+    PlayerStat p2 = new PlayerStat(2, "test_player2", 999, 999, 2, "87CEFC");
     ArrayList<PlayerStat> p_list = new ArrayList<PlayerStat>();
     p_list.add(p0);
+    p_list.add(p1);
+    p_list.add(p2);
     shared.Map worldmap = new shared.Map(t_map, p_list);
+
     
 
     //------------------------------------------------------
@@ -80,9 +85,11 @@ public class upgradeHandlerTest {
     assert (new_worldmap.getTerritoryByName("Green").getDefender().getTotalSoldiers() == 8);
 
     assert (new_worldmap.getTerritoryByName("Red").getDefender().getSoldierNumber(0) == 6);
-    assert (new_worldmap.getTerritoryByName("Red").getDefender().getSoldierNumber(1) == 4);
-    assert (new_worldmap.getTerritoryByName("Blue").getDefender().getSoldierNumber(2) == 4);
+    assert (new_worldmap.getTerritoryByName("Red").getDefender().getSoldierNumber(2) == 4);
+    assert (new_worldmap.getTerritoryByName("Blue").getDefender().getSoldierNumber(1) == 5);
     assert (new_worldmap.getTerritoryByName("Green").getDefender().getSoldierNumber(3) == 3);
+    
+    //new_worldmap = h1.handleAction(new_worldmap, upgrade_max_tech_lv_action);
     assert (new_worldmap.getPlayerStatByPid(0).getMaxTechLvl() == 2);
     
     System.out.println("upgradeHandler test passed");
