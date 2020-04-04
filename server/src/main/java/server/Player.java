@@ -111,7 +111,6 @@ public class Player {
     if (connected) {
       try {
         Object ob = in.readObject();
-        System.out.println(ob.toString());
         return ob;
       } catch (IOException e) {
         // IOException - Any of the usual Input/Output related exceptions.
@@ -122,7 +121,7 @@ public class Player {
         System.out.println("ClassNotFoundException when recv");
       }
     }
-    return null;// may need to change to other type
+    return null;
   }
 
   /****
