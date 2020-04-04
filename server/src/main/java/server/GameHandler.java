@@ -39,9 +39,11 @@ public class GameHandler extends Handler {
       if (t_dest != null) {
         t_dest.subtractDefender(army_to_upgrade);//remove soldiers to upgrade
         t_dest.addDefender(army_upgraded);//add back upgraded soldiers
-              
-        int upgrade_cost = calculateUpgradeCost(army_to_upgrade, army_upgraded);
+        
         int playerid = t_dest.getOwnership();
+        //instance of OperationValidator   
+        OperationValidator ov = new OperationValidator(playerid, new_worldmap);
+        int upgrade_cost = ov.calculateUpgradeCost(army_to_upgrade, army_upgraded);
         
         System.out.println("gold before upgrade:" + new_worldmap.getPlayerStatByPid(playerid).getGold());
 
@@ -53,33 +55,7 @@ public class GameHandler extends Handler {
      return new_worldmap;
    }
 
-   public int calculateUpgradeCost(Army army1, Army army2) {
-     int cost = 0;
-     ArrayList<Integer> upgrade_cost_list =
-         new ArrayList<Integer>(Arrays.asList(0, 3, 11, 30, 55, 90, 140));
-     Army army_to_upgrade = new Army(army1);
-     Army army_upgraded = new Army(army2);
-     
-     while (army_upgraded.getTotalSoldiers() != 0) {
-       //calculate number of soldiers to upgrade for highest level
-       int upgrade_num = army_upgraded.getSoldierNumber(army_upgraded.getHighestLevel());
-       System.out.println("number of soliders:" + upgrade_num);
-       System.out.println("upgrade from lv " + army_to_upgrade.getHighestLevel() + "to lv " + army_upgraded.getHighestLevel());
-       //get cost difference from level difference
-       //e.g. cost for lv1-->lv3 = (30-0) - (3-0)
-       int cost_difference = upgrade_cost_list.get(army_upgraded.getHighestLevel())
-           - upgrade_cost_list.get(army_to_upgrade.getHighestLevel());
-       //cumulatively add cost for upgrade
-        cost += cost_difference * upgrade_num;
-       
-       //remove calculated soldiers from army
-        army_upgraded.subtractSoldiers(army_upgraded.getHighestLevel(), upgrade_num);
-       
-        army_to_upgrade.subtractSoldiersFromHighestLv(upgrade_num);
-     }
-     
-     return cost;
-   }
+   
   
   public shared.Map handleMove(
       shared.Map worldmap, Action action) {
@@ -99,9 +75,9 @@ public class GameHandler extends Handler {
       if (t_src != null && t_dest != null) {
         t_src.subtractDefender(army_move);//src territory - unit
         t_dest.addDefender(army_move);//dest territory + unit
+        
         //(total size of territories moved through) * (number of units moved)
-        //TODO: call minimum path finder which returns total size of the path
-        int move_cost = 10 * army_move.getTotalSoldiers();
+        int move_cost = worldmap.CostofShortestPath(src, dest) * army_move.getTotalSoldiers();
         int playerid = t_src.getOwnership();
         System.out.println("food before move:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
         new_worldmap.getPlayerStatByPid(playerid).subtractFood(move_cost);

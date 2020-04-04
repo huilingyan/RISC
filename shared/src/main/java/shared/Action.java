@@ -71,7 +71,7 @@ public class Action implements Serializable {
   }
   
   public void addUpgradeOperation(UpgradeOperation uop) {
-    this.UpgradeOperations.add(uop);
+    this.upgradeOperations.add(uop);
   }
 
   public void concatInitOperation(Action clientaction) {
