@@ -45,6 +45,7 @@ public class MoveOPPaneController implements PaneController {
         BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
         proceedBtn.setOnAction(e -> {
             gc.addMoveOP(new MoveOperation(terrName, chBox.getValue(), amsld.getArmy()));
+            gc.moved();
             System.out.println(amsld.getArmy().getSoldierNumber(0));
             System.out.println(chBox.getValue());
             gc.showInfoPane();

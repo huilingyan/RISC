@@ -196,7 +196,7 @@ public class Map implements Serializable {
 
       return s;
     }
-}
+
     public void updateUnitandResource(){
         updateUnit();
         updateResource();
