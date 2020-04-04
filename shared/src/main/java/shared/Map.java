@@ -159,6 +159,7 @@ public class Map implements Serializable {
         String minTName = popMinDistT(distQ);
         int d = distQ.remove(minTName);//remove the minimum distance T from the queue
         if (minTName.equalsIgnoreCase(dest)){
+          System.out.println("CostofShortestPath: " + d);
           return d;
         }
         visited.put(minTName, d);

@@ -42,8 +42,15 @@ public class attackHandlerTest {
     t_map.add(t2);
     t_map.add(t3);
     t_map.add(t4);
-    shared.Map worldmap = new shared.Map(t_map);
     
+    PlayerStat p0 = new PlayerStat(0, "test_player0", 999, 999, 2, "87CEFA");
+    PlayerStat p1 = new PlayerStat(1, "test_player1", 999, 999, 1, "87CEFB");
+    PlayerStat p2 = new PlayerStat(2, "test_player2", 999, 999, 2, "87CEFC");
+    ArrayList<PlayerStat> p_list = new ArrayList<PlayerStat>();
+    p_list.add(p0);
+    p_list.add(p1);
+    p_list.add(p2);
+    shared.Map worldmap = new shared.Map(t_map, p_list);
 
     //------------------------------------------------------
     //set up a init operation list
