@@ -45,6 +45,7 @@ public class ClientWorker extends Thread {
 
         }  // while connected
         // thread exits if player disconnected
+        player.setLoggedin(false);  // login set to false
         player.closeSocket();
     }
 
@@ -113,8 +114,9 @@ public class ClientWorker extends Thread {
                 if (boss.isValidUser(name, password)) {
                     // find available rooms and update msg
                     msg = new RoomMessage(boss.gatherRooms(name));
-                    // update the old player
+                    // update the old player's socket and set as player field
                     player = boss.updateUser(name, player);
+                    player.setLoggedin(true);   // successfully logged in
                     success = true;
                 }
             } else {
@@ -122,10 +124,10 @@ public class ClientWorker extends Thread {
                 if (!boss.hasUser(name)) {
                     // successfully registered
                     player.setUpUserInfo(name, password);
-                    boss.addUser(player); // add to list, synchronized
+                    boss.addUser(player); // add to list, synchronized, player is copied and set disconnected and not logged in
                     // success message
                     msg = new RoomMessage(true); // empty room list for new user
-                    success = true;
+                    // success = true;   // success is still false to let the loop run
                 }
             } // login or register
             player.sendObject(msg);
@@ -134,6 +136,7 @@ public class ClientWorker extends Thread {
             }
         } // while
         // debug
+        System.out.println("loggedin is " + player.isLoggedin());
         System.out.println("player " + player.getUsername() + " successfully logged in");
     }
 

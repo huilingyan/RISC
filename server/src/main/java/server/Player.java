@@ -18,6 +18,7 @@ public class Player {
   private ObjectInputStream in;
   private boolean connected; // socket connection status
   private int activeGid;  // gameID of active game, 0 if in not on name
+  private boolean loggedin;   // TODO: mark if user's loggedin
 
   /***
    * Initialize a Player object with a connected socket, and initialize its
@@ -28,6 +29,19 @@ public class Player {
   public Player(Socket socket) {
     setSocketandOutputStream(socket);
     activeGid = 0;  // initialize active game to 0 (not at game)
+    loggedin = false;  // user not logged in
+  }
+
+  // copy constructor
+  public Player(Player rhs) {
+    username = rhs.getUsername();
+    password = rhs.getPassword();
+    clientSocket = rhs.getSocket();
+    out = rhs.getOutputStream();
+    in = rhs.getInputStream();
+    connected = rhs.isConnected();
+    activeGid = rhs.getActiveGid();
+    loggedin = rhs.isLoggedin();
   }
 
   
@@ -147,6 +161,7 @@ public class Player {
     in = p.getInputStream();
     out = p.getOutputStream();
     connected = true;   // is connected
+    
   }
 
   public void setUsername(String p_name) {
@@ -196,4 +211,13 @@ public class Player {
   public boolean isConnected() {
     return connected;
   }
+
+  public void setLoggedin(boolean bool){
+    loggedin = bool;
+  }
+
+  public boolean isLoggedin() {
+    return loggedin;
+  }
+
 }

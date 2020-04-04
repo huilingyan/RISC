@@ -11,8 +11,8 @@ public class InitHandler extends Handler {
   public Map handleAction(
          Map worldmap, Action action){
     
-    ArrayList<Territory> newmap = copyMap(worldmap.getTerritories());
-    ArrayList<PlayerStat> newstats = copyPlayerStats(worldmap.getPlayerStats());
+    ArrayList<Territory> newmap = copyMap(WorldMap.getTerritories());
+    ArrayList<PlayerStat> newstats = copyPlayerStats(WorldMap.getPlayerStats());
     //deep copy
     Map new_worldmap = new Map(newmap, newstats);
     
