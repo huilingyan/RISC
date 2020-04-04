@@ -87,18 +87,16 @@ public class OperationValidator {
     }
 
     // 2. Check if army is valid
-    if (!isArmyPostive(army_to_upgrade)) {
+    if (!isArmyPostive(army_to_upgrade) ||
+        !isArmyPostive(army_upgraded) ||
+        (army_to_upgrade.getTotalSoldiers() != army_upgraded.getTotalSoldiers())) {
       return ILLEGAL_NUM;
     }
-
-    for (int i = 0; i < army_to_upgrade.getHighestLevel(); i++) {
+    if (!isTerritoryHaveEnoughArmy(army_to_upgrade, t_to_deploy)) {
       //with gui slider, this situation should never occur
-      if (army_to_upgrade.getSoldierNumber(i) > t_to_deploy.getDefender().getSoldierNumber(i)) {
-        // not enough units to move for level i (0-max lv)
         return NOT_ENOUGH_UNITS;
-      }
     }
-
+   
     // 3 check if resource is enough
     int gold_remain = temp_map.getPlayerStatByPid(player_id).getGold();
     int upgrade_cost = army_to_upgrade.calculateUpgradeCost(army_upgraded);
@@ -109,6 +107,7 @@ public class OperationValidator {
 
     // add operation to action
     validatedaction.addUpgradeOperation(upgradeop);
+    temp_map.getPlayerStatByPid(player_id).subtractGold(upgrade_cost);
 
     return VALID;
   }
@@ -129,12 +128,9 @@ public class OperationValidator {
     if (!isArmyPostive(moveop.getArmy())) {
       return ILLEGAL_NUM;
     }
-    for (int i = 0; i < moveop.getArmy().getHighestLevel(); i++) {
-      if (moveop.getArmy().getSoldierNumber(i) >
-          t_to_remove.getDefender().getSoldierNumber(i)) {
-        // not enough units to move for level i (0-max lv)
+    if (!isTerritoryHaveEnoughArmy(moveop.getArmy(), t_to_remove)) {
+      //with gui slider, this situation should never occur
         return NOT_ENOUGH_UNITS;
-      }
     }
     
     // 3. check if valid dest
@@ -153,21 +149,23 @@ public class OperationValidator {
     }
 
     // 3.3 check if there's a path
-    if (!isValidPath(t_to_remove, t_to_move)) {
+    int move_dist = temp_map.CostofShortestPath(src, dest);
+    if (move_dist < 0) {
       return INVALID_PATH;
     }
 
     // 4 check if resource is enough
     int food_remain = temp_map.getPlayerStatByPid(player_id).getFood();
-    int move_cost = moveop.getArmy().getTotalSoldiers() * temp_map.CostofShortestPath(src, dest);
+    int move_cost = moveop.getArmy().getTotalSoldiers() * move_dist;
     
     if(food_remain < move_cost){
       return NOT_ENOUGH_FOOD;
     }
 
-    // update temp_map: add and subtract army
+    // update temp_map: add and subtract army, deduct resources
     t_to_remove.subtractDefender(moveop.getArmy());       
     t_to_move.addDefender(moveop.getArmy());
+    temp_map.getPlayerStatByPid(player_id).subtractFood(move_cost);
 
     // if valid, add to move operation
     validatedaction.addMoveOperation(moveop);
@@ -192,13 +190,11 @@ public class OperationValidator {
       // negative deployment, illegal number
       return ILLEGAL_NUM;
     }
-    for (int i = 0; i < attackop.getArmy().getHighestLevel(); i++) {
-      if (attackop.getArmy().getSoldierNumber(i) >
-          t_to_remove.getDefender().getSoldierNumber(i)) {
-        // not enough units to attack for level i (0-max lv)
+    if (!isTerritoryHaveEnoughArmy(attackop.getArmy(), t_to_remove)) {
+      //with gui slider, this situation should never occur
         return NOT_ENOUGH_UNITS;
-      }
     }
+    
 
     // 3. check if valid dest
     // the territory to attack
@@ -221,9 +217,11 @@ public class OperationValidator {
       return NOT_ENOUGH_FOOD;
     }
 
-    // update temp_map: add and sub units
+    // update temp_map: sub army, deduct resources
+    //do not change the territory being attacked
     t_to_remove.subtractDefender(attackop.getArmy());
-
+    temp_map.getPlayerStatByPid(player_id).subtractFood(attack_cost);
+    
     // if valid, add to move operation
     validatedaction.addAttackOperation(attackop);
     return VALID;
@@ -287,7 +285,9 @@ public class OperationValidator {
   private boolean isOwnTerritory(Territory t) {
     return (t.getOwnership() == this.player_id);
   }
+
   
+  /*
   private boolean isValidPath(Territory src, Territory dest) {
 
     LinkedList<Integer> visited = new LinkedList<Integer>();
@@ -318,7 +318,7 @@ public class OperationValidator {
 
     return false;
   }
-
+*/
   private boolean isAdjacent(Territory src, Territory dest) {
 
     for (int neigh : src.getNeighborList()) {
@@ -341,13 +341,14 @@ public class OperationValidator {
     return null; // not found
   }
   */
-  private int findOwnershipByTid(int tid) {
-    for (Territory t : this.temp_map.getTerritories()) {
-      if (t.getTid() == tid) { // if find the territory
-        return t.getOwnership();
+  private boolean isTerritoryHaveEnoughArmy(Army army, Territory t) {
+    for (int i = 0; i < army.getHighestLevel(); i++) {
+      if (army.getSoldierNumber(i) > t.getDefender().getSoldierNumber(i)) {
+        // not enough units to move for level i (0-max lv)
+        return false;
       }
     }
-    return -1; // not found
+    return true;
   }
 
   private boolean isArmyPostive(Army army_to_check) {
