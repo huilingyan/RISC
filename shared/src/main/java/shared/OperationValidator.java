@@ -371,14 +371,14 @@ public class OperationValidator {
        //calculate number of soldiers to upgrade for highest level
        int upgrade_num = army_upgraded.getSoldierNumber(army_upgraded.getHighestLevel());
        System.out.println("number of soliders:" + upgrade_num);
-       System.out.println("upgrade from lv " + army_to_upgrade.getHighestLevel() + "to lv " + army_upgraded.getHighestLevel());
+       System.out.println("upgrade from lv " + army_to_upgrade.getHighestLevel() + " to lv " + army_upgraded.getHighestLevel());
        //get cost difference from level difference
        //e.g. cost for lv1-->lv3 = (30-0) - (3-0)
        int cost_difference = upgrade_cost_list.get(army_upgraded.getHighestLevel())
            - upgrade_cost_list.get(army_to_upgrade.getHighestLevel());
        //cumulatively add cost for upgrade
         cost += cost_difference * upgrade_num;
-       
+       System.out.println("upgrade cost " + cost);
        //remove calculated soldiers from army
         army_upgraded.subtractSoldiers(army_upgraded.getHighestLevel(), upgrade_num);
        

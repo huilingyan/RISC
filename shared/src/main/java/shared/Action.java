@@ -80,14 +80,18 @@ public class Action implements Serializable {
 
 
   public void concatGameOperation(Action clientaction) {
+    
+    this.upgradeOperations.addAll(clientaction.upgradeOperations);
     this.moveOperations.addAll(clientaction.moveOperations);
     this.attackOperations.addAll(clientaction.attackOperations);
-    this.upgradeOperations.addAll(clientaction.upgradeOperations);
     //if any player choose to upgrade his max tech level, set it to true
     for (HashMap.Entry<Integer, Boolean> entry :
     clientaction.getUpgradeMaxTechHashMap().entrySet()) {
-      if (entry.getValue() == true) {//untested
-        upgradeMaxTechLv.replace(entry.getKey(), entry.getValue());
+    
+      if (entry.getValue()) {
+        //replace is not suitable here because it doesn't replace null value
+        upgradeMaxTechLv.put(entry.getKey(), entry.getValue());
+        //System.out.println("player " + entry.getKey() + " choose to upgrade max tech lv " + upgradeMaxTechLv.get(entry.getKey()) );
       }
     }
   }

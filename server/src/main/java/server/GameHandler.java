@@ -49,7 +49,7 @@ public class GameHandler extends Handler {
 
         new_worldmap.getPlayerStatByPid(playerid).subtractGold(upgrade_cost);
 
-        System.out.println("gold after upgrade:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
+        System.out.println("gold after upgrade:" + new_worldmap.getPlayerStatByPid(playerid).getGold());
       }
     }
      return new_worldmap;
