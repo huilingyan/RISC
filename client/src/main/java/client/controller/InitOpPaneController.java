@@ -28,13 +28,13 @@ public class InitOpPaneController implements PaneController {
     @Override
     public AnchorPane getCurrPane() {
         Territory terr = ic.getWorldmap().getTerritoryByName(terrName);
-        boolean showiop = (terr.getOwnership() == ic.getPid());//decide if show the slider
+        boolean showiop = (terr.getOwnership() == ic.getPid()); // decide if show the slider
         
-        GridPane grid=new GridPane();
+        GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         // slider for chosing soldier number
-        Text iop_info = new Text("You have "+ic.getnofSoldiers()+" units left to deploy, how many you want to put in "+terrName);
+        Text iop_info = new Text("You have " + ic.getnofSoldiers() + " units left to deploy, how many you want to put in " + terrName);
         Slider NofArmySlider = new Slider(0, ic.getnofSoldiers(), 0);
         NofArmySlider.setShowTickLabels(true);
         NofArmySlider.setShowTickMarks(true);
@@ -52,20 +52,20 @@ public class InitOpPaneController implements PaneController {
         grid.add(BtnBar, 0, 2, 2, 1);
         GridPane.setHalignment(BtnBar, HPos.CENTER);
         // control button actions
-        proceedBtn.setOnAction(e-> {
+        proceedBtn.setOnAction(e -> {
             int n = (int) NofArmySlider.getValue();
             Army army = new Army(n);
             // validate operation
-            this.ic.addInitOP(new InitOperation(terrName, army));
-            // // debug
-            // for (InitOperation initop : ic.getAction().getInitOperations()) {
-            //     System.out.println("dest: " + initop.getDest());
-            //     System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
-            // }
-            
-            this.ic.subSoldiers(n);
-            System.out.println(n);
-            this.ic.showInfoPane();
+            InitOperation iop = new InitOperation(terrName, army);
+            int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, this.ic.getnofSoldiers());
+            if(errorcode == OperationValidator.VALID) {
+                this.ic.subSoldiers(n);
+                this.ic.showInfoPane();
+            }
+            else {
+                ErrorAlerts.inValidOpAlert(errorcode);
+            }
+
         });
         cancelBtn.setOnAction(e -> this.ic.showInfoPane());
         
