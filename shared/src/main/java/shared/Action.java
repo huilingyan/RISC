@@ -72,7 +72,7 @@ public class Action implements Serializable {
   public void addAttackOperation(AttackOperation aop) {
       this.attackOperations.add(aop);
   }
-  
+
   public void concatInitOperation(Action clientaction) {
       this.initOperations.addAll(clientaction.initOperations);
   }
@@ -87,11 +87,11 @@ public class Action implements Serializable {
     for (HashMap.Entry<Integer, Boolean> entry :
     clientaction.getUpgradeMaxTechHashMap().entrySet()) {
     
-        if (entry.getValue()) {
-          //replace is not suitable here because it doesn't replace null value
-            upgradeMaxTechLv.put(entry.getKey(), entry.getValue());
-          //System.out.println("player " + entry.getKey() + " choose to upgrade max tech lv " + upgradeMaxTechLv.get(entry.getKey()) );
-        }
+      if (entry.getValue()) {
+        //replace is not suitable here because it doesn't replace null value
+        upgradeMaxTechLv.put(entry.getKey(), entry.getValue());
+        //System.out.println("player " + entry.getKey() + " choose to upgrade max tech lv " + upgradeMaxTechLv.get(entry.getKey()) );
+      }
     }
   }
   

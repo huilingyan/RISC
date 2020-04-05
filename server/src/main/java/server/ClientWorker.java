@@ -20,7 +20,10 @@ public class ClientWorker extends Thread {
         while (player.isConnected()) {
             // receive ClientMessage and process
             ClientMessage clientMsg = (ClientMessage) player.recvObject();
-            int gid = clientMsg.getGameID();
+            if (clientMsg==null){
+                break;
+            }
+            int gid = clientMsg.getGameID();  // TODO: can cause null pointer exception if client disconnect
             if (gid == 0) {  // switch out, send back RoomMessage, no wait
                 // debug
                 System.out.println("player " + player.getUsername() + " switch out of the game");
@@ -101,6 +104,9 @@ public class ClientWorker extends Thread {
         boolean success = false;
         while (!success) {
             UserMessage userMsg = (UserMessage) player.recvObject(); // recv UserMessage
+            if (userMsg==null){
+                return;  // jump out of loop
+            }
             String name = userMsg.getUsername();
             String password = userMsg.getPassword();
             RoomMessage msg = new RoomMessage(false); // default to false (not succeed)

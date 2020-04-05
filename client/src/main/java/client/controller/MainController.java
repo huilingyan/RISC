@@ -29,6 +29,11 @@ public class MainController {
 
     // Map worldmap = MapGenerator.initmapGenerator(); // dummy model
 
+    public void initializeSocketConnection() {
+        this.getGameClient().connectToServer(); 
+        this.getGameClient().setUpInputStream();
+    }
+
     public static MainController getInstance() {
         return INSTANCE;
     }
@@ -58,8 +63,6 @@ public class MainController {
     }
 
     public void showLoginScene() {
-        this.getGameClient().connectToServer(); 
-        this.getGameClient().setUpInputStream();
         this.loginController.setMainController(this);
         updateCurrScene(this.loginController);
     }

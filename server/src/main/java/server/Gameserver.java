@@ -78,7 +78,8 @@ public class Gameserver {
     return false;
   }
 
-  // check if username exists, password matches, and the user is currently logged out
+  // check if username exists, password matches, and the user is currently logged
+  // out
   public boolean isValidUser(String name, String password) {
     if (!hasUser(name)) {
       return false;
@@ -91,10 +92,11 @@ public class Gameserver {
     return false;
   }
 
-  public ArrayList<Room> gatherRooms(String name) {
+  public synchronized ArrayList<Room> gatherRooms(String name) {
     ArrayList<Room> rooms = new ArrayList<Room>();
     for (Game g : gameList) {
-      if (g.hasPlayer(name) && g.getStage() < GameMessage.GAME_OVER) {
+      // filled active game with the player in, or not filled game
+      if (g.hasPlayer(name) && g.getStage() < GameMessage.GAME_OVER || !g.isFull()) {
         rooms.add(new Room(g.getGid(), g.getPlayerNum(), g.isFull()));
       }
     }
@@ -104,24 +106,28 @@ public class Gameserver {
   public synchronized Player updateUser(String name, Player p) {
     for (Player old : userList) {
       if (p.getUsername().equals(name)) {
-        old.updateSocketandStreams(p);  // connected is set to true
+        old.updateSocketandStreams(p); // connected is set to true
         return old;
       }
     }
     return null; // not found, return null
   }
 
-  // add a copy of Player p to the list, and set connected and logged in to be false
-  public synchronized void addUser(Player p) {
+  // add a copy of Player p to the list, and set connected and logged in to be
+  // false
+  public void addUser(Player p) {
     Player copy = new Player(p);
     copy.setConnected(false);
     copy.setLoggedin(false);
-    userList.add(copy);  // add a copy of Player p to the list
+    synchronized (this) {
+      userList.add(copy); // add a copy of Player p to the list
+    }
 
   }
 
   private synchronized void addGame(Game g) {
     gameList.add(g);
+    currentGid++;   // increment gid counter
   }
 
   public Game startNewGame(int playerNum, Player firstP) {
@@ -129,7 +135,6 @@ public class Gameserver {
     Map m = new Map(initializeTerritoryList(playerNum));
     Game g = new Game(currentGid, playerNum, m, firstP);
     addGame(g);
-    currentGid++;
     return g;
   }
 
