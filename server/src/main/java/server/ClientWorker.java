@@ -52,6 +52,7 @@ public class ClientWorker extends Thread {
 
         } // while connected
           // thread exits if player disconnected
+        System.out.println("Player " + player.getUsername() + " is disconnected");
         player.setLoggedin(false); // login set to false
         player.closeSocket();
     }
@@ -116,9 +117,9 @@ public class ClientWorker extends Thread {
             String name = userMsg.getUsername();
             String password = userMsg.getPassword();
             // debug
-            System.out.println("Received username: " + name);
-            System.out.println("Received password: " + password);
-            System.out.println("Login: " + userMsg.isLogin());
+            // System.out.println("Received username: " + name);
+            // System.out.println("Received password: " + password);
+            // System.out.println("Login: " + userMsg.isLogin());
             RoomMessage msg = new RoomMessage(false); // default to false (not succeed)
             if (userMsg.isLogin()) { // log in
                 // validate login info
