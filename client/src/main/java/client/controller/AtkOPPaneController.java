@@ -3,6 +3,7 @@ package client.controller;
 import java.util.ArrayList;
 
 import client.ArmySlider;
+import client.ErrorMsgBox;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -11,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import shared.AttackOperation;
+import shared.OperationValidator;
 import shared.Territory;
 
 public class AtkOPPaneController implements PaneController {
@@ -43,10 +45,17 @@ public class AtkOPPaneController implements PaneController {
         ButtonBar BtnBar = new ButtonBar();
         BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
         proceedBtn.setOnAction(e -> {
-            gc.addAtkOP(new AttackOperation(terrName, chBox.getValue(), amsld.getArmy()));
-            gc.moved();
+            System.out.println(amsld.getArmy().getSoldierNumber(0));
             System.out.println(chBox.getValue());
+        AttackOperation aop = new AttackOperation(terrName, chBox.getValue(), amsld.getArmy());
+        int errorcode = gc.getOperationValidator().isValidAttackOperation(aop);
+          if(errorcode==OperationValidator.VALID){
+            gc.moved();
             gc.showInfoPane();
+          }
+          else {
+            ErrorMsgBox.display(errorcode);
+          }
         });
         cancelBtn.setOnAction(e -> gc.showInfoPane());
 

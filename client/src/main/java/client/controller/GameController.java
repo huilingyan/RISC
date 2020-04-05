@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import shared.Map;
 import shared.MoveOperation;
+import shared.OperationValidator;
 import shared.UpgradeOperation;
 import shared.Action;
 import shared.AttackOperation;
@@ -22,11 +23,12 @@ public class GameController extends SceneController {
 
     public MainController mc;
     // models
-    private Map worldmap;
+  private Map worldmap;//the map passed in, 
     private int masterpid;
     private Action action;
     private BorderPane root;
     private boolean ismoved;
+    private OperationValidator ov;
 
     // constructor
     public GameController(Map m) {
@@ -42,10 +44,15 @@ public class GameController extends SceneController {
 
     public void setMaster(int pid) {
         this.masterpid = pid;
+        this.ov = new OperationValidator(pid, worldmap);
+      }
+
+      public OperationValidator getOperationValidator() {
+        return ov;
       }
 
     public Map getWorldmap() {
-      return worldmap;
+      return ov.getCurrentMapState();
     }
 
     public int getPid() {
@@ -167,7 +174,7 @@ public class GameController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(worldmap));
+        updateRightPane(new InfoPaneController(ov.getCurrentMapState()));
     }
 
     public void updateRightPane(PaneController pc) {

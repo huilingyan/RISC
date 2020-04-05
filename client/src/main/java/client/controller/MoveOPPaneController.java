@@ -3,6 +3,7 @@ package client.controller;
 import java.util.ArrayList;
 
 import client.ArmySlider;
+import client.ErrorMsgBox;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -10,8 +11,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import shared.MapGenerator;
 import shared.MoveOperation;
+import shared.OperationValidator;
 import shared.Territory;
 
 public class MoveOPPaneController implements PaneController {
@@ -44,11 +45,18 @@ public class MoveOPPaneController implements PaneController {
         ButtonBar BtnBar = new ButtonBar();
         BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
         proceedBtn.setOnAction(e -> {
-            gc.addMoveOP(new MoveOperation(terrName, chBox.getValue(), amsld.getArmy()));
+          MoveOperation mop = new MoveOperation(terrName, chBox.getValue(), amsld.getArmy());
+          int errorcode = gc.getOperationValidator().isValidMoveOperation(mop);
+          if(errorcode==OperationValidator.VALID){
+            //gc.addMoveOP(new MoveOperation(terrName, chBox.getValue(), amsld.getArmy()));
             gc.moved();
             System.out.println(amsld.getArmy().getSoldierNumber(0));
             System.out.println(chBox.getValue());
             gc.showInfoPane();
+          }
+          else {
+            ErrorMsgBox.display(errorcode);
+          }
           });
         cancelBtn.setOnAction(e -> gc.showInfoPane());
 

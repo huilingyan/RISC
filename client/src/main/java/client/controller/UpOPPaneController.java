@@ -3,6 +3,7 @@ package client.controller;
 import java.util.ArrayList;
 
 import client.ArmySliderPlusLvSel;
+import client.ErrorMsgBox;
 import client.InfoLayoutGenerator;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -12,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import shared.Army;
+import shared.OperationValidator;
 import shared.Territory;
 import shared.UpgradeOperation;
 
@@ -39,11 +41,19 @@ public class UpOPPaneController implements PaneController {
         ButtonBar BtnBar = new ButtonBar();
         BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
         proceedBtn.setOnAction(e -> {
+            System.out.println(amsld.getTargetLv());
             Army oldArmy = amsld.getArmy();
             Army newArmy = upgradeArmy(oldArmy, amsld.getTargetLv());
-            gc.addUpOP(new UpgradeOperation(terrName, oldArmy, newArmy));
-            System.out.println(amsld.getTargetLv());
-            gc.showInfoPane();
+            UpgradeOperation uop = new UpgradeOperation(terrName, oldArmy, newArmy);
+            int errorcode = gc.getOperationValidator().isValidUpgradeOperation(uop);
+            if (errorcode == OperationValidator.VALID) {
+              gc.showInfoPane();
+            }
+            else {
+              ErrorMsgBox.display(errorcode);
+            }
+            //gc.addUpOP(new UpgradeOperation(terrName, oldArmy, newArmy));
+            
         });
         cancelBtn.setOnAction(e -> gc.showInfoPane());
 
