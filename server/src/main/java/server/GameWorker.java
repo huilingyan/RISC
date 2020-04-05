@@ -25,7 +25,10 @@ public class GameWorker extends Thread {
                 case (GameMessage.WAIT_FOR_PLAYERS): // wait for players
                     // wait until all players join
                     System.out.println("Player num: " + game.getPlayerNum());
-                    while (!game.isFull()) {
+                    // TODO: bug here, wait forever
+                    boolean full = game.isFull();
+                    while (!full) {
+                        full = game.isFull();
                     }
                     // debug
                     System.out.println("All players joined game " + game.getGid());

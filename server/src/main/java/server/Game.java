@@ -26,6 +26,7 @@ public class Game {
         playerList = new ArrayList<Player>();
         playerList.add(first_player); // put the first player into playerlist
         System.out.println("Add the first player to game " + g_id);
+        System.out.println("Player num: " + playerNum);
         tempActionList = new HashMap<Integer, Action>(); // empty action list
     }
 
@@ -70,10 +71,14 @@ public class Game {
     public synchronized void addPlayer(Player p) {
         playerList.add(p);
         System.out.println("Add a player " + p.getUsername());
+        System.out.println("Player number in player list: " + playerList.size());
     }
 
     public boolean isFull() {
-        return playerNum == playerList.size();
+        // boolean full = (playerNum - playerList.size()==0);
+        boolean full = (playerList.size() > 1);
+        // System.out.println(full);
+        return full;
     }
 
     public synchronized void addTempAction(int pid, Action ac) {
