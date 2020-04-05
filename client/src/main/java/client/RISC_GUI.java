@@ -11,6 +11,7 @@ public class RISC_GUI extends Application {
     public void start(Stage stage) {
 
         MainController maincontroller = MainController.getInstance();
+        maincontroller.initializeSocketConnection();
         maincontroller.setStage(stage);
         maincontroller.showLoginScene();
         maincontroller.showStage();
