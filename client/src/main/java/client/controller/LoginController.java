@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import shared.RoomMessage;
+import shared.UserMessage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
@@ -59,20 +60,17 @@ public class LoginController extends SceneController {
 
         loginbtn.setOnAction(e -> {
             this.mc.setPlayerName(userinput.getText());
-            /* this.mc.gclient.connectToServer(); 
+            // this.mc.getGameClient().connectToServer(); 
             this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), true));
-            this.mc.gclient.setupInputStream();
+            // this.mc.getGameClient().setUpInputStream();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
             if (room_msg.isValid()) {
-            */
-            // dummy roommsg model for test
-            RoomMessage room_msg = RoomMsgGenerator.generateRooms();
+            
             this.mc.showRoomScene(room_msg);
-            /*}
+            }
             else {
                 invalidLogin(); // pop up alert box
             }
-            */
         });
 
         signupbtn.setOnAction(e -> {

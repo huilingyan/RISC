@@ -14,7 +14,6 @@ import java.lang.String;
 import javafx.geometry.Pos;
 
 import shared.InitOperation;
-import client.RoomMsgGenerator;
 import shared.*;
 
 public class InitController extends SceneController {
@@ -63,7 +62,7 @@ public class InitController extends SceneController {
     }
 
     public void addInitOP(InitOperation iop) {
-      action.addInitOperation(iop);
+        action.addInitOperation(iop);
     }
 
     public void subSoldiers(int n) {
@@ -107,42 +106,32 @@ public class InitController extends SceneController {
         Button switchoutbtn = new Button("Switch out");
         switchoutbtn.setStyle("-fx-font-weight: bold;");
         switchoutbtn.setPadding(new Insets(5, 5, 5, 5));
-        switchoutbtn.setOnAction(e -> { 
-            /*
+        switchoutbtn.setOnAction(e -> {            
             this.mc.switchoutMsg(); // send switchout message to server
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
-            */
-            // dummy roommsg model for test
-            RoomMessage room_msg = RoomMsgGenerator.generateRooms();
             this.mc.showRoomScene(room_msg);
             
         });
         Button startgamebtn = new Button("Start Game");
         startgamebtn.setPadding(new Insets(5, 5, 5, 5));
         startgamebtn.setOnAction(e -> {
-            /*
+            
             this.mc.sendToServer(new ClientMessage(this.room_num, 1, this.action)); // initialize units
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
-            if ((servermsg.stage == 0) || (servermsg.stage == 1) || (servermsg.stage == 3)) {
+            if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1) || (servermsg.getStage() == 3)) {
                 System.out.println("Unexpected game stage!");
             }
             this.mc.setWorldMap(servermsg.getMap()); 
             int pid = servermsg.getMap().getPidByName(this.player_name);
-            int room_num = servermsg.gid;
-            */
-                // dummy model for test
-                int pid = 0;
-                this.mc.showGameScene(102, pid);
-            /*
-            }
-            */
+            int room_num = servermsg.getGameID();
+            this.mc.showGameScene(room_num, pid);
+            
         });
         AnchorPane bottompane = new AnchorPane(switchoutbtn, startgamebtn);
         root.setBottom(bottompane);
         AnchorPane.setLeftAnchor(switchoutbtn, 10.0);
         AnchorPane.setRightAnchor(startgamebtn, 10.0);
         BorderPane.setMargin(bottompane, new Insets(10, 10, 10, 10));
-        // BorderPane.setAlignment(startgamebtn, Pos.TOP_RIGHT);
  
         // set scene
         Scene mapscene = new Scene(root, 960, 720);

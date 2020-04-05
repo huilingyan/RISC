@@ -14,9 +14,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
+import shared.*;
 import shared.Map;
 import client.RoomMsgGenerator;
-import shared.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -122,14 +122,9 @@ public class GameController extends SceneController {
         Button switchoutbtn = new Button("Switch out");
         switchoutbtn.setStyle("-fx-font-weight: bold;");
         switchoutbtn.setOnAction(e -> {
-            /*
             this.mc.switchoutMsg(); // send switchout message to server
-            RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
-            */
-            // dummy roommsg model for test
-            RoomMessage room_msg = RoomMsgGenerator.generateRooms();
+            RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();           
             this.mc.showRoomScene(room_msg);            
-
         });
         Button upgradeMaxTechbtn = new Button("Upgrade Max Tech Lv");
         upgradeMaxTechbtn.setOnAction(e -> {
@@ -138,27 +133,21 @@ public class GameController extends SceneController {
         });
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
-            /*
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.action)); // commit order
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
-            if (servermsg.stage == 3) { // if game over
+            if (servermsg.getStage() == 3) { // if game over
                 // TODO: pop out alert box
                 this.mc.gameOverAlertBox(this.player_name, servermsg);
             }
-            else if ((servermsg.stage == 0) || (servermsg.stage == 1)) {
+            else if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1)) {
                 System.out.println("Unexpected game stage!");
             }
             else {
                 this.mc.setWorldMap(servermsg.getMap());  
                 int pid = servermsg.getMap().getPidByName(this.player_name);
-                int room_num = servermsg.gid;
-            */
-                // dummy model for test
-                int pid = 0;
-                this.mc.showGameScene(102, pid);
-            /*
-            }
-            */
+                int room_number = servermsg.getGameID();
+                this.mc.showGameScene(room_number, pid); 
+            }          
         });
 
         FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn, endTurnbtn);

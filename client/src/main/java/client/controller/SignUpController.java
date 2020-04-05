@@ -3,10 +3,12 @@ package client.controller;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import shared.UserMessage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
+import java.io.*;
 
 public class SignUpController extends SceneController {
 
@@ -56,7 +58,13 @@ public class SignUpController extends SceneController {
         Button registerbtn = new Button("Register");
         GridPane.setConstraints(registerbtn, 1, 3);
         registerbtn.setOnAction(e -> {
-            // this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), false));
+            // debug
+            System.out.println("username: " + userinput.getText());
+            System.out.println("password: " + pwdinput.getText());
+            // this.mc.getGameClient().connectToServer(); 
+            // this.mc.getGameClient().setUpInputStream();
+            this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), false));
+            // this.mc.getGameClient().sendObject(new UserMessage(userinput.getText(), pwdinput.getText(), false));
             this.mc.showLoginScene(); // return to the login scene
         });
 

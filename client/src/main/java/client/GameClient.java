@@ -18,42 +18,40 @@ public class GameClient {
     /****
     Connect to the server host provided in config file
     ***/
-    private void connectToServer() {
+    public void connectToServer() {
         Config config = new Config("config.properties"); 
         String host = config.readProperty("hostname"); 
         String port = config.readProperty("port");
         try {
-            Socket newSocket = new Socket(host, Integer.parseInt(port)); serverSocket = newSocket;
+            Socket newSocket = new Socket(host, Integer.parseInt(port)); 
+            this.serverSocket = newSocket;
         } catch (IOException e) {
             System.out.println("Cannnot connect to server at " + host + ": " + port); 
         }
         // open outputstream
         try {
-            outStream = new ObjectOutputStream(serverSocket.getOutputStream());
+            this.outStream = new ObjectOutputStream(this.serverSocket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("fail to set up ObjectOutputStream");
         } 
     }
-    /****
-     * Initialize an inputstream from the socket. Call it right before
+    /***** Initialize an inputstream from the socket. Call it right before
     receiving RoomMessage from server
-        ****/
+    ****/
     public void setUpInputStream() {
-        if (connected) {
-            try {
-                inStream = new ObjectInputStream(clientSocket.getInputStream()); 
-            } catch (IOException e) {
-                e.printStackTrace();
-            } 
-        }
-    }
-        /****
-        Recv an object from servre, return null on error
-        ****/
-    private Object recvObject() {
         try {
-            return inStream.readObject();
+            this.inStream = new ObjectInputStream(this.serverSocket.getInputStream()); 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }        
+    }
+    /****
+    Recv an object from servre, return null on error
+    ****/
+    public Object recvObject() {
+        try {
+            return this.inStream.readObject();
         } catch (IOException e) {
             closeSocket();
             System.exit(0); // exit program if server's down
@@ -65,11 +63,11 @@ public class GameClient {
     }
         
     /****
-        Send an object to server
-        *****/
-    private void sendObject(Object ob) {
+    Send an object to server
+    *****/
+    public void sendObject(Object ob) {
         try {
-            outStream.writeObject(ob); 
+            this.outStream.writeObject(ob); 
         } catch (IOException e) {
             closeSocket();
             System.exit(0); // exit program if server's down }
@@ -81,10 +79,10 @@ public class GameClient {
     public void sendSwitchOutMsg() {
         sendObject(new ClientMessage(0, 3, new Action())); 
     }
-        /****
-        Close the socket and any open output/input stream
-        ****/
-    private void closeSocket() {
+    /****
+    Close the socket and any open output/input stream
+    ****/
+    public void closeSocket() {
         try { 
             outStream.close();
         } catch (IOException e) {

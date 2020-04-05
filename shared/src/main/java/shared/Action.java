@@ -3,8 +3,7 @@ package shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collections;
+
 
 public class Action implements Serializable {
   private ArrayList<InitOperation> initOperations;
@@ -74,27 +73,12 @@ public class Action implements Serializable {
       this.attackOperations.add(aop);
   }
   
-  public void addUpgradeOperation(UpgradeOperation uop) {
-    this.upgradeOperations.add(uop);
-  }
-
   public void concatInitOperation(Action clientaction) {
       this.initOperations.addAll(clientaction.initOperations);
   }
 
 
   public void concatGameOperation(Action clientaction) {
-<<<<<<< HEAD
-      this.moveOperations.addAll(clientaction.moveOperations);
-      this.attackOperations.addAll(clientaction.attackOperations);
-      this.upgradeOperations.addAll(clientaction.upgradeOperations);
-      //if any player choose to upgrade his max tech level, set it to true
-      for (HashMap.Entry<Integer, Boolean> entry :
-          clientaction.getUpgradeMaxTechHashMap().entrySet()) {
-          if (entry.getValue() == true) {//untested
-              upgradeMaxTechLv.replace(entry.getKey(), entry.getValue());
-          }
-=======
     
     this.upgradeOperations.addAll(clientaction.upgradeOperations);
     this.moveOperations.addAll(clientaction.moveOperations);
@@ -103,12 +87,12 @@ public class Action implements Serializable {
     for (HashMap.Entry<Integer, Boolean> entry :
     clientaction.getUpgradeMaxTechHashMap().entrySet()) {
     
-      if (entry.getValue()) {
-        //replace is not suitable here because it doesn't replace null value
-        upgradeMaxTechLv.put(entry.getKey(), entry.getValue());
-        //System.out.println("player " + entry.getKey() + " choose to upgrade max tech lv " + upgradeMaxTechLv.get(entry.getKey()) );
->>>>>>> bb40d2450a921c610a8266e8bb48ea74210e2aaa
-      }
+        if (entry.getValue()) {
+          //replace is not suitable here because it doesn't replace null value
+            upgradeMaxTechLv.put(entry.getKey(), entry.getValue());
+          //System.out.println("player " + entry.getKey() + " choose to upgrade max tech lv " + upgradeMaxTechLv.get(entry.getKey()) );
+        }
+    }
   }
   
 }
