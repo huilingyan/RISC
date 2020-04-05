@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import shared.AttackOperation;
+import shared.OperationValidator;
 import shared.Territory;
 
 public class AtkOPPaneController implements PaneController {
@@ -43,10 +44,17 @@ public class AtkOPPaneController implements PaneController {
         ButtonBar BtnBar = new ButtonBar();
         BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
         proceedBtn.setOnAction(e -> {
-            gc.addAtkOP(new AttackOperation(terrName, chBox.getValue(), amsld.getArmy()));
-            gc.moved();
+            System.out.println(amsld.getArmy().getSoldierNumber(0));
             System.out.println(chBox.getValue());
-            gc.showInfoPane();
+            AttackOperation aop = new AttackOperation(terrName, chBox.getValue(), amsld.getArmy());
+            int errorcode = gc.getOperationValidator().isValidAttackOperation(aop);
+            if (errorcode == OperationValidator.VALID){
+                gc.moved();
+                gc.showInfoPane();
+            }
+            else {
+                ErrorAlerts.inValidOpAlert(errorcode);
+            }
         });
         cancelBtn.setOnAction(e -> gc.showInfoPane());
 

@@ -161,7 +161,6 @@ public class MainController {
 
     }
 
-
     public void sendToServer(Object obj) {
         this.getGameClient().sendObject(obj);
     }

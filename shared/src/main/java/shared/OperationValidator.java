@@ -48,33 +48,31 @@ public class OperationValidator {
     //totalunit inidicates the number of soldiers a player can initially deploy
     //totalunit should be a fixed constant
     
-    String dest = initop.getDest();
+      String dest = initop.getDest();
 
-    //get the territory to deploy initial soldiers
-    Territory t_to_deploy = temp_map.getTerritoryByName(dest);
-    // 1. Check the name of destination territory
-    if ((t_to_deploy == null) || (!isOwnTerritory(t_to_deploy))) {
-      return INVALID_DEST;
-    }
+      //get the territory to deploy initial soldiers
+      Territory t_to_deploy = temp_map.getTerritoryByName(dest);
+      // 1. Check the name of destination territory
+      if ((t_to_deploy == null) || (!isOwnTerritory(t_to_deploy))) {
+        return INVALID_DEST;
+      }
+      // 2. Check if deployed army is valid 
+      int remains = getRemainingUnit(totalunit);
+      if (initop.getArmy().getTotalSoldiers() > remains) {
+        // not enough units
+        return NOT_ENOUGH_UNITS;
+      }
+      if (!isArmyPostive(initop.getArmy())) {
+        // negative deployment, illegal number
+        return ILLEGAL_NUM;
+      }
+      // update temp_map: add units to the territory
+      t_to_deploy.addDefender(initop.getArmy());
 
-    // 2. Check if deployed army is valid 
-    int remains = getRemainingUnit(totalunit);
-    if (initop.getArmy().getTotalSoldiers() > remains) {
-      // not enough units
-      return NOT_ENOUGH_UNITS;
-    }
-    if (!isArmyPostive(initop.getArmy())) {
-      // negative deployment, illegal number
-      return ILLEGAL_NUM;
-    }
-
-    // update temp_map: add units to the territory
-    t_to_deploy.addDefender(initop.getArmy());
-
-    // add operation to action
-    validatedaction.addInitOperation(initop);
-   
-    return VALID;
+      // add operation to action
+      validatedaction.addInitOperation(initop);
+    
+      return VALID;
   }
 
   public int isValidUpgradeOperation(UpgradeOperation upgradeop) {
@@ -90,8 +88,8 @@ public class OperationValidator {
     }
 
     // 2. Check if army is valid
-    if (!isArmyPostive(army_to_upgrade) ||
-        !isArmyPostive(army_upgraded) ||
+    if (!isArmyPostive (army_to_upgrade) ||
+        !isArmyPostive (army_upgraded) ||
         (army_to_upgrade.getTotalSoldiers() != army_upgraded.getTotalSoldiers())) {
       return ILLEGAL_NUM;
     }
@@ -276,56 +274,11 @@ public class OperationValidator {
     }
     return remains;
   }
-  //use Map's method Territory getTerritoryByName(String t_name) instead
-  /*
-  private Territory findTerritory(String t_name) {
-    Territory t_to_deploy = null; // the territory to operate on
-    for (Territory t : this.temp_map.getTerritories()) {
-      if (t.getName().equalsIgnoreCase(t_name)) { // if is valid territory
-        t_to_deploy = t; 
-        return t_to_deploy;
-      }
-    }
-    return null;
-  }
-  */
+
   private boolean isOwnTerritory(Territory t) {
     return (t.getOwnership() == this.player_id);
   }
 
-  
-  /*
-  private boolean isValidPath(Territory src, Territory dest) {
-
-    LinkedList<Integer> visited = new LinkedList<Integer>();
-    LinkedList<Integer> queue = new LinkedList<Integer>();
-
-    queue.add(src.getTid());
-
-    while(queue.size() != 0) { // when queue is not empty
-      int tid = queue.poll();
-
-      if (tid == dest.getTid()) {
-        return true; // find the path
-      }
-
-      if (visited.contains(tid)) {
-        continue;
-      }
-
-      Territory t = temp_map.getTerritoryByTid(tid);
-
-      for (int neigh : t.getNeighborList()) {
-        if ((neigh != -1) && (findOwnershipByTid(neigh) == this.player_id)) {
-          queue.add(neigh);
-        }                
-      }
-      visited.add(t.getTid());
-    }
-
-    return false;
-  }
-*/
   private boolean isAdjacent(Territory src, Territory dest) {
 
     for (int neigh : src.getNeighborList()) {
@@ -337,17 +290,7 @@ public class OperationValidator {
     }
     return false;
   }
-  // use Map's method Territory getTerritoryByTid(int t_id) instead
-  /*
-  private Territory findTerritoryByTid(int tid) {
-    for (Territory t : this.temp_map) {
-      if (t.getTid() == tid) { // if find the territory
-        return t;
-      }
-    }
-    return null; // not found
-  }
-  */
+
   private boolean isTerritoryHaveEnoughArmy(Army army, Territory t) {
     for (int i = 0; i < army.getHighestLevel(); i++) {
       if (army.getSoldierNumber(i) > t.getDefender().getSoldierNumber(i)) {

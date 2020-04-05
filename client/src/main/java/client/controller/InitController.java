@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.lang.Integer;
 import java.lang.String;
 import javafx.geometry.Pos;
+import java.io.*;
 
 import shared.InitOperation;
 import shared.*;
@@ -20,21 +21,21 @@ public class InitController extends SceneController {
 
     public MainController mc;
     // models
-    public static final HashMap<Integer, String> TERRITORY_LIST = new HashMap<Integer, String>();
     private Map worldmap;
     private BorderPane root;
     private String player_name;
     private int room_num; // id of current room
     private int masterpid; // id of the player
     private int totalnofsoldiers;
-    private Action action;
+    private Action action; // TODO: DELETE it
+    private OperationValidator ov;
     
     // constructor
     public InitController(Map m, String pname, int room_num, int pid) {
       this.worldmap = m;
-      this.totalnofsoldiers = 20;//hard coded, need adjust
+      this.totalnofsoldiers = Map.INIT_UNIT;//hard coded, need adjust
       this.root = new BorderPane();
-      this.action = new Action();
+      this.action = new Action(); // TODO: DELETE it
       this.player_name = pname;
       this.room_num = room_num;
       this.masterpid = pid;
@@ -47,14 +48,27 @@ public class InitController extends SceneController {
 
     public void setMaster(int pid) {
         this.masterpid = pid;
+        this.ov = new OperationValidator(pid, this.worldmap);
+    }
+
+    public OperationValidator getOperationValidator() {
+        return this.ov;
     }
   
     public Map getWorldmap() {
-        return worldmap;
+        return this.ov.getCurrentMapState();
+    }
+  
+    public int getRoomNum() {
+        return this.room_num;
+    }
+
+    public String getPlayerName() {
+        return this.player_name;
     }
 
     public int getPid() {
-        return masterpid;
+        return this.masterpid;
     }
 
     public int getnofSoldiers() {
@@ -77,12 +91,13 @@ public class InitController extends SceneController {
   
     @Override
     public Scene getCurrScene() {
-        // hard-coded master pid for test
-        setMaster(0);
+
+        setMaster(this.masterpid);
+
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
-        Label l = new Label("Below is the map:");
+        Label l = new Label("Room " + this.getRoomNum() + "  " + this.getPlayerName());
         root.setTop(l);
         l.setStyle("-fx-font: 24 arial;");
         BorderPane.setMargin(l, new Insets(10, 10, 10, 10));
@@ -98,7 +113,7 @@ public class InitController extends SceneController {
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
 
         // set right
-        AnchorPane rightpane = new InfoPaneController(worldmap).getCurrPane();
+        AnchorPane rightpane = new InfoPaneController(this.getWorldmap()).getCurrPane();
         root.setRight(rightpane);
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
         
@@ -140,54 +155,42 @@ public class InitController extends SceneController {
 
     }
 
-    private void addTerritoryList() {
-        InitController.TERRITORY_LIST.put(0, "Pikachu");
-        InitController.TERRITORY_LIST.put(1, "Ditto");
-        InitController.TERRITORY_LIST.put(2, "Gengar");
-        InitController.TERRITORY_LIST.put(3, "Eevee");
-
-        InitController.TERRITORY_LIST.put(4, "Snorlax");
-        InitController.TERRITORY_LIST.put(5, "Mew");
-        InitController.TERRITORY_LIST.put(6, "Psyduck");
-        InitController.TERRITORY_LIST.put(7, "Magneton");
-
-        InitController.TERRITORY_LIST.put(8, "Vulpix");
-        InitController.TERRITORY_LIST.put(9, "Jumpluff");
-        InitController.TERRITORY_LIST.put(10, "Bulbasaur");
-        InitController.TERRITORY_LIST.put(11, "Charmandar");
-
-        InitController.TERRITORY_LIST.put(12, "Squirtle");
-        InitController.TERRITORY_LIST.put(13, "Pidgey");
-        InitController.TERRITORY_LIST.put(14, "Caterpie");
-        InitController.TERRITORY_LIST.put(15, "Rattata");
-    }
-
     private Group generateMap() {
+        // debug
+        for (Territory t : this.worldmap.getTerritories()) {
+            System.out.println("Territory id: " + t.getTid());
+            System.out.println("Territory name: " + t.getName());
+            System.out.println("Belongs to: " + t.getOwnership());
+        }
+        System.out.println("");
 
         Group buttongroup = new Group();
         int init_x = 50;
         int init_y = 50;
 
-        for (int i = 0; i < 9; i++) {
-            // Button button = new Button(InitController.TERRITORY_LIST.get(i));
-            String t_name = this.worldmap.getTerritories().get(i).getName();
-            Button button = new Button(t_name);
-            // get the button colour according to player
-            int pid = this.worldmap.getTerritories().get(i).getOwnership();
-            String color = this.worldmap.getPlayerStatByPid(pid).getColor();
-            button.setPrefWidth(100);
-            button.setPrefHeight(100);
-            button.setLayoutX(init_x + 75 * (i / 4));
-            button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
-            button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
-                            + "-fx-background-color: #" + color + ";");
-            button.setOnAction(e -> {
-                showInitOPPane(t_name);
-            });
-            
-            buttongroup.getChildren().addAll(button);
-        }
+        for (int i = 0; i < Territory.MAP_SIZE; i++) {
+            String t_name = this.worldmap.getTerritoryNameByTid(i);
+            if (t_name != null) {
+                // debug
+                System.out.println(" tid: " + i + " name: " + t_name);
+                Button button = new Button(t_name);
+                // get the button colour according to player
+                int pid = this.worldmap.getTerritoryByName(t_name).getOwnership();
+                System.out.println("pid: " + pid);
+                String color = this.worldmap.getPlayerStatByPid(pid).getColor();
 
+                button.setPrefWidth(100);
+                button.setPrefHeight(100);
+                button.setLayoutX(init_x + 75 * (i / 4));
+                button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
+                button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
+                                + "-fx-background-color: #" + color + ";");
+                button.setOnAction(e -> {
+                    showInitOPPane(t_name);
+                });
+                buttongroup.getChildren().addAll(button);
+            }
+        }
         return buttongroup;
     }
 
@@ -198,7 +201,7 @@ public class InitController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(worldmap));
+        updateRightPane(new InfoPaneController(this.worldmap));
     }
 
     public void updateRightPane(PaneController pc) {

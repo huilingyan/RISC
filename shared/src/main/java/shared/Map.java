@@ -84,6 +84,10 @@ public class Map implements Serializable {
         return playerStats;
     }
 
+    public int getTerritoryNum() {
+        return this.territories.size();
+    }
+
     public Territory getTerritoryByName(String t_name) {
         for (Territory t : territories) {
             if (t.getName().equalsIgnoreCase(t_name)) {
@@ -103,7 +107,7 @@ public class Map implements Serializable {
     }
 
     public PlayerStat getPlayerStatByName(String p_name) {
-        for (PlayerStat p : playerStats) {
+        for (PlayerStat p : this.playerStats) {
             if (p.getPName().equals(p_name)) {
                 return p;
             }
@@ -111,14 +115,25 @@ public class Map implements Serializable {
         return null;
     }
 
+
     public int getPidByName(String p_name) {
-      for (PlayerStat p : playerStats) {
+      for (PlayerStat p : this.playerStats) {
         if (p.getPName().equals(p_name)) {
             return p.getPid();
         }
       }
       return -1;
     }
+
+    public String getTerritoryNameByTid(int tid) {
+      for (Territory t : this.territories) {
+        if (t.getTid() == tid) {
+            return t.getName();
+        }
+      }
+      return null;
+    }
+
 
     public PlayerStat getPlayerStatByPid(int p_id) {
         for (PlayerStat p : playerStats) {

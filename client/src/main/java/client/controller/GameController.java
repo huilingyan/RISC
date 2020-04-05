@@ -33,6 +33,7 @@ public class GameController extends SceneController {
     private Action action;
     private String player_name;
     private int room_num; // id of current room
+    private OperationValidator ov;
     
     // constructor
     public GameController(Map m, String pname, int room_num, int pid) {
@@ -51,7 +52,12 @@ public class GameController extends SceneController {
 
     public void setMaster(int pid) {
         this.masterpid = pid;
-      }
+        this.ov = new OperationValidator(pid, this.worldmap);
+    }
+
+    public OperationValidator getOperationValidator() {
+        return ov;
+    }
 
     public Map getWorldmap() {
       return worldmap;
@@ -87,9 +93,10 @@ public class GameController extends SceneController {
   
     @Override
     public Scene getCurrScene() {
-        // hard-coded master pid for test
-        setMaster(0);
 
+        setMaster(this.masterpid);
+        
+        // this.validator = new OperationValidator(this.masterpid, this.worldmap);
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
@@ -129,7 +136,7 @@ public class GameController extends SceneController {
         Button upgradeMaxTechbtn = new Button("Upgrade Max Tech Lv");
         upgradeMaxTechbtn.setOnAction(e -> {
             UpgTechOP(this.masterpid);
-            upgradeTechSucceed(); // pop up alert box
+            ErrorAlerts.upgradeTechSucceed(); // pop up alert box
         });
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
@@ -164,14 +171,12 @@ public class GameController extends SceneController {
     }
 
     private Group generateMap() {
-
         Group buttongroup = new Group();
         int init_x = 50;
         int init_y = 50;
 
-        for (int i = 0; i < 9; i++) {
-            // Button button = new Button(InitController.TERRITORY_LIST.get(i));
-            String t_name = this.worldmap.getTerritories().get(i).getName();
+        for (int i = 0; i < this.worldmap.getTerritoryNum(); i++) {
+            String t_name = this.worldmap.getTerritoryNameByTid(i);
             Button button = new Button(t_name);
             // get the button colour according to player
             int pid = this.worldmap.getTerritories().get(i).getOwnership();
@@ -184,9 +189,10 @@ public class GameController extends SceneController {
                             + "-fx-background-color: #" + color + ";");
             button.setOnAction(e -> {
                 showModePane(t_name);
-            });           
+            });
+            
             buttongroup.getChildren().addAll(button);
-        }        
+        }
         return buttongroup;
     }
 
@@ -220,16 +226,6 @@ public class GameController extends SceneController {
 
     public void updateRightPane(PaneController pc) {
         root.setRight(pc.getCurrPane());
-    }
-
-    public void upgradeTechSucceed() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Success");
-
-        alert.setHeaderText(null);
-        alert.setContentText("Maximum Tech Level upgraded successfully!");
- 
-        alert.showAndWait();
     }
     
 }
