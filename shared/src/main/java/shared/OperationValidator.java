@@ -82,7 +82,7 @@ public class OperationValidator {
     Army army_to_upgrade = upgradeop.getArmyToUpgrade();
     Army army_upgraded = upgradeop.getArmy();
 
-    //get the territory to deploy initial soldiers
+    
     Territory t_to_deploy = temp_map.getTerritoryByName(dest);
     // 1. Check the name of destination territory
     if ((t_to_deploy == null) || (!isOwnTerritory(t_to_deploy))) {
@@ -107,7 +107,10 @@ public class OperationValidator {
     if (gold_remain < upgrade_cost) {
       return NOT_ENOUGH_GOLD;
     }
-
+    
+    //update upgraded army to map
+    t_to_deploy.subtractDefender(army_to_upgrade);       
+    t_to_deploy.addDefender(army_upgraded);
     // add operation to action
     validatedaction.addUpgradeOperation(upgradeop);
     temp_map.getPlayerStatByPid(player_id).subtractGold(upgrade_cost);
