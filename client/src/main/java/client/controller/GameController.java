@@ -63,6 +63,14 @@ public class GameController extends SceneController {
       return worldmap;
     }
 
+    public int getRoomNum() {
+        return this.room_num;
+    }
+
+    public String getPlayerName() {
+        return this.player_name;
+    }
+
     public int getPid() {
         return masterpid;
     }
@@ -96,25 +104,14 @@ public class GameController extends SceneController {
 
         setMaster(this.masterpid);
         
-        // this.validator = new OperationValidator(this.masterpid, this.worldmap);
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
-        HBox player_info = new HBox();
-        root.setTop(player_info);
-
-        Label room_num = new Label("Room 103: ");
-        room_num.setStyle("-fx-font: 24 arial;");
-        player_info.getChildren().addAll(room_num);
-
-        Label player_name = new Label("Ashley");
-        player_name.setStyle("-fx-font: 24 arial;");
-        player_info.getChildren().addAll(player_name);
-
-        BorderPane.setMargin(player_name, new Insets(15, 15, 15, 15));
-        BorderPane.setAlignment(player_name, Pos.TOP_CENTER);
-        BorderPane.setMargin(room_num, new Insets(15, 15, 15, 15));
-        BorderPane.setAlignment(room_num, Pos.TOP_LEFT);
+        Label l = new Label("Room " + this.getRoomNum() + "  " + this.getPlayerName());
+        root.setTop(l);
+        l.setStyle("-fx-font: 24 arial;");
+        BorderPane.setMargin(l, new Insets(10, 10, 10, 10));
+        BorderPane.setAlignment(l, Pos.CENTER);
 
         // set left
         Pane leftpane = new Pane();
@@ -127,7 +124,7 @@ public class GameController extends SceneController {
 
         // set bottom
         Button switchoutbtn = new Button("Switch out");
-        switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #FF2D2D;");
+        switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #ff7575;");
         switchoutbtn.setOnAction(e -> {
             this.mc.switchoutMsg(); // send switchout message to server
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();           
@@ -175,23 +172,28 @@ public class GameController extends SceneController {
         int init_x = 50;
         int init_y = 50;
 
-        for (int i = 0; i < this.worldmap.getTerritoryNum(); i++) {
+        for (int i = 0; i < Territory.MAP_SIZE; i++) {
             String t_name = this.worldmap.getTerritoryNameByTid(i);
-            Button button = new Button(t_name);
-            // get the button colour according to player
-            int pid = this.worldmap.getTerritories().get(i).getOwnership();
-            String color = this.worldmap.getPlayerStatByPid(pid).getColor();
-            button.setPrefWidth(100);
-            button.setPrefHeight(100);
-            button.setLayoutX(init_x + 75 * (i / 4));
-            button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
-            button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
-                            + "-fx-background-color: #" + color + ";");
-            button.setOnAction(e -> {
-                showModePane(t_name);
-            });
-            
-            buttongroup.getChildren().addAll(button);
+            if (t_name != null) {
+                // debug
+                System.out.println(" tid: " + i + " name: " + t_name);
+                Button button = new Button(t_name);
+                // get the button colour according to player
+                int pid = this.worldmap.getTerritoryByName(t_name).getOwnership();
+                System.out.println("pid: " + pid);
+                String color = this.worldmap.getPlayerStatByPid(pid).getColor();
+
+                button.setPrefWidth(100);
+                button.setPrefHeight(100);
+                button.setLayoutX(init_x + 75 * (i / 4));
+                button.setLayoutY(init_y + 100 * (i % 4) + ((i % 8 > 3)? 50 : 0));
+                button.setStyle("-fx-shape: \"M 700 450 L 625 325 L 700 200 L 850 200 L 925 325 L 850 450 Z\"; " 
+                                + "-fx-background-color: #" + color + ";");
+                button.setOnAction(e -> {
+                    showModePane(t_name);
+                });
+                buttongroup.getChildren().addAll(button);
+            }
         }
         return buttongroup;
     }
@@ -221,7 +223,7 @@ public class GameController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(worldmap));
+        updateRightPane(new InfoPaneController(this.worldmap));
     }
 
     public void updateRightPane(PaneController pc) {

@@ -127,10 +127,10 @@ public class ErrorAlerts {
 
         Label l = new Label();
         if (ecodetomsgMap.containsKey(errorcode)) {
-        l.setText(ecodetomsgMap.get(errorcode));
+            l.setText(ecodetomsgMap.get(errorcode));
         }
         else {
-        l.setText("Error code:"+errorcode);
+            l.setText("Error code:"+errorcode);
         }
 
         Button closeBtn = new Button("OK");

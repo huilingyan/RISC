@@ -29,7 +29,7 @@ public class InfoPaneController implements PaneController {
       grid.add(new Text("gold"),4,0);
       grid.add(new Text("max tech"),5,0);
       
-      ArrayList<PlayerStat> psList = worldmap.getPlayerStats();
+      ArrayList<PlayerStat> psList = this.worldmap.getPlayerStats();
       for (int i = 0; i < psList.size(); i++) {
           int row = i + 1;
           PlayerStat ps = psList.get(i);

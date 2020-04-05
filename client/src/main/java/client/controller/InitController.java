@@ -33,7 +33,7 @@ public class InitController extends SceneController {
     // constructor
     public InitController(Map m, String pname, int room_num, int pid) {
       this.worldmap = m;
-      this.totalnofsoldiers = Map.INIT_UNIT;//hard coded, need adjust
+      this.totalnofsoldiers = Map.INIT_UNIT;
       this.root = new BorderPane();
       this.action = new Action(); // TODO: DELETE it
       this.player_name = pname;
@@ -93,7 +93,7 @@ public class InitController extends SceneController {
     public Scene getCurrScene() {
 
         setMaster(this.masterpid);
-
+        
         root.setPadding(new Insets(10, 10, 10, 10));
 
         // set top
@@ -119,7 +119,7 @@ public class InitController extends SceneController {
         
         // set bottom
         Button switchoutbtn = new Button("Switch out");
-        switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #FF2D2D;");
+        switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #ff7575;");
         switchoutbtn.setPadding(new Insets(5, 5, 5, 5));
         switchoutbtn.setOnAction(e -> {            
             this.mc.switchoutMsg(); // send switchout message to server
@@ -131,7 +131,7 @@ public class InitController extends SceneController {
         startgamebtn.setPadding(new Insets(5, 5, 5, 5));
         startgamebtn.setOnAction(e -> {
             
-            this.mc.sendToServer(new ClientMessage(this.room_num, 1, this.action)); // initialize units
+            this.mc.sendToServer(new ClientMessage(this.room_num, 1, ov.getAction())); // initialize units
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1) || (servermsg.getStage() == 3)) {
                 System.out.println("Unexpected game stage!");
@@ -171,12 +171,9 @@ public class InitController extends SceneController {
         for (int i = 0; i < Territory.MAP_SIZE; i++) {
             String t_name = this.worldmap.getTerritoryNameByTid(i);
             if (t_name != null) {
-                // debug
-                System.out.println(" tid: " + i + " name: " + t_name);
                 Button button = new Button(t_name);
                 // get the button colour according to player
                 int pid = this.worldmap.getTerritoryByName(t_name).getOwnership();
-                System.out.println("pid: " + pid);
                 String color = this.worldmap.getPlayerStatByPid(pid).getColor();
 
                 button.setPrefWidth(100);

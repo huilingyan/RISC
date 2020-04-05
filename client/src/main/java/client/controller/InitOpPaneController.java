@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import shared.*;
+import java.io.*;
 
 public class InitOpPaneController implements PaneController {
     public InitController ic;
@@ -54,18 +55,25 @@ public class InitOpPaneController implements PaneController {
         // control button actions
         proceedBtn.setOnAction(e -> {
             int n = (int) NofArmySlider.getValue();
+            // debug
+            System.out.println("soldiers to deploy: " + n);
             Army army = new Army(n);
             // validate operation
             InitOperation iop = new InitOperation(terrName, army);
-            int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, this.ic.getnofSoldiers());
-            if(errorcode == OperationValidator.VALID) {
+            // debug
+            System.out.println("Current soldier number: " + this.ic.getnofSoldiers());
+            int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, Map.INIT_UNIT);
+            // int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, this.ic.getnofSoldiers());
+            if (errorcode == OperationValidator.VALID) {
                 this.ic.subSoldiers(n);
+                // debug
+                System.out.println("Now have soldiers: " + this.ic.getnofSoldiers());
                 this.ic.showInfoPane();
             }
             else {
                 ErrorAlerts.inValidOpAlert(errorcode);
             }
-
+            
         });
         cancelBtn.setOnAction(e -> this.ic.showInfoPane());
         
