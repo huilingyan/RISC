@@ -68,7 +68,7 @@ public class RoomController extends SceneController {
         room_list.getChildren().addAll(room_available);
         // list available rooms
         for (Room room : this.roomMsg.getRooms()) {
-            if (!(room.isFull())) {
+            if (!(room.isFull())) { // TODO: why only list not full room?
                 Label room_id = new Label();
                 room_id.setText(String.valueOf(room.getGid()));
                 room_list.getChildren().addAll(room_id);
@@ -91,32 +91,46 @@ public class RoomController extends SceneController {
         Button enterbtn = new Button("Join");
         GridPane.setConstraints(enterbtn, 0, 3);
         enterbtn.setOnAction(e -> {
-            /*
-            this.mc.sendToServer(new ClientMessage(room_num.getText(), 0, new Action()));
-            ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
-            if (servermsg.stage == 3) { // if game over
+
+            // TODO: need to check if input is integer, and if the room num is in the list
+            int roomNum = Integer.parseInt(room_num.getText());
+            this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
+            ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
+            this.mc.setWorldMap(servermsg.getMap());  // set map
+            int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
+            int gid = servermsg.getGameID();
+            // debug stage number
+            int stage = servermsg.getStage();
+            if (stage==GameMessage.INITIALIZE_UNITS){
+                this.mc.showInitScene(gid, pid);
+            } else if (stage==GameMessage.GAME_PLAY){
+                // TODO
+                this.mc.showGameScene(gid, pid);
+            } else if (stage==GameMessage.GAME_OVER){
+                // TODO
                 this.mc.gameOverAlertBox(this.playername, servermsg);
-            }
-            else if (servermsg.stage == 1) { // waiting for players
-                System.out.println("Unexpected game stage!");
-            }
-            else {
-                this.mc.setWorldMap(servermsg.getMap()); 
-                int pid = servermsg.getMap().getPidByName(this.player_name);
-                int room_num = servermsg.gid;
-                if (servermsg.stage == 1) { // initialize
-                    this.mc.showInitScene(room_num, pid);
-                }
-                else if (servermsg.stage == 2) { // game play
-                    this.mc.showGameScene(room_num, pid);
-                }
-            */
-                // dummy model for test
-                int pid = 0;
-                this.mc.showInitScene(102, pid);
-            /*
-            }
-            */
+            } else {
+                System.out.println("Stage number is " + stage);
+                System.out.println("Error: wrong game state");
+            }   
+            
+            
+            //  this.mc.sendToServer(new ClientMessage(room_num.getText(), 0, new Action()));
+            //  ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer(); if
+            //  (servermsg.stage == 3) { // if game over
+            //  this.mc.gameOverAlertBox(this.playername, servermsg); } else if
+            //  (servermsg.stage == 1) { // waiting for players
+            //  System.out.println("Unexpected game stage!"); } else {
+            //  this.mc.setWorldMap(servermsg.getMap()); int pid =
+            //  servermsg.getMap().getPidByName(this.player_name); int room_num =
+            //  servermsg.gid; if (servermsg.stage == 1) { // initialize
+            //  this.mc.showInitScene(room_num, pid); } else if (servermsg.stage == 2) { //
+            //  game play this.mc.showGameScene(room_num, pid); }
+             
+            // dummy model for test
+            // int pid = 0;
+            // this.mc.showInitScene(102, pid);
+            // }
         });
         enter_room.getChildren().addAll(enter, input_room_num, room_num, enterbtn);
 
@@ -142,20 +156,27 @@ public class RoomController extends SceneController {
         GridPane.setConstraints(createbtn, 0, 3);
         createbtn.setOnAction(e -> {
             // TODO： repeated code
-            /*
-            this.mc.sendToServer(new ClientMessage(player_num_field.getText(), 0, new Action()));
-            ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
-            // TODO: how to deal with wait_for_player_mode
-            else { 
-                int pid = servermsg.getMap().getPidByName(this.player_name);
-                int room_num = servermsg.gid;
-                */
-                // dummy model for test
-                int pid = 0;
-                this.mc.showInitScene(102, pid);
-            /*
+            // TODO: player_num_field should be integer, and between 2-5
+            this.mc.sendToServer(new ClientMessage(Integer.parseInt(player_num_field.getText()), 0, new Action()));
+            // TODO: debug
+            // System.out.println("Sent client message");
+            // RoomMessage rMessage = (RoomMessage) this.mc.recvFromServer();
+            // System.out.println(rMessage.isValid());
+        
+            ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
+            // debug stage number
+            int stage = servermsg.getStage();
+            if (stage != GameMessage.INITIALIZE_UNITS) {
+                System.out.println("Stage number is " + stage);
+                System.out.println("Error: should be 1 (initialize units)");
             }
-            */
+            this.mc.setWorldMap(servermsg.getMap());
+            int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
+            int gid = servermsg.getGameID();
+            // dummy model for test
+            // int pid = 0;
+            this.mc.showInitScene(gid, pid);
+
         });
         new_room_pane.getChildren().addAll(player_num_label, player_num_field, createbtn);
 
@@ -164,5 +185,5 @@ public class RoomController extends SceneController {
 
         return roomscene;
     }
-    
+
 }

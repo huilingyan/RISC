@@ -60,15 +60,12 @@ public class LoginController extends SceneController {
 
         loginbtn.setOnAction(e -> {
             this.mc.setPlayerName(userinput.getText());
-            // this.mc.getGameClient().connectToServer(); 
             this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), true));
-            // this.mc.getGameClient().setUpInputStream();
-            RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
+            RoomMessage room_msg = (RoomMessage) this.mc.recvFromServer();
+            System.out.println("Login result: " + room_msg.isValid());
             if (room_msg.isValid()) {
-            
-            this.mc.showRoomScene(room_msg);
-            }
-            else {
+                this.mc.showRoomScene(room_msg);
+            } else {
                 invalidLogin(); // pop up alert box
             }
         });
@@ -83,11 +80,11 @@ public class LoginController extends SceneController {
 
     public void invalidLogin() {
         Alert alert = new Alert(AlertType.ERROR);
- 
+
         alert.setTitle("Error");
         alert.setHeaderText("Invalid Account");
         alert.setContentText("Invalid username or password! Please try again.");
-        
+
         alert.showAndWait();
     }
 
