@@ -65,6 +65,9 @@ public class ClientWorker extends Thread {
                 // debug
                 System.out.println("player " + player.getUsername() + " joins game " + gid);
                 g.addPlayer(player);
+            } else {   // switch in: should add temp action to game, otherwise it stucks
+                int pid = g.getPidByName(player.getUsername());
+                g.addTempAction(pid, new Action());
             }
             player.setActiveGid(gid);
             // debug
