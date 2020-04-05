@@ -147,30 +147,22 @@ public class Army implements Serializable{
   }
 
   public int calculateUpgradeCost(Army army_upgrade) {
-     int cost = 0;
+     
      ArrayList<Integer> upgrade_cost_list =
          new ArrayList<Integer>(Arrays.asList(0, 3, 11, 30, 55, 90, 140));
      Army army_to_upgrade = new Army(Soldiers);
      Army army_upgraded = new Army(army_upgrade);
-     
-     while (army_upgraded.getTotalSoldiers() != 0) {
-       //calculate number of soldiers to upgrade for highest level
-       int upgrade_num = army_upgraded.getSoldierNumber(army_upgraded.getHighestLevel());
-       System.out.println("number of soliders:" + upgrade_num);
-       System.out.println("upgrade from lv " + army_to_upgrade.getHighestLevel() + " to lv " + army_upgraded.getHighestLevel());
-       //get cost difference from level difference
-       //e.g. cost for lv1-->lv3 = (30-0) - (3-0)
-       int cost_difference = upgrade_cost_list.get(army_upgraded.getHighestLevel())
-           - upgrade_cost_list.get(army_to_upgrade.getHighestLevel());
-       //cumulatively add cost for upgrade
-        cost += cost_difference * upgrade_num;
-       System.out.println("upgrade cost " + cost);
-       //remove calculated soldiers from army
-        army_upgraded.subtractSoldiers(army_upgraded.getHighestLevel(), upgrade_num);
-       
-        army_to_upgrade.subtractSoldiersFromHighestLv(upgrade_num);
+
+     int value_upgraded = 0;
+     int value_before_upgrade = 0;
+
+     for (int i = 0; i < 7; i++) {
+       value_upgraded += army_upgraded.getSoldierNumber(i) * upgrade_cost_list.get(i);
+       value_before_upgrade  += army_to_upgrade.getSoldierNumber(i) * upgrade_cost_list.get(i);
+      
      }
+    //e.g. cost for lv1-->lv3 = (30-0) - (3-0)
+    return value_upgraded - value_before_upgrade; 
      
-     return cost;
    }
 }
