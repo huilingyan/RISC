@@ -63,8 +63,6 @@ public class MainController {
     }
 
     public void showLoginScene() {
-        // this.getGameClient().connectToServer(); 
-        // this.getGameClient().setUpInputStream();
         this.loginController.setMainController(this);
         updateCurrScene(this.loginController);
     }
