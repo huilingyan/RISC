@@ -17,21 +17,33 @@ public class OperationValidator {
   public static final int INVALID_PATH = -5;
   public static final int NOT_ADJACENT = -6;
   public static final int DEST_SAME_AS_SRC = -7;
+<<<<<<< HEAD
   public static final int NOT_ENOUGH_FOOD = -8;// 4 new flags for ev2
   public static final int NOT_ENOUGH_GOLD = -9;
   public static final int EXCEED_MAX_LV = -10;
   public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
+=======
+  public static final int NOT_ENOUGH_FOOD = -8;// 3 new flags for ev2
+  public static final int NOT_ENOUGH_GOLD = -9;
+  public static final int EXCEED_MAX_LV = -10;
+>>>>>>> f5848bd2d02ca9bb83045e9b7305d133d15b9c8a
 
   private Action validatedaction;
   private shared.Map temp_map;//bad naming from ev1
   private int player_id;
+<<<<<<< HEAD
   private boolean upgrade_max_tech_lv;
+=======
+>>>>>>> f5848bd2d02ca9bb83045e9b7305d133d15b9c8a
 
   public OperationValidator(int pid, shared.Map curr_map) {
     this.validatedaction = new Action();//empty Action, only add valid ops
     this.temp_map = new shared.Map(curr_map);//deep copy original map
     this.player_id = pid;//store current player's pid
+<<<<<<< HEAD
     this.upgrade_max_tech_lv = false;
+=======
+>>>>>>> f5848bd2d02ca9bb83045e9b7305d133d15b9c8a
   }
 
   public Action getAction() {
@@ -156,6 +168,7 @@ public class OperationValidator {
     if (move_dist < 0) {
       return INVALID_PATH;
     }
+<<<<<<< HEAD
 
     // 4 check if resource is enough
     int food_remain = temp_map.getPlayerStatByPid(player_id).getFood();
@@ -180,6 +193,32 @@ public class OperationValidator {
     String src = attackop.getSrc();
     String dest = attackop.getDest();
 
+=======
+
+    // 4 check if resource is enough
+    int food_remain = temp_map.getPlayerStatByPid(player_id).getFood();
+    int move_cost = moveop.getArmy().getTotalSoldiers() * move_dist;
+    
+    if(food_remain < move_cost){
+      return NOT_ENOUGH_FOOD;
+    }
+
+    // update temp_map: add and subtract army, deduct resources
+    t_to_remove.subtractDefender(moveop.getArmy());       
+    t_to_move.addDefender(moveop.getArmy());
+    temp_map.getPlayerStatByPid(player_id).subtractFood(move_cost);
+
+    // if valid, add to move operation
+    validatedaction.addMoveOperation(moveop);
+    return VALID;
+
+  }
+
+  public int isValidAttackOperation(AttackOperation attackop) {
+    String src = attackop.getSrc();
+    String dest = attackop.getDest();
+
+>>>>>>> f5848bd2d02ca9bb83045e9b7305d133d15b9c8a
     // the territory to remove units
     Territory t_to_remove = temp_map.getTerritoryByName(src);
     
@@ -235,6 +274,7 @@ public class OperationValidator {
   public int isValidUpgradeMaxTechLv() {
     //should be called if player choose to upgrade his max technology level
     //i suppose the gui controller can call this method if button is clicked
+<<<<<<< HEAD
     if(upgrade_max_tech_lv){
         //do not allow repeated upgrade
         return REPEATED_UPGRADE_MAX_TECH_LV;
@@ -251,14 +291,34 @@ public class OperationValidator {
         new ArrayList<Integer>(Arrays.asList(0, 50, 75, 125, 200, 300));
     int upgrade_cost = upgrade_cost_list.get(tech_lv);
 
+=======
+    
+    int tech_lv = temp_map.getPlayerStatByPid(player_id).getMaxTechLvl();
+    if (tech_lv >= 6){
+      // cannot exceed lv 6
+      return EXCEED_MAX_LV;
+    }
+
+    int gold_remain = temp_map.getPlayerStatByPid(player_id).getGold();
+
+    ArrayList<Integer> upgrade_cost_list =
+        new ArrayList<Integer>(Arrays.asList(0, 50, 75, 125, 200, 300));
+    int upgrade_cost = upgrade_cost_list.get(tech_lv);
+
+>>>>>>> f5848bd2d02ca9bb83045e9b7305d133d15b9c8a
     if (gold_remain < upgrade_cost) {
       return NOT_ENOUGH_GOLD;
     }
     // if valid, add to action
     //make validatedaction.isUpgradeMaxTechLv(player_id)==true
+<<<<<<< HEAD
     temp_map.getPlayerStatByPid(player_id).subtractGold(upgrade_cost);
     validatedaction.upgradeMaxTechLv(player_id);
     upgrade_max_tech_lv = true;
+=======
+
+    validatedaction.upgradeMaxTechLv(player_id);
+>>>>>>> f5848bd2d02ca9bb83045e9b7305d133d15b9c8a
     return VALID;
 
   }

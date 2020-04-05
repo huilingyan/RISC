@@ -3,8 +3,7 @@ package shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collections;
+
 
 public class Action implements Serializable {
   private ArrayList<InitOperation> initOperations;
@@ -21,61 +20,61 @@ public class Action implements Serializable {
     this.moveOperations= new ArrayList<MoveOperation>();
     this.attackOperations = new ArrayList<AttackOperation>();
     this.upgradeOperations = new ArrayList<UpgradeOperation>();
-    upgradeMaxTechLv = new HashMap<Integer, Boolean>();
+    this.upgradeMaxTechLv = new HashMap<Integer, Boolean>();
   }
 
   public ArrayList<InitOperation> getInitOperations() {
-    return initOperations;
+      return initOperations;
   }
 
   public ArrayList<MoveOperation> getMoveOperations() {
-    return moveOperations;
+      return moveOperations;
   }
 
   public ArrayList<AttackOperation> getAttackOperations() {
-    return attackOperations;
+      return attackOperations;
   }
 
   public ArrayList<UpgradeOperation> getUpgradeOperations() {
-    return upgradeOperations;
+      return upgradeOperations;
   }
 
   public HashMap<Integer, Boolean> getUpgradeMaxTechHashMap() {
-    return upgradeMaxTechLv;
+      return upgradeMaxTechLv;
   }
   
   public boolean isUpgradeMaxTechLv(int pid) {
-    if(upgradeMaxTechLv.get(pid) == true){
-      return true;
-    } else {//get() returns null
-      return false;
-    }
+      if(upgradeMaxTechLv.get(pid) == true) {
+          return true;
+      } else {//get() returns null
+          return false;
+      }
     //return upgradeMaxTechLv.get(pid);
   }
 
   public void upgradeMaxTechLv(int pid) {
     //this method has the same name with variable
-    upgradeMaxTechLv.put(pid, true);
+      upgradeMaxTechLv.put(pid, true);
   }
     
   public void addInitOperation(InitOperation iop) {
-    this.initOperations.add(iop);
+      this.initOperations.add(iop);
+  }
+
+  public void addUpgradeOperation(UpgradeOperation uop) {
+      this.upgradeOperations.add(uop);
   }
 
   public void addMoveOperation(MoveOperation mop) {
-    this.moveOperations.add(mop);
+      this.moveOperations.add(mop);
   }
 
   public void addAttackOperation(AttackOperation aop) {
-    this.attackOperations.add(aop);
-  }
-  
-  public void addUpgradeOperation(UpgradeOperation uop) {
-    this.upgradeOperations.add(uop);
+      this.attackOperations.add(aop);
   }
 
   public void concatInitOperation(Action clientaction) {
-    this.initOperations.addAll(clientaction.initOperations);
+      this.initOperations.addAll(clientaction.initOperations);
   }
 
 

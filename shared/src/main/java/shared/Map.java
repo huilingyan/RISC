@@ -111,6 +111,15 @@ public class Map implements Serializable {
         return null;
     }
 
+    public int getPidByName(String p_name) {
+      for (PlayerStat p : playerStats) {
+        if (p.getPName().equals(p_name)) {
+            return p.getPid();
+        }
+      }
+      return -1;
+    }
+
     public PlayerStat getPlayerStatByPid(int p_id) {
         for (PlayerStat p : playerStats) {
             if (p.getPid() == p_id) {
