@@ -41,4 +41,13 @@ public class RoomMessage implements Serializable {
         roomList = rooms;
     }
 
+    public boolean ifIsValidRoom(int gid) {
+        for (Room room : this.getRooms()) {
+            if (room.getGid() == gid) { // if contains
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

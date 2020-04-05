@@ -55,40 +55,45 @@ public class SignUpController extends SceneController {
         PasswordField confpwdinput = new PasswordField();
         confpwdinput.setPromptText("password");
         GridPane.setConstraints(confpwdinput, 1, 2);
+
+        // back to login scene
+        Button backbtn = new Button("Back");
+        GridPane.setConstraints(backbtn, 0, 3);
+        backbtn.setOnAction(e -> {
+            this.mc.showLoginScene(); // return to the login scene
+        });
        
         // register
         Button registerbtn = new Button("Register");
         GridPane.setConstraints(registerbtn, 1, 3);
         registerbtn.setOnAction(e -> {
-            // debug
-            System.out.println("username: " + userinput.getText());
-            System.out.println("password: " + pwdinput.getText());
-            this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), false));
-            // TODO: check isValid from the received room message
-            RoomMessage roomMsg = (RoomMessage)mc.recvFromServer();
-            if (roomMsg.isValid()){
-                this.mc.showLoginScene(); // return to the login scene
-            } else {
-                // TODO: 
-                invalidUsername();  // pop out alert box
+
+            if ((userinput.getText().isEmpty()) || (pwdinput.getText().isEmpty()) || (confpwdinput.getText().isEmpty())) { // if any of the field is empty
+                ErrorAlerts.RgstfieldNullAlert();
             }
-            
+            else if (!pwdinput.getText().equals(confpwdinput.getText())) { // if two passwords aren't equal
+                ErrorAlerts.diffPwdAlert();
+            }
+            else {
+                // debug
+                System.out.println("username: " + userinput.getText());
+                System.out.println("password: " + pwdinput.getText());
+                this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), false));
+                RoomMessage roomMsg = (RoomMessage)mc.recvFromServer();
+                if (roomMsg.isValid()){
+                    this.mc.showLoginScene(); // return to the login scene
+                } else {
+                    ErrorAlerts.invalidUsername();  // pop out alert box
+                }
+            }  
+
         });
 
-        spane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, confpwdlabel, confpwdinput, registerbtn);
+        spane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, confpwdlabel, confpwdinput, backbtn, registerbtn);
 
         Scene signupscene = new Scene(spane, 350, 200);
         return signupscene;
         
     }
 
-    public void invalidUsername() {
-        Alert alert = new Alert(AlertType.ERROR);
-
-        alert.setTitle("Error");
-        alert.setHeaderText("Invalid Register");
-        alert.setContentText("Username already exists! Please try again.");
-
-        alert.showAndWait();
-    }
 }

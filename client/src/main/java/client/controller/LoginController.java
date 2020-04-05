@@ -59,15 +59,21 @@ public class LoginController extends SceneController {
         gpane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, loginbtn, signupbtn);
 
         loginbtn.setOnAction(e -> {
-            this.mc.setPlayerName(userinput.getText());
-            this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), true));
-            RoomMessage room_msg = (RoomMessage) this.mc.recvFromServer();
-            System.out.println("Login result: " + room_msg.isValid());
-            if (room_msg.isValid()) {
-                this.mc.showRoomScene(room_msg);
-            } else {
-                invalidLogin(); // pop up alert box
+            if ((!userinput.getText().isEmpty()) && (!pwdinput.getText().isEmpty())) {
+                this.mc.setPlayerName(userinput.getText());
+                this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), true));
+                RoomMessage room_msg = (RoomMessage) this.mc.recvFromServer();
+                System.out.println("Login result: " + room_msg.isValid());
+                if (room_msg.isValid()) {
+                    this.mc.showRoomScene(room_msg);
+                } else {
+                    ErrorAlerts.invalidLogin(); // pop up alert box
+                }
             }
+            else {
+                // if either of the field is null
+                ErrorAlerts.bothFieldNullAlert();
+            }                    
         });
 
         signupbtn.setOnAction(e -> {
@@ -76,16 +82,6 @@ public class LoginController extends SceneController {
 
         Scene loginscene = new Scene(gpane, 300, 200);
         return loginscene;
-    }
-
-    public void invalidLogin() {
-        Alert alert = new Alert(AlertType.ERROR);
-
-        alert.setTitle("Error");
-        alert.setHeaderText("Invalid Account");
-        alert.setContentText("Invalid username or password! Please try again.");
-
-        alert.showAndWait();
     }
 
 }

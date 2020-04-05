@@ -104,7 +104,7 @@ public class InitController extends SceneController {
         
         // set bottom
         Button switchoutbtn = new Button("Switch out");
-        switchoutbtn.setStyle("-fx-font-weight: bold;");
+        switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #FF2D2D;");
         switchoutbtn.setPadding(new Insets(5, 5, 5, 5));
         switchoutbtn.setOnAction(e -> {            
             this.mc.switchoutMsg(); // send switchout message to server

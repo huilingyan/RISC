@@ -120,7 +120,7 @@ public class GameController extends SceneController {
 
         // set bottom
         Button switchoutbtn = new Button("Switch out");
-        switchoutbtn.setStyle("-fx-font-weight: bold;");
+        switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #FF2D2D;");
         switchoutbtn.setOnAction(e -> {
             this.mc.switchoutMsg(); // send switchout message to server
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();           
@@ -136,7 +136,6 @@ public class GameController extends SceneController {
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.action)); // commit order
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if (servermsg.getStage() == 3) { // if game over
-                // TODO: pop out alert box
                 this.mc.gameOverAlertBox(this.player_name, servermsg);
             }
             else if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1)) {

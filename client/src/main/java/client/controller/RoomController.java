@@ -7,10 +7,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 import java.lang.String;
+import java.lang.Integer;
 import java.util.Optional;
 import javafx.geometry.Pos;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -56,24 +58,29 @@ public class RoomController extends SceneController {
         BorderPane.setMargin(welcome, new Insets(10, 10, 10, 10));
         select_room.setPadding(new Insets(10, 20, 40, 20));
         BorderPane.setAlignment(welcome, Pos.TOP_CENTER);
+
         // set left
-        VBox room_list = new VBox();
+        GridPane room_list = new GridPane();
+        room_list.setHgap(10);
+        room_list.setVgap(10);
+
+        room_list.add(new Text("room#"),0,0);
+        room_list.add(new Text("player#"),1,0);
+        room_list.add(new Text("IsFull"),2,0);
+
+        int row = 0;
+        for (Room room : this.roomMsg.getRooms()) {
+            row++;
+            room_list.add(new Text(String.valueOf(room.getGid())), 0, row);
+            room_list.add(new Text(String.valueOf(room.getPlayerNum())), 1, row);
+            room_list.add(new Text(room.isFull()? "Full" : "Not Full"), 2, row);
+        }
+
         select_room.setLeft(room_list);
         BorderPane.setAlignment(select_room, Pos.CENTER);
         room_list.setPadding(new Insets(40, 20, 20, 20));
         room_list.setAlignment(Pos.TOP_CENTER);
-        room_list.setSpacing(8);
-        Label room_available = new Label("Available rooms:");
-        room_available.setStyle("-fx-font: 18 arial; -fx-font-weight: bold;");
-        room_list.getChildren().addAll(room_available);
-        // list available rooms
-        for (Room room : this.roomMsg.getRooms()) {
-            if (!(room.isFull())) { // TODO: why only list not full room?
-                Label room_id = new Label();
-                room_id.setText(String.valueOf(room.getGid()));
-                room_list.getChildren().addAll(room_id);
-            }
-        }
+
         // set right
         GridPane enter_room = new GridPane();
         enter_room.setHgap(10);
@@ -92,29 +99,44 @@ public class RoomController extends SceneController {
         GridPane.setConstraints(enterbtn, 0, 3);
         enterbtn.setOnAction(e -> {
 
-            // TODO: need to check if input is integer, and if the room num is in the list
-            int roomNum = Integer.parseInt(room_num.getText());
-            this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
-            ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
-            this.mc.setWorldMap(servermsg.getMap());  // set map
-            int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
-            int gid = servermsg.getGameID();
-            // debug stage number
-            int stage = servermsg.getStage();
-            if (stage==GameMessage.INITIALIZE_UNITS){
-                this.mc.showInitScene(gid, pid);
-            } else if (stage==GameMessage.GAME_PLAY){
-                // TODO
-                this.mc.showGameScene(gid, pid);
-            } else if (stage==GameMessage.GAME_OVER){
-                // TODO
-                this.mc.gameOverAlertBox(this.playername, servermsg);
-            } else {
-                System.out.println("Stage number is " + stage);
-                System.out.println("Error: wrong game state");
-            }   
-            
-            
+            if (room_num.getText().isEmpty()) { // if empty input
+                ErrorAlerts.nullRoomNumAlert();
+            }
+            else { // if not empty input
+                try {
+                    int roomNum = Integer.parseInt(room_num.getText());
+                    if (!this.roomMsg.ifIsValidRoom(Integer.parseInt(room_num.getText()))) { // if room not exist
+                        ErrorAlerts.invalidRoom(roomNum);
+                    }
+                    else {
+                        this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
+                        ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
+                        System.out.println("Game id is " + servermsg.getGameID());
+                        this.mc.setWorldMap(servermsg.getMap());  // set map
+                        int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
+                        int gid = servermsg.getGameID();
+                        // debug stage number
+                        int stage = servermsg.getStage();
+                        if (stage == GameMessage.INITIALIZE_UNITS){
+                            this.mc.showInitScene(gid, pid);
+                        } else if (stage == GameMessage.GAME_PLAY){
+                            // TODO
+                            this.mc.showGameScene(gid, pid);
+                        } else if (stage == GameMessage.GAME_OVER){
+                            // TODO
+                            this.mc.gameOverAlertBox(this.playername, servermsg);
+                        } else {
+                            System.out.println("Stage number is " + stage);
+                            System.out.println("Error: wrong game state");
+                        }
+                    }
+
+                } catch (NumberFormatException ex) {
+                    ErrorAlerts.invalidTypeAlert();
+                }
+
+            }
+
             //  this.mc.sendToServer(new ClientMessage(room_num.getText(), 0, new Action()));
             //  ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer(); if
             //  (servermsg.stage == 3) { // if game over
@@ -133,6 +155,18 @@ public class RoomController extends SceneController {
             // }
         });
         enter_room.getChildren().addAll(enter, input_room_num, room_num, enterbtn);
+
+        // set bottom
+        Button refreshbtn = new Button("Refresh");
+        refreshbtn.setPadding(new Insets(5, 5, 5, 5));
+        refreshbtn.setOnAction(e -> { // refresh room list           
+            this.mc.switchoutMsg(); // send switchout message to server
+            RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
+            this.mc.showRoomScene(room_msg);
+            
+        });
+        select_room.setBottom(refreshbtn);
+        BorderPane.setMargin(refreshbtn, new Insets(10, 10, 10, 10));
 
         // set create_room pane
         Label newroom = new Label("Create a new room:");
@@ -155,27 +189,42 @@ public class RoomController extends SceneController {
         Button createbtn = new Button("Create");
         GridPane.setConstraints(createbtn, 0, 3);
         createbtn.setOnAction(e -> {
-            // TODO： repeated code
-            // TODO: player_num_field should be integer, and between 2-5
-            this.mc.sendToServer(new ClientMessage(Integer.parseInt(player_num_field.getText()), 0, new Action()));
-            // TODO: debug
-            // System.out.println("Sent client message");
-            // RoomMessage rMessage = (RoomMessage) this.mc.recvFromServer();
-            // System.out.println(rMessage.isValid());
-        
-            ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
-            // debug stage number
-            int stage = servermsg.getStage();
-            if (stage != GameMessage.INITIALIZE_UNITS) {
-                System.out.println("Stage number is " + stage);
-                System.out.println("Error: should be 1 (initialize units)");
+
+            if (player_num_field.getText().isEmpty()) { // if empty input
+                ErrorAlerts.nullRoomNumAlert();
             }
-            this.mc.setWorldMap(servermsg.getMap());
-            int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
-            int gid = servermsg.getGameID();
-            // dummy model for test
-            // int pid = 0;
-            this.mc.showInitScene(gid, pid);
+            else { // if not empty input
+                try {
+                    int roomNum = Integer.parseInt(player_num_field.getText());
+                    if ((roomNum < 2) || (roomNum > 5)) { // if player number not between 2 to 5
+                        ErrorAlerts.InvalidPlayerNum();
+                    }
+                    else {
+                        this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
+                        // TODO： repeated code
+                        // TODO: debug
+                        System.out.println("Sent client message");
+                        RoomMessage rMessage = (RoomMessage) this.mc.recvFromServer();
+                        System.out.println(rMessage.isValid());
+                        ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
+                        // debug stage number
+                        int stage = servermsg.getStage();
+                        if (stage != GameMessage.INITIALIZE_UNITS) {
+                            System.out.println("Stage number is " + stage);
+                            System.out.println("Error: should be 1 (initialize units)");
+                        }
+                        this.mc.setWorldMap(servermsg.getMap());
+                        int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
+                        int gid = servermsg.getGameID();
+                        this.mc.showInitScene(gid, pid);
+                        
+                    }
+
+                } catch (NumberFormatException ex) {
+                    ErrorAlerts.invalidTypeAlert();
+                }
+
+            }
 
         });
         new_room_pane.getChildren().addAll(player_num_label, player_num_field, createbtn);
