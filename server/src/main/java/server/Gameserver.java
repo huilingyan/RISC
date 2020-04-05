@@ -70,10 +70,10 @@ public class Gameserver {
   }
 
   public boolean hasUser(String name) {
-    System.out.print("Print out user list: ");
+    // System.out.print("Print out user list: ");
     for (Player p : userList) {
       // debug
-      System.out.println(p.getUsername());
+      // System.out.println(p.getUsername());
       if (p.getUsername().equals(name)) {
         return true;
       }
