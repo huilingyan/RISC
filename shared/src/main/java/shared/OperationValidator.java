@@ -17,18 +17,21 @@ public class OperationValidator {
   public static final int INVALID_PATH = -5;
   public static final int NOT_ADJACENT = -6;
   public static final int DEST_SAME_AS_SRC = -7;
-  public static final int NOT_ENOUGH_FOOD = -8;// 3 new flags for ev2
+  public static final int NOT_ENOUGH_FOOD = -8;// 4 new flags for ev2
   public static final int NOT_ENOUGH_GOLD = -9;
   public static final int EXCEED_MAX_LV = -10;
+  public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
 
   private Action validatedaction;
   private shared.Map temp_map;//bad naming from ev1
   private int player_id;
+  private boolean upgrade_max_tech_lv;
 
   public OperationValidator(int pid, shared.Map curr_map) {
     this.validatedaction = new Action();//empty Action, only add valid ops
     this.temp_map = new shared.Map(curr_map);//deep copy original map
     this.player_id = pid;//store current player's pid
+    this.upgrade_max_tech_lv = false;
   }
 
   public Action getAction() {
@@ -232,7 +235,10 @@ public class OperationValidator {
   public int isValidUpgradeMaxTechLv() {
     //should be called if player choose to upgrade his max technology level
     //i suppose the gui controller can call this method if button is clicked
-    
+    if(upgrade_max_tech_lv){
+        //do not allow repeated upgrade
+        return REPEATED_UPGRADE_MAX_TECH_LV;
+    }
     int tech_lv = temp_map.getPlayerStatByPid(player_id).getMaxTechLvl();
     if (tech_lv >= 6){
       // cannot exceed lv 6
@@ -250,8 +256,9 @@ public class OperationValidator {
     }
     // if valid, add to action
     //make validatedaction.isUpgradeMaxTechLv(player_id)==true
-
+    temp_map.getPlayerStatByPid(player_id).subtractGold(upgrade_cost);
     validatedaction.upgradeMaxTechLv(player_id);
+    upgrade_max_tech_lv = true;
     return VALID;
 
   }
