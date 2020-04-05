@@ -25,6 +25,7 @@ public class Game {
         map = m;
         playerList = new ArrayList<Player>();
         playerList.add(first_player); // put the first player into playerlist
+        System.out.println("Add the first player to game " + g_id);
         tempActionList = new HashMap<Integer, Action>(); // empty action list
     }
 
@@ -68,6 +69,7 @@ public class Game {
 
     public synchronized void addPlayer(Player p) {
         playerList.add(p);
+        System.out.println("Add a player " + p.getUsername());
     }
 
     public boolean isFull() {

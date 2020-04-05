@@ -3,12 +3,14 @@ package client.controller;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import shared.UserMessage;
+import shared.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 import java.io.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class SignUpController extends SceneController {
 
@@ -61,11 +63,16 @@ public class SignUpController extends SceneController {
             // debug
             System.out.println("username: " + userinput.getText());
             System.out.println("password: " + pwdinput.getText());
-            // this.mc.getGameClient().connectToServer(); 
-            // this.mc.getGameClient().setUpInputStream();
             this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), false));
-            // this.mc.getGameClient().sendObject(new UserMessage(userinput.getText(), pwdinput.getText(), false));
-            this.mc.showLoginScene(); // return to the login scene
+            // TODO: check isValid from the received room message
+            RoomMessage roomMsg = (RoomMessage)mc.recvFromServer();
+            if (roomMsg.isValid()){
+                this.mc.showLoginScene(); // return to the login scene
+            } else {
+                // TODO: 
+                invalidUsername();  // pop out alert box
+            }
+            
         });
 
         spane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, confpwdlabel, confpwdinput, registerbtn);
@@ -73,5 +80,15 @@ public class SignUpController extends SceneController {
         Scene signupscene = new Scene(spane, 350, 200);
         return signupscene;
         
+    }
+
+    public void invalidUsername() {
+        Alert alert = new Alert(AlertType.ERROR);
+
+        alert.setTitle("Error");
+        alert.setHeaderText("Invalid Register");
+        alert.setContentText("Username already exists! Please try again.");
+
+        alert.showAndWait();
     }
 }

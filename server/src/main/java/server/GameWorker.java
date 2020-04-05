@@ -15,6 +15,7 @@ public class GameWorker extends Thread {
 
     // run the thread
     public void run() {
+        System.out.println("Start a new game worker");
         // keep running when game is not over
         while (game.getStage() < GameMessage.GAME_OVER) {
             switch (game.getStage()) {
@@ -23,6 +24,7 @@ public class GameWorker extends Thread {
                     break;
                 case (GameMessage.WAIT_FOR_PLAYERS): // wait for players
                     // wait until all players join
+                    System.out.println("Player num: " + game.getPlayerNum());
                     while (!game.isFull()) {
                     }
                     // debug
@@ -47,7 +49,10 @@ public class GameWorker extends Thread {
                 default:
                     System.out.println("Game state: " + game.getStage());
             } // switch
-            game.notifyAll(); // notify clientworkers
+            synchronized (game){
+                game.notifyAll(); // notify clientworkers
+            }
+            
         } // while
           // gameover, gameworker exits
     }
