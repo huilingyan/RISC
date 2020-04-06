@@ -123,8 +123,9 @@ public class InitController extends SceneController {
         });
         Button startgamebtn = new Button("Start Game");
         startgamebtn.setPadding(new Insets(5, 5, 5, 5));
-        startgamebtn.setOnAction(e -> {   
+        startgamebtn.setOnAction(e -> {  
             this.mc.sendToServer(new ClientMessage(this.room_num, 1, this.ov.getAction())); // initialize units
+            showWaitPane();
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1) || (servermsg.getStage() == 3)) {
                 System.out.println("Unexpected game stage!");
@@ -192,6 +193,10 @@ public class InitController extends SceneController {
 
     public void showInfoPane() {
         updateRightPane(new InfoPaneController(this.worldmap));
+    }
+
+    public void showWaitPane() {
+        updateRightPane(new WaitPaneController());
     }
 
     public void updateRightPane(PaneController pc) {

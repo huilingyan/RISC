@@ -109,7 +109,7 @@ public class RoomController extends SceneController {
                         ErrorAlerts.invalidRoom(roomNum);
                     }
                     else {
-                        this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
+                        this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action())); 
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
                         System.out.println("Game id is " + servermsg.getGameID());
                         this.mc.setWorldMap(servermsg.getMap());  // set map
@@ -117,15 +117,17 @@ public class RoomController extends SceneController {
                         int gid = servermsg.getGameID();
                         // debug stage number
                         int stage = servermsg.getStage();
-                        if (stage == GameMessage.INITIALIZE_UNITS){
+                        if (stage == GameMessage.INITIALIZE_UNITS) {
                             this.mc.showInitScene(gid, pid);
-                        } else if (stage == GameMessage.GAME_PLAY){
-                            // TODO
+                            ErrorAlerts.deployArmyPrompt();
+                        } 
+                        else if (stage == GameMessage.GAME_PLAY) {   
                             this.mc.showGameScene(gid, pid);
-                        } else if (stage == GameMessage.GAME_OVER){
-                            // TODO
+                        } 
+                        else if (stage == GameMessage.GAME_OVER) {
                             this.mc.gameOverAlertBox(this.playername, servermsg);
-                        } else {
+                        } 
+                        else {
                             System.out.println("Stage number is " + stage);
                             System.out.println("Error: wrong game state");
                         }
@@ -136,23 +138,6 @@ public class RoomController extends SceneController {
                 }
 
             }
-
-            //  this.mc.sendToServer(new ClientMessage(room_num.getText(), 0, new Action()));
-            //  ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer(); if
-            //  (servermsg.stage == 3) { // if game over
-            //  this.mc.gameOverAlertBox(this.playername, servermsg); } else if
-            //  (servermsg.stage == 1) { // waiting for players
-            //  System.out.println("Unexpected game stage!"); } else {
-            //  this.mc.setWorldMap(servermsg.getMap()); int pid =
-            //  servermsg.getMap().getPidByName(this.player_name); int room_num =
-            //  servermsg.gid; if (servermsg.stage == 1) { // initialize
-            //  this.mc.showInitScene(room_num, pid); } else if (servermsg.stage == 2) { //
-            //  game play this.mc.showGameScene(room_num, pid); }
-             
-            // dummy model for test
-            // int pid = 0;
-            // this.mc.showInitScene(102, pid);
-            // }
         });
         enter_room.getChildren().addAll(enter, input_room_num, room_num, enterbtn);
 
@@ -205,6 +190,7 @@ public class RoomController extends SceneController {
                         System.out.println("Sent client message");
                         // RoomMessage rMessage = (RoomMessage) this.mc.recvFromServer();
                         // System.out.println(rMessage.isValid());
+                        ErrorAlerts.deployArmyPrompt();
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
                         // debug stage number
                         int stage = servermsg.getStage();
@@ -233,5 +219,7 @@ public class RoomController extends SceneController {
 
         return roomscene;
     }
+
+
 
 }

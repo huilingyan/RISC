@@ -112,6 +112,16 @@ public class ErrorAlerts {
         alert.showAndWait();
     }
 
+    public static void deployArmyPrompt() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Please deploy");
+
+        alert.setHeaderText(null);
+        alert.setContentText("Please click on the territory to deploy army");
+ 
+        alert.showAndWait();
+    }
+
     private static final Map<Integer, String> ecodetomsgMap = ImmutableMap.<Integer, String>builder()
         .put(OperationValidator.NOT_ENOUGH_FOOD, "You don't have enough food to do this!")
         .put(OperationValidator.NOT_ENOUGH_GOLD, "You don't have enough gold to upgrade!")
@@ -157,6 +167,5 @@ public class ErrorAlerts {
  
         alert.showAndWait();
     }
-
 
 }

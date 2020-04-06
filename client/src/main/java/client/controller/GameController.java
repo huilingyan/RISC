@@ -28,7 +28,7 @@ public class GameController extends SceneController {
     private BorderPane root;
     private boolean ismoved;
     // models
-  private Map worldmap;//the map passed in, 
+    private Map worldmap;//the map passed in, 
     private int masterpid;
 
     private String player_name;
@@ -127,6 +127,7 @@ public class GameController extends SceneController {
         });
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
+
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if (servermsg.getStage() == 3) { // if game over
@@ -214,6 +215,10 @@ public class GameController extends SceneController {
 
     public void showInfoPane() {
         updateRightPane(new InfoPaneController(this.getWorldmap()));
+    }
+
+    public void showWaitPane() {
+        updateRightPane(new WaitPaneController());
     }
 
     public void updateRightPane(PaneController pc) {
