@@ -46,8 +46,7 @@ public class MoveOPPaneController implements PaneController {
         proceedBtn.setOnAction(e -> {
             MoveOperation mop = new MoveOperation(terrName, chBox.getValue(), amsld.getArmy());
             int errorcode = this.gc.getOperationValidator().isValidMoveOperation(mop);
-            if(errorcode == OperationValidator.VALID){
-                //gc.addMoveOP(new MoveOperation(terrName, chBox.getValue(), amsld.getArmy()));
+            if(errorcode == OperationValidator.VALID) {
                 this.gc.moved();
                 System.out.println(amsld.getArmy().getSoldierNumber(0));
                 System.out.println(chBox.getValue());

@@ -27,7 +27,6 @@ public class InitController extends SceneController {
     private int room_num; // id of current room
     private int masterpid; // id of the player
     private int totalnofsoldiers;
-    private Action action; // TODO: DELETE it
     private OperationValidator ov;
     
     // constructor
@@ -35,7 +34,6 @@ public class InitController extends SceneController {
       this.worldmap = m;
       this.totalnofsoldiers = Map.INIT_UNIT;
       this.root = new BorderPane();
-      this.action = new Action(); // TODO: DELETE it
       this.player_name = pname;
       this.room_num = room_num;
       this.masterpid = pid;
@@ -75,19 +73,11 @@ public class InitController extends SceneController {
         return totalnofsoldiers;
     }
 
-    public void addInitOP(InitOperation iop) {
-        action.addInitOperation(iop);
-    }
 
     public void subSoldiers(int n) {
       //lose n soldiers due to initialization
         totalnofsoldiers -= n;
     }
-
-    public Action getAction() {
-        return this.action;
-    }
-  
   
     @Override
     public Scene getCurrScene() {
@@ -131,7 +121,7 @@ public class InitController extends SceneController {
         startgamebtn.setPadding(new Insets(5, 5, 5, 5));
         startgamebtn.setOnAction(e -> {
             
-            this.mc.sendToServer(new ClientMessage(this.room_num, 1, ov.getAction())); // initialize units
+            this.mc.sendToServer(new ClientMessage(this.room_num, 1, this.ov.getAction())); // initialize units
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1) || (servermsg.getStage() == 3)) {
                 System.out.println("Unexpected game stage!");

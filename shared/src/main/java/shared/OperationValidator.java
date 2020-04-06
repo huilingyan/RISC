@@ -42,7 +42,6 @@ public class OperationValidator {
     return temp_map;
   }
 
-
   public int isValidInitOperation(InitOperation initop, int totalunit) {
     //totalunit: bad naming from ev1
     //totalunit inidicates the number of soldiers a player can initially deploy
@@ -238,7 +237,7 @@ public class OperationValidator {
         return REPEATED_UPGRADE_MAX_TECH_LV;
     }
     int tech_lv = temp_map.getPlayerStatByPid(player_id).getMaxTechLvl();
-    if (tech_lv >= 6){
+    if (tech_lv >= 6) {
       // cannot exceed lv 6
       return EXCEED_MAX_LV;
     }

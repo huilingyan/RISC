@@ -30,7 +30,6 @@ public class GameController extends SceneController {
     // models
     private Map worldmap;
     private int masterpid;
-    private Action action;
     private String player_name;
     private int room_num; // id of current room
     private OperationValidator ov;
@@ -39,7 +38,6 @@ public class GameController extends SceneController {
     public GameController(Map m, String pname, int room_num, int pid) {
         this.worldmap = m;
         this.root = new BorderPane();
-        this.action = new Action();
         this.ismoved = false;
         this.player_name = pname;
         this.room_num = room_num;
@@ -73,22 +71,6 @@ public class GameController extends SceneController {
 
     public int getPid() {
         return masterpid;
-    }
-
-    public void UpgTechOP(int pid) {
-        this.action.upgradeMaxTechLv(pid);
-    }
-
-    public void addMoveOP(MoveOperation mop) {
-        this.action.addMoveOperation(mop);
-    }
-
-    public void addAtkOP(AttackOperation aop) {
-        this.action.addAttackOperation(aop);
-    }
-
-    public void addUpOP(UpgradeOperation uop) {
-        this.action.addUpgradeOperation(uop);
     }
 
     public boolean isMoved() {
@@ -132,12 +114,19 @@ public class GameController extends SceneController {
         });
         Button upgradeMaxTechbtn = new Button("Upgrade Max Tech Lv");
         upgradeMaxTechbtn.setOnAction(e -> {
-            UpgTechOP(this.masterpid);
-            ErrorAlerts.upgradeTechSucceed(); // pop up alert box
+
+            int errorcode = this.ov.isValidUpgradeMaxTechLv();
+            if (errorcode == OperationValidator.VALID) {
+                ErrorAlerts.upgradeTechSucceed(); // pop up alert box
+            }
+            else {
+                ErrorAlerts.inValidOpAlert(errorcode);
+            }
+
         });
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
-            this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.action)); // commit order
+            this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if (servermsg.getStage() == 3) { // if game over
                 this.mc.gameOverAlertBox(this.player_name, servermsg);
@@ -223,7 +212,7 @@ public class GameController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(this.worldmap));
+        updateRightPane(new InfoPaneController(this.ov.getCurrentMapState()));
     }
 
     public void updateRightPane(PaneController pc) {
