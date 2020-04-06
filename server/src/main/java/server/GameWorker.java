@@ -26,7 +26,7 @@ public class GameWorker extends Thread {
                     // wait until all players join
                     System.out.println("Player num: " + game.getPlayerNum());
                     while (!game.isFull()) {
-                        sleepOnThread(2);
+                        sleepOnThread(10);
                     }
                     // debug
                     System.out.println("All players joined game " + game.getGid());
@@ -38,14 +38,14 @@ public class GameWorker extends Thread {
                 case (GameMessage.INITIALIZE_UNITS): // initialize units
                     // wait until all active players send action
                     while (!game.turnFinished()) {
-                        sleepOnThread(2);
+                        sleepOnThread(10);
                     }
                     initializeGameUnits();
                     break;
                 case (GameMessage.GAME_PLAY): // play game
                     // wait until all active players send action
                     while (!game.turnFinished()) {
-                        sleepOnThread(2);
+                        sleepOnThread(10);
                     }
                     updateOneTurn();
                     break;
@@ -108,9 +108,12 @@ public class GameWorker extends Thread {
         Map newMap = handler.handleAction(gameMap, ac);
         // check game over
         // if yes, update game stage
-        // if no, update map
+        // if no, check active player number and update map
         if (isGameOver(newMap)) {
             game.setStage(GameMessage.GAME_OVER);
+        } else if (game.noActivePlayer()){
+            // if no active player, do nothing
+            System.out.println("No active player in game " + game.getGid());
         } else {
             newMap.updateUnitandResource();
         }

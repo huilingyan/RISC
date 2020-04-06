@@ -60,9 +60,16 @@ public class OperationValidatorTest {
     a5.addSoldiers(4, 2);
     UpgradeOperation uop5 = new UpgradeOperation("Ditto", new Army(2), a5);
     assert (v0.isValidUpgradeOperation(uop5) == NOT_ENOUGH_GOLD);
+
+    Army a6 = new Army();
+    a6.addSoldiers(2, 1);
+    UpgradeOperation uop6 = new UpgradeOperation("Ditto", new Army(1), a6);
+    assert (v0.isValidUpgradeOperation(uop6) == EXCEED_MAX_LV);
+    
     assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 7);
 
     System.out.println("upgradeOperation validator test passed");
+    
     MoveOperation moveop0 = new MoveOperation("Mew", "Ditto", new Army(7));
     MoveOperation moveop1 = new MoveOperation("Snorlax", "Ditto", new Army(7));
     assert (v0.isValidMoveOperation(moveop0) == VALID);

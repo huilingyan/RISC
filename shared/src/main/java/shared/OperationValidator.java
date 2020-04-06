@@ -104,6 +104,12 @@ public class OperationValidator {
     if (gold_remain < upgrade_cost) {
       return NOT_ENOUGH_GOLD;
     }
+    //4 check if upgrade exceed max tech level
+    int max_tech_lv = temp_map.getPlayerStatByPid(player_id).getMaxTechLvl();
+    if (army_upgraded.getHighestLevel() > max_tech_lv) {
+      //e.g. max tech lv = 2, order want to upgrade a soldier to lv 3
+      return EXCEED_MAX_LV;
+    }
     
     //update upgraded army to map
     t_to_deploy.subtractDefender(army_to_upgrade);       

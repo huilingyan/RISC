@@ -19,21 +19,35 @@ public class Gameserver {
   private ArrayList<Player> userList; // list of Player
   private ArrayList<Game> gameList; // list of games
   private int currentGid = 10; // gid start from 10
+  private ArrayList<ClientWorker> clientThreads;
 
   public Gameserver() {
     userList = new ArrayList<Player>();
     gameList = new ArrayList<Game>();
+    clientThreads = new ArrayList<ClientWorker>();  // ClientWorkers
   }
 
-  // run the server
+  public ArrayList<ClientWorker> getClientThreads(){
+    return clientThreads;
+  }
+
+  /***
+   * Run the server
+   */
   public void run() {
     bindSocket(); // initialize server socket
+    // moniter worker
+    MoniterWorker mWorker = new MoniterWorker(this);
+    mWorker.start();
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
       while ((newSocket = acceptConnection()) == null) {
       } // loops until accept one connection
       ClientWorker worker = new ClientWorker(newSocket, this);
+      synchronized(this){
+        clientThreads.add(worker);  // add ClientWorker to the list
+      }
       worker.start();
     }
   }
@@ -69,11 +83,13 @@ public class Gameserver {
     }
   }
 
+  /**
+   * Check if user with the given username existed in server memory
+   * @param name
+   * @return
+   */
   public boolean hasUser(String name) {
-    // System.out.print("Print out user list: ");
     for (Player p : userList) {
-      // debug
-      // System.out.println(p.getUsername());
       if (p.getUsername().equals(name)) {
         return true;
       }
@@ -81,8 +97,12 @@ public class Gameserver {
     return false;
   }
 
-  // check if username exists, password matches, and the user is currently logged
-  // out
+  /***
+   * Check if username exists, password matches, and the user is currently logged out
+   * @param name
+   * @param password
+   * @return
+   */
   public boolean isValidUser(String name, String password) {
     if (!hasUser(name)) {
       return false;
@@ -95,6 +115,11 @@ public class Gameserver {
     return false;
   }
 
+  /***
+   * Return the roomlist visible to the player, given the username
+   * @param name
+   * @return
+   */
   public synchronized ArrayList<Room> gatherRooms(String name) {
     ArrayList<Room> rooms = new ArrayList<Room>();
     for (Game g : gameList) {
@@ -118,8 +143,10 @@ public class Gameserver {
     return null; // not found, return null
   }
 
-  // add a copy of Player p to the list, and set connected and logged in to be
-  // false
+  /**
+   * Add a copy of Player p to the list, and set connected and logged in to be false
+   * @param p
+   */
   public void addUser(Player p) {
     Player copy = new Player(p);
     copy.setConnected(false);

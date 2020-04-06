@@ -18,7 +18,7 @@ public class Player {
   private ObjectInputStream in;
   private boolean connected; // socket connection status
   private int activeGid;  // gameID of active game, 0 if in not on name
-  private boolean loggedin;   // TODO: mark if user's loggedin
+  private boolean loggedin;   // mark if user's loggedin
 
   /***
    * Initialize a Player object with a connected socket, and initialize its
