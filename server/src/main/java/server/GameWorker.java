@@ -21,6 +21,9 @@ public class GameWorker extends Thread {
             switch (game.getStage()) {
                 case (GameMessage.ERROR):
                     System.out.println("Error: Game " + game.getGid() + " is on error state");
+                    synchronized (game) {
+                        notifyClientWorkers();
+                    }
                     break;
                 case (GameMessage.WAIT_FOR_PLAYERS): // wait for players
                     // wait until all players join
@@ -34,30 +37,43 @@ public class GameWorker extends Thread {
                     game.setPlayerStats();
                     // change stage to initialize units
                     game.setStage(GameMessage.INITIALIZE_UNITS);
+                    synchronized (game) {
+                        notifyClientWorkers();
+                    }
                     break;
                 case (GameMessage.INITIALIZE_UNITS): // initialize units
                     // wait until all active players send action
                     while (!game.turnFinished()) {
                         sleepOnThread(10);
                     }
-                    initializeGameUnits();
+                    synchronized (game) {
+                        initializeGameUnits();
+                        notifyClientWorkers();
+                    }
                     break;
                 case (GameMessage.GAME_PLAY): // play game
                     // wait until all active players send action
                     while (!game.turnFinished()) {
                         sleepOnThread(10);
                     }
-                    updateOneTurn();
+                    synchronized (game) {
+                        updateOneTurn();
+                        notifyClientWorkers();
+                    }
                     break;
                 default:
                     System.out.println("Game state: " + game.getStage());
+                    synchronized (game) {
+                        notifyClientWorkers();
+                    }
             } // switch
-            synchronized (game) {
-                game.notifyAll(); // notify clientworkers
-            }
-
         } // while
           // gameover, gameworker exits
+    }
+
+    private void notifyClientWorkers() {
+        System.out.println("Game worker notifies all client workers");
+        game.notifyAll(); // notify clientworkers
     }
 
     private void sleepOnThread(int time) {
@@ -95,6 +111,7 @@ public class GameWorker extends Thread {
         game.clearTempActions();
         // update stage
         game.setStage(GameMessage.GAME_PLAY);
+
     }
 
     private void updateOneTurn() {
@@ -111,7 +128,7 @@ public class GameWorker extends Thread {
         // if no, check active player number and update map
         if (isGameOver(newMap)) {
             game.setStage(GameMessage.GAME_OVER);
-        } else if (game.noActivePlayer()){
+        } else if (game.noActivePlayer()) {
             // if no active player, do nothing
             System.out.println("No active player in game " + game.getGid());
         } else {

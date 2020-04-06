@@ -44,6 +44,13 @@ public class Player {
     loggedin = rhs.isLoggedin();
   }
 
+  // default constructor that has no binding socket
+  public Player(String name, String pass_word){
+    connected = false;
+    activeGid = 0;
+    loggedin = false;
+    setUpUserInfo(name, pass_word);
+  }
   
   /****
    * Initialize an inputstream from the socket. Usually is called in gameserver

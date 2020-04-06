@@ -12,14 +12,14 @@ public class ClientWorker extends Thread {
     public ClientWorker(Socket s, Gameserver server) {
         socket = s;
         boss = server;
-        player = null;  // initialize to null
+        player = null; // initialize to null
     }
 
-    public Player getPlayer(){
+    public Player getPlayer() {
         return player;
     }
 
-    public Socket getSocket(){
+    public Socket getSocket() {
         return socket;
     }
 
@@ -43,19 +43,23 @@ public class ClientWorker extends Thread {
                 // new game
                 if (gid >= 2 && gid <= 5) {
                     g = createNewGame(gid); // here gid is the num of players
-                    waitOnGame(g);
+                    synchronized (g) {
+                        waitOnGame(g);
+                    }
                     // debug
                     System.out.println("Finish waiting on gameworker");
                 } else if (boss.hasActiveGame(gid)) { // game exists
                     g = boss.getGame(gid);
-                    updateOnGame(g, clientMsg);
-                    waitOnGame(g);
+                    synchronized (g) {
+                        updateOnGame(g, clientMsg);
+                        waitOnGame(g);
+                    }
                 } else { // game doesn't exist
                     System.out.println("Error: received gid (" + gid + ") doesn't exist");
                 }
                 // send ServerMessage after gameworker notify
                 // debug
-                System.out.println("Game worker notifies after one turn");
+                System.out.println("Notified by game worker after one turn");
                 player.sendObject(new ServerMessage(g.getGid(), g.getStage(), g.getMap()));
             }
 
@@ -74,7 +78,8 @@ public class ClientWorker extends Thread {
                 // debug
                 System.out.println("player " + player.getUsername() + " joins game " + gid);
                 g.addPlayer(player);
-            } else {   // switch in: should add temp action to game, otherwise it stucks
+            } else { // switch in: should add temp action to game, otherwise it stucks
+                System.out.println("player " + player.getUsername() + " switch in game " + gid);
                 int pid = g.getPidByName(player.getUsername());
                 g.addTempAction(pid, new Action());
             }
@@ -93,6 +98,7 @@ public class ClientWorker extends Thread {
                         + ", or player has wrong activeGid");
             }
         }
+
     }
 
     // tell server to create a new game and start a gameworker
@@ -108,10 +114,10 @@ public class ClientWorker extends Thread {
 
     private void waitOnGame(Game g) {
         try {
-            System.out.println("Wait on game " + g.getGid());
-            synchronized (g) {
-                g.wait(); // wait for gameworker to notify
-            }
+            System.out.println("Player " + player.getUsername() + " wait on game " + g.getGid());
+            // synchronized (g) {
+            g.wait(); // wait for gameworker to notify
+            // }
         } catch (InterruptedException e) {
             System.out.println("InterruptedException while wait()");
             e.printStackTrace();
@@ -156,7 +162,7 @@ public class ClientWorker extends Thread {
                     // success = true; // success is still false to let the loop run
                 }
             } // login or register
-            // debug
+              // debug
             System.out.println("Send room message to player " + player.getUsername());
             System.out.println("isValid: " + msg.isValid());
             player.sendObject(msg);
