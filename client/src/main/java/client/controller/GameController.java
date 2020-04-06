@@ -132,9 +132,8 @@ public class GameController extends SceneController {
         });
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
-
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
-            showWaitPane();
+            ErrorAlerts.WaitForOtherPlayers();
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if (servermsg.getStage() == 3) { // if game over
                 this.mc.gameOverAlertBox(this.player_name, servermsg);

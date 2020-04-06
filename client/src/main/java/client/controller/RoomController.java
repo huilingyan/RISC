@@ -205,7 +205,6 @@ public class RoomController extends SceneController {
                 } catch (NumberFormatException ex) {
                     ErrorAlerts.invalidTypeAlert();
                 }
-
             }
 
         });
