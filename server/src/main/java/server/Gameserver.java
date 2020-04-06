@@ -40,6 +40,8 @@ public class Gameserver {
     // MoniterWorker mWorker = new MoniterWorker(this);
     // mWorker.start();
     // accept connection and assign to a ClientWorker
+    // add default users to list
+    addAdminUsers();
     while (true) {
       Socket newSocket;
       while ((newSocket = acceptConnection()) == null) {
@@ -50,6 +52,13 @@ public class Gameserver {
       }
       worker.start();
     }
+  }
+
+  private void addAdminUsers(){
+    addUser(new Player("admin1", "1234"));
+    addUser(new Player("admin2", "1234"));
+    addUser(new Player("admin3", "1234"));
+    addUser(new Player("admin4", "1234"));
   }
 
   /****
