@@ -22,12 +22,12 @@ public class InfoPaneController implements PaneController {
       grid.setHgap(10);
       grid.setVgap(10);
 
-      grid.add(new Text("territory color"),0,0);
-      grid.add(new Text("player name"),1,0);
-      grid.add(new Text("number of territories"),2,0);
-      grid.add(new Text("food"),3,0);
-      grid.add(new Text("gold"),4,0);
-      grid.add(new Text("max tech"),5,0);
+      grid.add(new Text("Territory color"),0,0);
+      grid.add(new Text("Player name"),1,0);
+      grid.add(new Text("Number of territories"),2,0);
+      grid.add(new Text("Food"),3,0);
+      grid.add(new Text("Gold"),4,0);
+      grid.add(new Text("Max tech"),5,0);
       
       ArrayList<PlayerStat> psList = this.worldmap.getPlayerStats();
       for (int i = 0; i < psList.size(); i++) {

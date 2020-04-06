@@ -25,8 +25,10 @@ public class ArmySliderPlusLvSel extends ArmySliderBase {
       armysliders.add(sld);
       upgradeselectionPane.add(txt, 0, i);
       upgradeselectionPane.add(sld, 1, i);
+      Text txt2 = new Text("to Lv");
+      upgradeselectionPane.add(txt2, 2, i);
       ChoiceBox<Integer> chBox = singleChoiceBox(i);
-      upgradeselectionPane.add(chBox, 2, i);
+      upgradeselectionPane.add(chBox, 3, i);
       chboxes.add(chBox);
       
     }

@@ -23,9 +23,9 @@ public class WaitPaneController implements PaneController {
         AnchorPane anchorP = new AnchorPane(l);
         // l.setAlignment();
         AnchorPane.setTopAnchor(l, 10.0);
-        // AnchorPane.setBottomAnchor(l, 10.0);
-        // AnchorPane.setLeftAnchor(l, 10.0);
-        // AnchorPane.setRightAnchor(l, 10.0);
+        AnchorPane.setBottomAnchor(l, 10.0);
+        AnchorPane.setLeftAnchor(l, 10.0);
+        AnchorPane.setRightAnchor(l, 10.0);
         return anchorP;
     }
 

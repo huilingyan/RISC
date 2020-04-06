@@ -1,25 +1,21 @@
 package client.controller;
 
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.Scene;
-import javafx.scene.Group;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.control.Button;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
-import shared.*;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
+import shared.ClientMessage;
 import shared.Map;
-import client.RoomMsgGenerator;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import shared.OperationValidator;
+import shared.RoomMessage;
+import shared.ServerMessage;
+import shared.Territory;
 
 public class GameController extends SceneController {
 
@@ -132,9 +128,11 @@ public class GameController extends SceneController {
         });
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
-
+            //showWaitPane();
+            System.out.println("end turn wait for other players");
+            //try{Thread.sleep(5000);}catch(InterruptedException ex){System.out.println(ex);}  
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
-            showWaitPane();
+            
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if (servermsg.getStage() == 3) { // if game over
                 this.mc.gameOverAlertBox(this.player_name, servermsg);
@@ -147,7 +145,7 @@ public class GameController extends SceneController {
                 int pid = servermsg.getMap().getPidByName(this.player_name);
                 int room_number = servermsg.getGameID();
                 this.mc.showGameScene(room_number, pid); 
-            }          
+                }          
         });
 
         FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn, endTurnbtn);
