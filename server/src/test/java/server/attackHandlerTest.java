@@ -18,12 +18,12 @@ public class attackHandlerTest {
     Territory t4 = new Territory(2, 4, "Purple");
 
     // set number of defenders
-    t0.setDefender(new Army(5));
-    t1.setDefender(new Army(9));
+    t0.setDefender(new Army(10));
+    t1.setDefender(new Army(1));
     t2.setDefender(new Army(new ArrayList<Integer>(
-                            Arrays.asList(2,1,1,0,1,0,0))));
-    t3.setDefender(new Army(7));
-    t4.setDefender(new Army(6));
+                            Arrays.asList(12,1,1,0,1,0,0))));
+    t3.setDefender(new Army(1));
+    t4.setDefender(new Army(1));
 
     t0.setNeighbor(0, 1);
     t1.setNeighbor(0, 0);
@@ -58,22 +58,34 @@ public class attackHandlerTest {
     //player 1: Green 12
     //player 2: Yellow 7 Purple 6
     Action attackAction = new Action();
-    AttackOperation attack1 = new AttackOperation("Blue", "Green", new Army(7));
-    AttackOperation attack2 = new AttackOperation("Red", "Green", new Army(5));
-    AttackOperation attack3 = new AttackOperation("Yellow", "Green", t2.getDefender());
-    AttackOperation attack4 = new AttackOperation("Purple", "Red", new Army(4));
-    AttackOperation attack5 = new AttackOperation("Green", "Red", new Army(1));
+    AttackOperation attack1 = new AttackOperation("Blue", "Green", new Army(1));
+    AttackOperation attack2 = new AttackOperation("Red", "Green", new Army(1));
+    AttackOperation attack3 = new AttackOperation("Yellow", "Green", new Army(1));
+    Army a1 = new Army();
+    Army a2 = new Army();
+    a1.addSoldiers(4, 1);
+    a2.addSoldiers(2, 1);
+    a2.addSoldiers(1, 1);
+    AttackOperation attack4 = new AttackOperation("Green", "Yellow", a1);
+    AttackOperation attack5 = new AttackOperation("Green", "Blue", a2);
+    AttackOperation attack6 = new AttackOperation("Gree", "Red", new Army(1));
     attackAction.addAttackOperation(attack1);
     attackAction.addAttackOperation(attack2);
     attackAction.addAttackOperation(attack3);
     attackAction.addAttackOperation(attack4);
     attackAction.addAttackOperation(attack5);
+    attackAction.addAttackOperation(attack6);
     //-----------------------------------
     //instance of initHandler
     GameHandler h1 = new GameHandler();
     shared.Map new_worldmap = h1.handleAttack(worldmap, attackAction);
-    //assert (newmap.get(0).getDefenderNum() == 3);
-    //attack result is randomized so can't use assert
+    
+    System.out.println("p0 has " + new_worldmap.getPlayerStatByPid(0).getTerritoryNum());
+    System.out.println("p1 has " + new_worldmap.getPlayerStatByPid(1).getTerritoryNum());
+    System.out.println("p2 has " + new_worldmap.getPlayerStatByPid(2).getTerritoryNum());
+    assert (new_worldmap.getPlayerStatByPid(0).getTerritoryNum() == 1);
+    assert (new_worldmap.getPlayerStatByPid(1).getTerritoryNum() == 3);
+    assert (new_worldmap.getPlayerStatByPid(2).getTerritoryNum() == 1);
     System.out.println("attackHandler test passed"); 
   }
 
