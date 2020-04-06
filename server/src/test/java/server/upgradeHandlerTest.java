@@ -45,6 +45,7 @@ public class upgradeHandlerTest {
 	PlayerStat p0 = new PlayerStat(0, "test_player0", 999, 999, 2, "87CEFA");
     PlayerStat p1 = new PlayerStat(1, "test_player1", 999, 999, 1, "87CEFB");
     PlayerStat p2 = new PlayerStat(2, "test_player2", 999, 999, 2, "87CEFC");
+    p2.setMaxTechLvl(6);
     ArrayList<PlayerStat> p_list = new ArrayList<PlayerStat>();
     p_list.add(p0);
     p_list.add(p1);
@@ -73,7 +74,7 @@ public class upgradeHandlerTest {
 
     Action upgrade_max_tech_lv_action = new Action();
     upgrade_max_tech_lv_action.upgradeMaxTechLv(0);
-
+    upgrade_max_tech_lv_action.upgradeMaxTechLv(2);
     upgradeAction.concatGameOperation(upgrade_max_tech_lv_action);
     
     //-----------------------------------
@@ -91,7 +92,7 @@ public class upgradeHandlerTest {
     
     //new_worldmap = h1.handleAction(new_worldmap, upgrade_max_tech_lv_action);
     assert (new_worldmap.getPlayerStatByPid(0).getMaxTechLvl() == 2);
-    
+    assert (new_worldmap.getPlayerStatByPid(2).getMaxTechLvl() == 6);
     System.out.println("upgradeHandler test passed");
     
     
