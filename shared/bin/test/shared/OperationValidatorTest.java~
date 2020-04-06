@@ -1,0 +1,23 @@
+package shared;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+
+public class OperationValidatorTest {
+  @Test
+  public void test_operationvalidator() {
+    shared.Map worldmap = MapGenerator.gamemapGenerator();
+    //PlayerStat p0 = new PlayerStat(0, "p0", 113, 40, 4, "87CEFA");
+    //pid 0, food 113, gold 40, 4 territories tid 1,4,9,5
+    
+    //ArrayList<Integer> tids = new ArrayList<Integer>(Arrays.asList(1, 4, 9, 5, 10, 13, 2, 6, 11));
+    
+    //Army army = new Army(new ArrayList<Integer>(Arrays.asList(7,6,5,4,3,2,1)));
+    OperationValidator v0 = new OperationValidator(0, worldmap);
+    Map updated_map = v0.getCurrentMapState();
+    assert (updated_map.getPlayerStatByPid(0).getFood() == 113);
+    
+  }
+
+}

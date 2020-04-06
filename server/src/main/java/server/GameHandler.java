@@ -203,9 +203,12 @@ public class GameHandler extends Handler {
       //winner take over the territory and change ownership
       t_defender.setOwnership(winner_id);
       t_defender.setDefender(winner_army);
-      //update territoryNum in PlayerStat of the winner and the loser 
-      worldmap.getPlayerStatByPid(winner_id).addTerritoryNum(1);
-      worldmap.getPlayerStatByPid(loser_id).subtractTerritoryNum(1);
+      //update territoryNum in PlayerStat if winner is attacker
+      //otherwise territoryNum do not change
+      if(winner_id == attacker_id){
+      	worldmap.getPlayerStatByPid(winner_id).addTerritoryNum(1);
+      	worldmap.getPlayerStatByPid(loser_id).subtractTerritoryNum(1);
+      }
     }
   }
 

@@ -293,8 +293,8 @@ public class OperationValidator {
     return false;
   }
 
-  private boolean isTerritoryHaveEnoughArmy(Army army, Territory t) {
-    for (int i = 0; i < army.getHighestLevel(); i++) {
+  public boolean isTerritoryHaveEnoughArmy(Army army, Territory t) {
+    for (int i = 0; i <= army.getHighestLevel(); i++) {
       if (army.getSoldierNumber(i) > t.getDefender().getSoldierNumber(i)) {
         // not enough units to move for level i (0-max lv)
         return false;
