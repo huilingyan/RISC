@@ -105,6 +105,11 @@ public class GameController extends SceneController {
         leftpane.getChildren().add(buttongroup);
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
 
+        // set right
+        AnchorPane rightpane = new InfoPaneController(this.getWorldmap()).getCurrPane();
+        root.setRight(rightpane);
+        BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
+
         // set bottom
         Button switchoutbtn = new Button("Switch out");
         switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #ff7575;");
@@ -129,6 +134,7 @@ public class GameController extends SceneController {
         endTurnbtn.setOnAction(e -> {
 
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
+            showWaitPane();
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if (servermsg.getStage() == 3) { // if game over
                 this.mc.gameOverAlertBox(this.player_name, servermsg);

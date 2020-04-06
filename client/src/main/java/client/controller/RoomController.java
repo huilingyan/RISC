@@ -186,11 +186,8 @@ public class RoomController extends SceneController {
                     }
                     else {
                         this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
-                        // TODO： repeated code
                         System.out.println("Sent client message");
-                        // RoomMessage rMessage = (RoomMessage) this.mc.recvFromServer();
-                        // System.out.println(rMessage.isValid());
-                        ErrorAlerts.deployArmyPrompt();
+                        // ErrorAlerts.deployArmyPrompt();
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
                         // debug stage number
                         int stage = servermsg.getStage();
