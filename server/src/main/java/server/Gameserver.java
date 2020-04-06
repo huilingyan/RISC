@@ -37,8 +37,8 @@ public class Gameserver {
   public void run() {
     bindSocket(); // initialize server socket
     // moniter worker
-    MoniterWorker mWorker = new MoniterWorker(this);
-    mWorker.start();
+    // MoniterWorker mWorker = new MoniterWorker(this);
+    // mWorker.start();
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
