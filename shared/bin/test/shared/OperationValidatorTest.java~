@@ -16,6 +16,7 @@ public class OperationValidatorTest {
     //Army army = new Army(new ArrayList<Integer>(Arrays.asList(7,6,5,4,3,2,1)));
     OperationValidator v0 = new OperationValidator(0, worldmap);
     Map updated_map = v0.getCurrentMapState();
+    System.out.println("territory 1: " + updated_map.getTerritoryNameByTid(1) + "owner: " + updated_map.getTerritoryByName(updated_map.getTerritoryNameByTid(1)).getOwnership());
     assert (updated_map.getPlayerStatByPid(0).getFood() == 113);
     
   }
