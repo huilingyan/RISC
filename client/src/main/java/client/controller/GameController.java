@@ -58,7 +58,7 @@ public class GameController extends SceneController {
     }
 
     public Map getWorldmap() {
-      return worldmap;
+      return this.ov.getCurrentMapState();
     }
 
     public int getRoomNum() {
@@ -212,7 +212,7 @@ public class GameController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(this.ov.getCurrentMapState()));
+        updateRightPane(new InfoPaneController(this.getWorldmap()));
     }
 
     public void updateRightPane(PaneController pc) {
