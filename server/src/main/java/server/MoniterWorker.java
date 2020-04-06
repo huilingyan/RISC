@@ -20,6 +20,7 @@ public class MoniterWorker extends Thread{
                         e.printStackTrace();
                     }
                     if (clientWorker.getPlayer()!=null && clientWorker.getSocket().isClosed() && clientWorker.getPlayer().isConnected()) {
+                        System.out.println("socket is closed of player " + clientWorker.getPlayer().getUsername());
                         clientWorker.getPlayer().setConnected(false);
                         clientWorker.interrupt();  // interrupt from wait()
                     }
