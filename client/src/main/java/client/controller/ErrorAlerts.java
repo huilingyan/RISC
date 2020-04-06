@@ -118,6 +118,7 @@ public class ErrorAlerts {
         .put(OperationValidator.NOT_ADJACENT, "You can only attack territories adjacent to this one!")
         .put(OperationValidator.INVALID_PATH, "There is no path to the destination you choose!")
         .put(OperationValidator.REPEATED_UPGRADE_MAX_TECH_LV, "You can't upgrade max tech Lv more than once in one turn!")
+        .put(OperationValidator.EXCEED_MAX_LV, "Your upgrade cannot exceed your maximum tech Lv!")
         .build();
 
     public static void inValidOpAlert(int errorcode) {
@@ -144,7 +145,7 @@ public class ErrorAlerts {
 
         Scene sc = new Scene(vb);
         window.setScene(sc);
-        window.showAndWait();;
+        window.showAndWait();
     }
 
     public static void upgradeTechSucceed() {

@@ -13,6 +13,10 @@ import java.lang.Integer;
 import java.lang.String;
 import javafx.geometry.Pos;
 import java.io.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 
 import shared.InitOperation;
 import shared.*;
@@ -119,8 +123,7 @@ public class InitController extends SceneController {
         });
         Button startgamebtn = new Button("Start Game");
         startgamebtn.setPadding(new Insets(5, 5, 5, 5));
-        startgamebtn.setOnAction(e -> {
-            
+        startgamebtn.setOnAction(e -> {   
             this.mc.sendToServer(new ClientMessage(this.room_num, 1, this.ov.getAction())); // initialize units
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
             if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1) || (servermsg.getStage() == 3)) {
