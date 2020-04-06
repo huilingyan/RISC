@@ -20,39 +20,44 @@ public class ClientWorker extends Thread {
         while (player.isConnected()) {
             // receive ClientMessage and process
             ClientMessage clientMsg = (ClientMessage) player.recvObject();
-            if (clientMsg==null){
+            if (clientMsg == null) {
                 break;
             }
-            int gid = clientMsg.getGameID();  // TODO: can cause null pointer exception if client disconnect
-            if (gid == 0) {  // switch out, send back RoomMessage, no wait
+            int gid = clientMsg.getGameID(); // TODO: can cause null pointer exception if client disconnect
+            if (gid == 0) { // switch out, send back RoomMessage, no wait
                 // debug
                 System.out.println("player " + player.getUsername() + " switch out of the game");
-                player.setActiveGid(0);  // change active gid to 0
+                player.setActiveGid(0); // change active gid to 0
                 player.sendObject(new RoomMessage(boss.gatherRooms(player.getUsername())));
             } else { // need to send back ServerMessage after gameworker notify
                 Game g = new Game(); // default game object with error state
                 // new game
                 if (gid >= 2 && gid <= 5) {
-                    g = createNewGame(gid);  // here gid is the num of players
+                    g = createNewGame(gid); // here gid is the num of players
                     waitOnGame(g);
-                } else if (boss.hasActiveGame(gid)) {  // game exists
+                    // debug
+                    System.out.println("Finish waiting on gameworker");
+                } else if (boss.hasActiveGame(gid)) { // game exists
                     g = boss.getGame(gid);
-                    updateOnGame(g, clientMsg);      
+                    updateOnGame(g, clientMsg);
                     waitOnGame(g);
                 } else { // game doesn't exist
                     System.out.println("Error: received gid (" + gid + ") doesn't exist");
                 }
                 // send ServerMessage after gameworker notify
+                // debug
+                System.out.println("Game worker notifies after one turn");
                 player.sendObject(new ServerMessage(g.getGid(), g.getStage(), g.getMap()));
             }
 
-        }  // while connected
-        // thread exits if player disconnected
-        player.setLoggedin(false);  // login set to false
+        } // while connected
+          // thread exits if player disconnected
+        System.out.println("Player " + player.getUsername() + " is disconnected");
+        player.setLoggedin(false); // login set to false
         player.closeSocket();
     }
 
-    private void updateOnGame(Game g, ClientMessage msg){
+    private void updateOnGame(Game g, ClientMessage msg) {
         int gid = g.getGid();
         if (player.getActiveGid() == 0) { // switch in or join game
             // join game: add player to game
@@ -60,20 +65,23 @@ public class ClientWorker extends Thread {
                 // debug
                 System.out.println("player " + player.getUsername() + " joins game " + gid);
                 g.addPlayer(player);
+            } else {   // switch in: should add temp action to game, otherwise it stucks
+                int pid = g.getPidByName(player.getUsername());
+                g.addTempAction(pid, new Action());
             }
             player.setActiveGid(gid);
             // debug
             System.out.println("player " + player.getUsername() + " sets active gid to " + gid);
-        } else {  // player is in game
-            if (g.hasPlayer(player.getUsername()) && player.getActiveGid() == gid) { 
+        } else { // player is in game
+            if (g.hasPlayer(player.getUsername()) && player.getActiveGid() == gid) {
                 // normal game play, has action
                 int pid = g.getPidByName(player.getUsername());
                 g.addTempAction(pid, msg.getAction());
                 // debug
                 System.out.println("player " + player.getUsername() + " sends action to game " + gid);
             } else {
-                System.out.println("Error: received game (" + gid + ") doesn't have player "
-                        + player.getUsername() + ", or player has wrong activeGid");
+                System.out.println("Error: received game (" + gid + ") doesn't have player " + player.getUsername()
+                        + ", or player has wrong activeGid");
             }
         }
     }
@@ -91,24 +99,30 @@ public class ClientWorker extends Thread {
 
     private void waitOnGame(Game g) {
         try {
-            g.wait(); // wait for gameworker to notify
+            System.out.println("Wait on game " + g.getGid());
+            synchronized (g) {
+                g.wait(); // wait for gameworker to notify
+            }
         } catch (InterruptedException e) {
             System.out.println("InterruptedException while wait()");
             e.printStackTrace();
         }
     }
 
-
     // validate login/register and modify the userlist in server
-    private void userLogin(){
+    private void userLogin() {
         boolean success = false;
         while (!success) {
             UserMessage userMsg = (UserMessage) player.recvObject(); // recv UserMessage
-            if (userMsg==null){
-                return;  // jump out of loop
+            if (userMsg == null) {
+                return; // jump out of loop
             }
             String name = userMsg.getUsername();
             String password = userMsg.getPassword();
+            // debug
+            // System.out.println("Received username: " + name);
+            // System.out.println("Received password: " + password);
+            // System.out.println("Login: " + userMsg.isLogin());
             RoomMessage msg = new RoomMessage(false); // default to false (not succeed)
             if (userMsg.isLogin()) { // log in
                 // validate login info
@@ -118,7 +132,7 @@ public class ClientWorker extends Thread {
                     msg = new RoomMessage(boss.gatherRooms(name));
                     // update the old player's socket and set as player field
                     player = boss.updateUser(name, player);
-                    player.setLoggedin(true);   // successfully logged in
+                    player.setLoggedin(true); // successfully logged in
                     success = true;
                 }
             } else {
@@ -126,18 +140,22 @@ public class ClientWorker extends Thread {
                 if (!boss.hasUser(name)) {
                     // successfully registered
                     player.setUpUserInfo(name, password);
-                    boss.addUser(player); // add to list, synchronized, player is copied and set disconnected and not logged in
+                    boss.addUser(player); // add to list, synchronized, player is copied and set disconnected and not
+                                          // logged in
                     // success message
                     msg = new RoomMessage(true); // empty room list for new user
-                    // success = true;   // success is still false to let the loop run
+                    // success = true; // success is still false to let the loop run
                 }
             } // login or register
+            // debug
+            System.out.println("Send room message to player " + player.getUsername());
+            System.out.println("isValid: " + msg.isValid());
             player.sendObject(msg);
             if (!player.isConnected()) {
                 return;
             }
         } // while
-        // debug
+          // debug
         System.out.println("loggedin is " + player.isLoggedin());
         System.out.println("player " + player.getUsername() + " successfully logged in");
     }
@@ -150,7 +168,7 @@ public class ClientWorker extends Thread {
         player = new Player(socket);
         player.setUpInputStream(); // ready to receive from client
         userLogin();
-        
+
     }
 
 }

@@ -26,8 +26,8 @@ public class Territory implements Serializable{
   public static final int ROW_NUM = 4;
 
   
-  private int ownership;//set to player id 1-5 who owns the territory
-  private int tid; //territory id, 1-16
+  private int ownership;//set to player id 0-4 who owns the territory
+  private int tid; //territory id, 0-15
   private String name; //territory name
   //private int x,y; //location coordinate
   private Army defender; //currently only have num_units field

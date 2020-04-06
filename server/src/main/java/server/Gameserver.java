@@ -70,7 +70,10 @@ public class Gameserver {
   }
 
   public boolean hasUser(String name) {
+    // System.out.print("Print out user list: ");
     for (Player p : userList) {
+      // debug
+      // System.out.println(p.getUsername());
       if (p.getUsername().equals(name)) {
         return true;
       }
@@ -105,11 +108,13 @@ public class Gameserver {
 
   public synchronized Player updateUser(String name, Player p) {
     for (Player old : userList) {
-      if (p.getUsername().equals(name)) {
+      if (old.getUsername().equals(name)) {
+        System.out.println("update socket info");
         old.updateSocketandStreams(p); // connected is set to true
         return old;
       }
     }
+    System.out.println("Error: user not found");
     return null; // not found, return null
   }
 
