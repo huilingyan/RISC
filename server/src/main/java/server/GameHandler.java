@@ -205,7 +205,7 @@ public class GameHandler extends Handler {
       t_defender.setDefender(winner_army);
       //update territoryNum in PlayerStat if winner is attacker
       //otherwise territoryNum do not change
-      if(winner_id == attacker_id){
+      if(winner_id != defender_id){
       	worldmap.getPlayerStatByPid(winner_id).addTerritoryNum(1);
       	worldmap.getPlayerStatByPid(loser_id).subtractTerritoryNum(1);
       }
