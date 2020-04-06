@@ -15,7 +15,7 @@ public class GenerateRandomAttributeListTest {
             ArrayList<Integer> list = server.generateRandomAttriGroup(5);
             for (int i : list) {
                 System.out.println(i);
-                assert (i > 1);
+                assert (i >= 1);
             }
             System.out.println("");
         }
@@ -29,7 +29,7 @@ public class GenerateRandomAttributeListTest {
             ArrayList<Integer> list = server.generateRandomAttriGroup(10);
             for (int i : list) {
                 System.out.println(i);
-                assert (i > 1);
+                assert (i >= 1);
             }
             System.out.println("");
         }
