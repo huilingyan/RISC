@@ -16,9 +16,16 @@ public class Game {
     private Map map; // game map
     private ArrayList<Player> playerList; // list of players
     private HashMap<Integer, Action> tempActionList; // store temperary actions in each turn
-    private boolean full;
+    private boolean full;  // true if game is full, else false
 
-    // initialize a game
+    /****
+     * Initialize a game with gid, player number, map and first player.
+     * Stage is default to WAIT_FOR_PLAYERS, full is default to false
+     * @param g_id
+     * @param player_num
+     * @param m
+     * @param first_player
+     */
     public Game(int g_id, int player_num, Map m, Player first_player) {
         gid = g_id;
         playerNum = player_num;
@@ -32,7 +39,9 @@ public class Game {
         full = false;
     }
 
-    // default constuctor: game with gid=0, stage=ERROR
+    /**
+     * Default constuctor: game with gid=0, stage=ERROR
+     */
     public Game() {
         gid = 0;
         playerNum = 0;
@@ -71,6 +80,11 @@ public class Game {
         stage = s;
     }
 
+    /**
+     * Add a player p to playerlist.
+     * If after adding the game reaches full, set full to true
+     * @param p
+     */
     public synchronized void addPlayer(Player p) {
         playerList.add(p);
         System.out.println("Add a player " + p.getUsername());
@@ -82,12 +96,14 @@ public class Game {
     }
 
     public boolean isFull() {
-        // boolean full = (playerNum - playerList.size()==0);
-        // boolean full = (playerList.size() > 1);
-        // System.out.println(full);
         return full;
     }
 
+    /**
+     * After receives action from client, clientworker add a temp action to tempActionList
+     * @param pid
+     * @param ac
+     */
     public synchronized void addTempAction(int pid, Action ac) {
         if (tempActionList.containsKey(pid)) {
             System.out.println("Error: pid " + pid + " already wrote to tempActionList in game " + gid);
@@ -96,15 +112,28 @@ public class Game {
         tempActionList.put(pid, ac);
     }
 
+    /**
+     * After the gameworker updates game state for one turn, it clears tempActionList
+     */
     public synchronized void clearTempActions() {
         tempActionList.clear();
     }
 
+    /**
+     * Return player's pid, given its username
+     * @param name
+     * @return
+     */
     public int getPidByName(String name) {
         PlayerStat p = map.getPlayerStatByName(name);
         return p.getPid();
     }
 
+    /**
+     * Check if the game has the player, given the player's username
+     * @param name
+     * @return
+     */
     public boolean hasPlayer(String name) {
         for (Player p : playerList) {
             if (p.getUsername().equals(name)) {
@@ -114,7 +143,9 @@ public class Game {
         return false;
     }
 
-    // set PlayerStats according to playerList
+    /**
+     * Set PlayerStats according to playerList
+     */
     public void setPlayerStats() {
         ArrayList<PlayerStat> playerStats = new ArrayList<PlayerStat>();
         for (int i = 0; i < playerNum; i++){
@@ -128,8 +159,10 @@ public class Game {
         
     }
 
-    // return true if all active player has sent action to server,
-    // which means one turn just finished
+    /***
+     * @return true if all active player has sent action to server,
+     * which means one turn just finished
+     */
     public boolean turnFinished(){
         for (Player p: playerList){
             if (p.isConnected() && p.isLoggedin() && p.getActiveGid()==gid){
@@ -137,6 +170,20 @@ public class Game {
                 if (!tempActionList.containsKey(pid)){
                     return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    /***
+     * Check if the game has no active player
+     * @return
+     */
+    public boolean noActivePlayer(){
+        for (Player p: playerList){
+            // is active player
+            if (p.isConnected() && p.isLoggedin() && p.getActiveGid()==gid){
+                return false;
             }
         }
         return true;
