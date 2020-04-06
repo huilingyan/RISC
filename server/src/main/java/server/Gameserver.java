@@ -19,10 +19,16 @@ public class Gameserver {
   private ArrayList<Player> userList; // list of Player
   private ArrayList<Game> gameList; // list of games
   private int currentGid = 10; // gid start from 10
+  private ArrayList<ClientWorker> clientThreads;
 
   public Gameserver() {
     userList = new ArrayList<Player>();
     gameList = new ArrayList<Game>();
+    clientThreads = new ArrayList<ClientWorker>();  // ClientWorkers
+  }
+
+  public ArrayList<ClientWorker> getClientThreads(){
+    return clientThreads;
   }
 
   /***
@@ -30,12 +36,18 @@ public class Gameserver {
    */
   public void run() {
     bindSocket(); // initialize server socket
+    // moniter worker
+    MoniterWorker mWorker = new MoniterWorker(this);
+    mWorker.start();
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
       while ((newSocket = acceptConnection()) == null) {
       } // loops until accept one connection
       ClientWorker worker = new ClientWorker(newSocket, this);
+      synchronized(this){
+        clientThreads.add(worker);  // add ClientWorker to the list
+      }
       worker.start();
     }
   }

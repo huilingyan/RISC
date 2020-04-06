@@ -12,6 +12,15 @@ public class ClientWorker extends Thread {
     public ClientWorker(Socket s, Gameserver server) {
         socket = s;
         boss = server;
+        player = null;  // initialize to null
+    }
+
+    public Player getPlayer(){
+        return player;
+    }
+
+    public Socket getSocket(){
+        return socket;
     }
 
     // run the thread
