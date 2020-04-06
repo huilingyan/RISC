@@ -112,12 +112,23 @@ public class ErrorAlerts {
         alert.showAndWait();
     }
 
+    public static void deployArmyPrompt() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Please deploy");
+
+        alert.setHeaderText(null);
+        alert.setContentText("Please click on the territory to deploy army");
+ 
+        alert.showAndWait();
+    }
+
     private static final Map<Integer, String> ecodetomsgMap = ImmutableMap.<Integer, String>builder()
         .put(OperationValidator.NOT_ENOUGH_FOOD, "You don't have enough food to do this!")
         .put(OperationValidator.NOT_ENOUGH_GOLD, "You don't have enough gold to upgrade!")
         .put(OperationValidator.NOT_ADJACENT, "You can only attack territories adjacent to this one!")
         .put(OperationValidator.INVALID_PATH, "There is no path to the destination you choose!")
         .put(OperationValidator.REPEATED_UPGRADE_MAX_TECH_LV, "You can't upgrade max tech Lv more than once in one turn!")
+        .put(OperationValidator.EXCEED_MAX_LV, "Your upgrade cannot exceed your maximum tech Lv!")
         .build();
 
     public static void inValidOpAlert(int errorcode) {
@@ -144,7 +155,7 @@ public class ErrorAlerts {
 
         Scene sc = new Scene(vb);
         window.setScene(sc);
-        window.showAndWait();;
+        window.showAndWait();
     }
 
     public static void upgradeTechSucceed() {
@@ -156,6 +167,5 @@ public class ErrorAlerts {
  
         alert.showAndWait();
     }
-
 
 }
