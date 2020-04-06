@@ -31,11 +31,11 @@ public class guitest_long extends Application{
        AtkOPPaneController aopPC = new AtkOPPaneController("Ditto");
        UpOPPaneController uopPC = new UpOPPaneController("Ditto");
        
-       InitController iC = new InitController(worldmap);
-       iC.setMaster(0);
-       GameController gC = new GameController(gamemap);
+    //    InitController iC = new InitController(worldmap);
+    //    iC.setMaster(0);
+       GameController gC = new GameController(gamemap,"p0",101,0);
        //Scene s1 = new Scene(uopPC.getCurrPane(), 1280, 720);
-       stage.setScene(gC.getCurrScene());
+        stage.setScene(gC.getCurrScene());
        stage.show();
 
     }

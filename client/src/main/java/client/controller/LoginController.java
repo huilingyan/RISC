@@ -4,13 +4,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import shared.RoomMessage;
+import shared.UserMessage;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.AnchorPane;
 import javafx.geometry.Insets;
-import java.io.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 import client.RoomMsgGenerator;
 
@@ -58,26 +58,25 @@ public class LoginController extends SceneController {
 
         gpane.getChildren().addAll(usernamelabel, userinput, pwdlabel, pwdinput, loginbtn, signupbtn);
 
-
         loginbtn.setOnAction(e -> {
-            /* this.mc.gclient.connectToServer(); 
-            this.mc.gclient.sendObject(new UserMessage(userinput.getText(), pwdinput.getText(), true));
-            this.mc.gclient.setupInputStream();
-            RoomMessage room_msg = (RoomMessage)this.mc.gclient.recvObject();
-            if (room_msg.isValid()) {
-            */
-            // dummy roommsg model for test
-            RoomMessage room_msg = RoomMsgGenerator.generateRooms();
-            this.mc.showRoomScene(room_msg);
-            /*}
-            else {
-                // TODO: pop up alert box
+            if ((!userinput.getText().isEmpty()) && (!pwdinput.getText().isEmpty())) {
+                this.mc.setPlayerName(userinput.getText());
+                this.mc.sendToServer(new UserMessage(userinput.getText(), pwdinput.getText(), true));
+                RoomMessage room_msg = (RoomMessage) this.mc.recvFromServer();
+                System.out.println("Login result: " + room_msg.isValid());
+                if (room_msg.isValid()) {
+                    this.mc.showRoomScene(room_msg);
+                } else {
+                    ErrorAlerts.invalidLogin(); // pop up alert box
+                }
             }
-            */
+            else {
+                // if either of the field is null
+                ErrorAlerts.bothFieldNullAlert();
+            }                    
         });
 
         signupbtn.setOnAction(e -> {
-            // TODO:  switch to signupscene
             this.mc.showSignupScene();
         });
 

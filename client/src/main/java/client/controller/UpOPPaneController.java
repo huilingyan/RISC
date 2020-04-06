@@ -3,7 +3,6 @@ package client.controller;
 import java.util.ArrayList;
 
 import client.ArmySliderPlusLvSel;
-import client.ErrorMsgBox;
 import client.InfoLayoutGenerator;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -31,7 +30,7 @@ public class UpOPPaneController implements PaneController {
 
     @Override
     public AnchorPane getCurrPane() {
-        Territory terr = gc.getWorldmap().getTerritoryByName(terrName);
+        Territory terr = this.gc.getWorldmap().getTerritoryByName(terrName);
         
         GridPane costTable = InfoLayoutGenerator.generateUpgradeTable();
         Text selectUpgrade = new Text("Move the slider to select number of soldiers and pick the target level you want to upgrade them to.");
@@ -45,17 +44,16 @@ public class UpOPPaneController implements PaneController {
             Army oldArmy = amsld.getArmy();
             Army newArmy = upgradeArmy(oldArmy, amsld.getTargetLv());
             UpgradeOperation uop = new UpgradeOperation(terrName, oldArmy, newArmy);
-            int errorcode = gc.getOperationValidator().isValidUpgradeOperation(uop);
+            int errorcode = this.gc.getOperationValidator().isValidUpgradeOperation(uop);
             if (errorcode == OperationValidator.VALID) {
-              gc.showInfoPane();
+                this.gc.showInfoPane();
             }
             else {
-              ErrorMsgBox.display(errorcode);
+                ErrorAlerts.inValidOpAlert(errorcode);
             }
-            //gc.addUpOP(new UpgradeOperation(terrName, oldArmy, newArmy));
             
         });
-        cancelBtn.setOnAction(e -> gc.showInfoPane());
+        cancelBtn.setOnAction(e -> this.gc.showInfoPane());
 
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);

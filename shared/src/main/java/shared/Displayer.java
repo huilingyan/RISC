@@ -1,31 +1,31 @@
 /*package shared;
 
-import java.util.ArrayList;
-import java.io.*;
-import java.lang.*;
+// import java.util.ArrayList;
+// import java.io.*;
+// import java.lang.*;
 
-import shared.Territory;
-import shared.*;
+// import shared.Territory;
+// import shared.*;
 
-public class Displayer {
+// public class Displayer {
 
-    private static Displayer displayer = new Displayer();
-    private int num_player;
+//     private static Displayer displayer = new Displayer();
+//     private int num_player;
 
-    private Displayer() {
+//     private Displayer() {
 
-    }
+//     }
 
-    public static synchronized Displayer getInstance() {
-        if (displayer == null) {
-            displayer = new Displayer();
-        }
-        return displayer;
-    }
+//     public static synchronized Displayer getInstance() {
+//         if (displayer == null) {
+//             displayer = new Displayer();
+//         }
+//         return displayer;
+//     }
 
-    public void setNumOfPlayer(int num) {
-        this.num_player = num;
-    }
+//     public void setNumOfPlayer(int num) {
+//         this.num_player = num;
+//     }
 
     
     public void displayMap(ArrayList<Territory> t_map) {
@@ -37,7 +37,6 @@ public class Displayer {
                 Next to: UNC, Cornell, CMU, G-Tech
 
         */   
-        // TODO: For version2, visualize it
 /*
         for (int i = 0; i < this.num_player; i++) {
             displayOnePlayerMap(i, t_map);
@@ -53,116 +52,116 @@ public class Displayer {
                 System.out.println("\tNumber of units: " + t.getDefenderNum()); // number of units 
                 System.out.print("\tNext to: "); // neighbours
     
-                ArrayList<Integer> neighlist = t.getNeighborList();
-                int cnt = 0;
-                for (int neigh : neighlist) { // show neighbour list
-                    if (neigh != -1) {
-                        cnt++;
-                        System.out.print(findNameByTid(neigh, t_map) + ((cnt == t.countNeighbors())? "\n" : ", ")); // owner
+//                 ArrayList<Integer> neighlist = t.getNeighborList();
+//                 int cnt = 0;
+//                 for (int neigh : neighlist) { // show neighbour list
+//                     if (neigh != -1) {
+//                         cnt++;
+//                         System.out.print(findNameByTid(neigh, t_map) + ((cnt == t.countNeighbors())? "\n" : ", ")); // owner
                         
-                    }                   
-                }
-                System.out.print("\n");
-            }
-        }
-    }
+//                     }                   
+//                 }
+//                 System.out.print("\n");
+//             }
+//         }
+//     }
 
-    public void displayBeforeInitMap() {
-      System.out.println("Below shows your territories.\n");
-    }
+//     public void displayBeforeInitMap() {
+//       System.out.println("Below shows your territories.\n");
+//     }
 
-    public void displayIntroduction(int player_id) {
+//     public void displayIntroduction(int player_id) {
                 
-        System.out.println("You are player " + player_id + ", what would you like to do?");
-        System.out.println("(M)ove\n(A)ttack\n(D)one");
-    }
+//         System.out.println("You are player " + player_id + ", what would you like to do?");
+//         System.out.println("(M)ove\n(A)ttack\n(D)one");
+//     }
 
-// Messages during communication with server
+// // Messages during communication with server
 
-    public void connEstablishedMsg(int player_id) {
-        System.out.println("Successfully connected to server! You're playing as player " + player_id);
-    }
+//     public void connEstablishedMsg(int player_id) {
+//         System.out.println("Successfully connected to server! You're playing as player " + player_id);
+//     }
 
-    public void inputPlayerNum() {
-        System.out.println("You're the first player. Please enter the number of players:");
-    }
+//     public void inputPlayerNum() {
+//         System.out.println("You're the first player. Please enter the number of players:");
+//     }
 
-    public void disConnectMsg() {
-        System.out.println("Disconnected from server!");
-    }
+//     public void disConnectMsg() {
+//         System.out.println("Disconnected from server!");
+//     }
 
-// Messages for InputTaker
+// // Messages for InputTaker
 
-    // invalid input messages
-    public void invalidPlayerNum() {
-        System.out.println("This game only supports 2-5 players! Please input again:");
-    }
+//     // invalid input messages
+//     public void invalidPlayerNum() {
+//         System.out.println("This game only supports 2-5 players! Please input again:");
+//     }
 
-    public void tooManyNumber() {
-        System.out.println("Please input just one number:");
-    }
+//     public void tooManyNumber() {
+//         System.out.println("Please input just one number:");
+//     }
 
-    public void negNumberMsg() {
-        System.out.println("Please input a number which is >= 0:");
-    }
+//     public void negNumberMsg() {
+//         System.out.println("Please input a number which is >= 0:");
+//     }
 
-    public void invalidTerritoryName() {
-        System.out.println("The name you entered is not a valid territory name! Please input again:");
-    }
+//     public void invalidTerritoryName() {
+//         System.out.println("The name you entered is not a valid territory name! Please input again:");
+//     }
 
-    public void invalidOrder() {
-        System.out.println("Invalid choice! Please choose what to do: A, M, or D?");
-    }
+//     public void invalidOrder() {
+//         System.out.println("Invalid choice! Please choose what to do: A, M, or D?");
+//     }
 
-    public void invalidExitChoice() {
-        System.out.println("Invalid choice! Please enter Y or N:");
-    }
+//     public void invalidExitChoice() {
+//         System.out.println("Invalid choice! Please enter Y or N:");
+//     }
 
-    // prompts during move operation
-    public void enterMoveSrcTerritory() {
-        System.out.println("Please enter the source territory to move armies from:");
-    }
+//     // prompts during move operation
+//     public void enterMoveSrcTerritory() {
+//         System.out.println("Please enter the source territory to move armies from:");
+//     }
 
-    public void enterNumOfMove() {
-        System.out.println("Please enter the number of armies you want to move:");
-    }
+//     public void enterNumOfMove() {
+//         System.out.println("Please enter the number of armies you want to move:");
+//     }
 
-    public void enterMoveDestTerritory() {
-        System.out.println("Please enter the destination territory to move armies to:");
-    }
+//     public void enterMoveDestTerritory() {
+//         System.out.println("Please enter the destination territory to move armies to:");
+//     }
 
-    // prompts during attack operation
-    public void enterAttackSrcTerritory() {
-        System.out.println("Please enter the source territory to dispatch armies from:");
-    }
+//     // prompts during attack operation
+//     public void enterAttackSrcTerritory() {
+//         System.out.println("Please enter the source territory to dispatch armies from:");
+//     }
 
-    public void enterNumOfAttack() {
-        System.out.println("Please enter the number of armies you want to dispatch:");
-    }
+//     public void enterNumOfAttack() {
+//         System.out.println("Please enter the number of armies you want to dispatch:");
+//     }
 
-    public void enterAttackDestTerritory() {
-        System.out.println("Please enter the destination territory you want to attack:");
-    }
+//     public void enterAttackDestTerritory() {
+//         System.out.println("Please enter the destination territory you want to attack:");
+//     }
 
-// Messages for OperationValidator 
-// msg during initialization
+// // Messages for OperationValidator 
+// // msg during initialization
 
-    public void showRemainUnitNumber(int totalunit, String name) {
-        System.out.println("You have " + totalunit + " units in total. ");
-        System.out.println("How many units would you like to deploy to territory " + name + "?");
-    }
+//     public void showRemainUnitNumber(int totalunit, String name) {
+//         System.out.println("You have " + totalunit + " units in total. ");
+//         System.out.println("How many units would you like to deploy to territory " + name + "?");
+//     }
 
-    public void deployUnits(InitOperation initop) {
-        System.out.println("Deploy " + initop.num + " to " + initop.getDest());
-    }
+//     public void deployUnits(InitOperation initop) {
+//         System.out.println("Deploy " + initop.num + " to " + initop.getDest());
+//     }
 
-// msg during move commit
+// // msg during move commit
 
-    public void moveUnits(MoveOperation moveop) {
-        System.out.println("Move " + moveop.num + " units from " + moveop.getSrc() + " to " + moveop.getDest());
-    }
+//     public void moveUnits(MoveOperation moveop) {
+//         System.out.println("Move " + moveop.num + " units from " + moveop.getSrc() + " to " + moveop.getDest());
+//     }
 
-// msg during attack commit
+// // msg during attack commit
     
     public void attackUnits(AttackOperation attackop) {
         System.out.println("Attack " + attackop.getDest() + " from " + attackop.getSrc() + " with " + attackop.num + " units");

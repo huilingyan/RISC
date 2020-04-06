@@ -15,6 +15,7 @@ public class GameWorker extends Thread {
 
     // run the thread
     public void run() {
+        System.out.println("Start a new game worker");
         // keep running when game is not over
         while (game.getStage() < GameMessage.GAME_OVER) {
             switch (game.getStage()) {
@@ -23,7 +24,9 @@ public class GameWorker extends Thread {
                     break;
                 case (GameMessage.WAIT_FOR_PLAYERS): // wait for players
                     // wait until all players join
+                    System.out.println("Player num: " + game.getPlayerNum());
                     while (!game.isFull()) {
+                        sleepOnThread(2);
                     }
                     // debug
                     System.out.println("All players joined game " + game.getGid());
@@ -35,36 +38,49 @@ public class GameWorker extends Thread {
                 case (GameMessage.INITIALIZE_UNITS): // initialize units
                     // wait until all active players send action
                     while (!game.turnFinished()) {
+                        sleepOnThread(2);
                     }
                     initializeGameUnits();
                     break;
                 case (GameMessage.GAME_PLAY): // play game
                     // wait until all active players send action
                     while (!game.turnFinished()) {
+                        sleepOnThread(2);
                     }
                     updateOneTurn();
                     break;
                 default:
                     System.out.println("Game state: " + game.getStage());
             } // switch
-            game.notifyAll(); // notify clientworkers
+            synchronized (game) {
+                game.notifyAll(); // notify clientworkers
+            }
+
         } // while
           // gameover, gameworker exits
     }
 
+    private void sleepOnThread(int time) {
+        try {
+            sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     // check if game is over
-    private boolean isGameOver(Map map){
+    private boolean isGameOver(Map map) {
         int total = map.getTerritories().size();
-        for (PlayerStat ps: map.getPlayerStats()){
+        for (PlayerStat ps : map.getPlayerStats()) {
             // check if the player owns all territory
-            if (ps.getTerritoryNum()==total){
+            if (ps.getTerritoryNum() == total) {
                 return true;
             }
         }
         return false;
     }
 
-    private void initializeGameUnits(){
+    private void initializeGameUnits() {
         // debug
         System.out.println("All players placed units in game " + game.getGid());
         // validate actions
@@ -81,7 +97,7 @@ public class GameWorker extends Thread {
         game.setStage(GameMessage.GAME_PLAY);
     }
 
-    private void updateOneTurn(){
+    private void updateOneTurn() {
         // debug
         System.out.println("All players finished one turn in game " + game.getGid());
         // validate actions
@@ -93,7 +109,7 @@ public class GameWorker extends Thread {
         // check game over
         // if yes, update game stage
         // if no, update map
-        if (isGameOver(newMap)){
+        if (isGameOver(newMap)) {
             game.setStage(GameMessage.GAME_OVER);
         } else {
             newMap.updateUnitandResource();
@@ -108,41 +124,44 @@ public class GameWorker extends Thread {
     /****
      * Returns an action which only contains validated init operations
      ****/
-    // TODO: uncomment validator code
     private Action validateInitAction(Action ac, int pid, Map gameMap) {
-        // OperationValidator validator = new OperationValidator(pid, gameMap);
-        // for (InitOperation op : ac.getInitOperations()) {
-        //     validator.isValidInitOperation(op, Map.INIT_UNIT);
-        // }
-        // return validator.getAction();
-        return ac;  // not validated
+        OperationValidator validator = new OperationValidator(pid, gameMap);
+        for (InitOperation op : ac.getInitOperations()) {
+            validator.isValidInitOperation(op, Map.INIT_UNIT);
+        }
+        return validator.getAction();
+        // return ac; // not validated
     }
 
     /*****
-     * Returns an action which only contains validated game operations and upgrade max tech level or not
+     * Returns an action which only contains validated game operations and upgrade
+     * max tech level or not
      ******/
-    // TODO: uncomment validator code
     private Action validateGameAction(Action ac, int pid, Map gameMap) {
-        // OperationValidator validator = new OperationValidator(pid, gameMap);  // TODO
-        // for (MoveOperation op : ac.getMoveOperations()) {
-        //     validator.isValidMoveOperation(op);
-        // }
-        // for (AttackOperation op : ac.getAttackOperations()) {
-        //     validator.isValidAttackOperation(op);
-        // }
-        // for (UpgradeOperation: ac.getUpgradeOperations()){
-        //     validator.isValidUpdateOperation(op);  // TODO
-        // }
-        // if (ac.getUpgradeMaxTechHashMap().containsKey(pid) && ac.getUpgradeMaxTechHashMap().get(pid)==true){
-        //     validator.isValidUpgradeMaxTech();  // TODO
-        // }
-        // return validator.getAction();
-        return ac;  // not validated
+        OperationValidator validator = new OperationValidator(pid, gameMap);
+        // 1. validate upgrade operations
+        for (UpgradeOperation uop : ac.getUpgradeOperations()) {
+            validator.isValidUpgradeOperation(uop);
+        }
+        // 2. validate move operations
+        for (MoveOperation mop : ac.getMoveOperations()) {
+            validator.isValidMoveOperation(mop);
+        }
+        // 3. validate attack operations
+        for (AttackOperation aop : ac.getAttackOperations()) {
+            validator.isValidAttackOperation(aop);
+        }
+        // 4. validate upgrade max tech level
+        if (ac.getUpgradeMaxTechHashMap().containsKey(pid) && ac.getUpgradeMaxTechHashMap().get(pid) == true) {
+            validator.isValidUpgradeMaxTechLv();
+        }
+        return validator.getAction();
+        // return ac; // not validated
     }
 
     private Action validateAllInitOperations(HashMap<Integer, Action> actionList, Map gamemap) {
         Action action = new Action();
-        for (HashMap.Entry<Integer, Action> entry: actionList.entrySet()){
+        for (HashMap.Entry<Integer, Action> entry : actionList.entrySet()) {
             int pid = entry.getKey();
             Action ac = entry.getValue();
             action.concatInitOperation(validateInitAction(ac, pid, gamemap));
@@ -152,13 +171,13 @@ public class GameWorker extends Thread {
 
     private Action validateAllGameOperations(HashMap<Integer, Action> actionList, Map gamemap) {
         Action action = new Action();
-        for (HashMap.Entry<Integer, Action> entry: actionList.entrySet()){
+        for (HashMap.Entry<Integer, Action> entry : actionList.entrySet()) {
             // skip the action sent by already losed player
             int pid = entry.getKey();
-            if (gamemap.getPlayerStatByPid(pid).hasTerritory()){
+            if (gamemap.getPlayerStatByPid(pid).hasTerritory()) {
                 Action ac = entry.getValue();
                 action.concatGameOperation(validateGameAction(ac, pid, gamemap));
-            }     
+            }
         }
         return action;
     }

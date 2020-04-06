@@ -2,7 +2,6 @@ package client.controller;
 
 import client.InfoLayoutGenerator;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -12,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import shared.*;
+import java.io.*;
 
 public class InitOpPaneController implements PaneController {
     public InitController ic;
@@ -29,13 +29,13 @@ public class InitOpPaneController implements PaneController {
     @Override
     public AnchorPane getCurrPane() {
         Territory terr = ic.getWorldmap().getTerritoryByName(terrName);
-        boolean showiop = (terr.getOwnership() == ic.getPid());//decide if show the slider
+        boolean showiop = (terr.getOwnership() == ic.getPid()); // decide if show the slider
         
-        GridPane grid=new GridPane();
+        GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         // slider for chosing soldier number
-        Text iop_info = new Text("You have "+ic.getnofSoldiers()+" units left to deploy, how many you want to put in "+terrName);
+        Text iop_info = new Text("You have " + ic.getnofSoldiers() + " units left to deploy, how many you want to put in " + terrName);
         Slider NofArmySlider = new Slider(0, ic.getnofSoldiers(), 0);
         NofArmySlider.setShowTickLabels(true);
         NofArmySlider.setShowTickMarks(true);
@@ -53,20 +53,27 @@ public class InitOpPaneController implements PaneController {
         grid.add(BtnBar, 0, 2, 2, 1);
         GridPane.setHalignment(BtnBar, HPos.CENTER);
         // control button actions
-        proceedBtn.setOnAction(e-> {
+        proceedBtn.setOnAction(e -> {
             int n = (int) NofArmySlider.getValue();
+            // debug
+            System.out.println("soldiers to deploy: " + n);
             Army army = new Army(n);
             // validate operation
-            this.ic.addInitOP(new InitOperation(terrName, army));
-            // // debug
-            // for (InitOperation initop : ic.getAction().getInitOperations()) {
-            //     System.out.println("dest: " + initop.getDest());
-            //     System.out.println("soldier num: " + initop.getArmy().getSoldierNumber(0));
-            // }
+            InitOperation iop = new InitOperation(terrName, army);
+            // debug
+            System.out.println("Current soldier number: " + this.ic.getnofSoldiers());
+            int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, Map.INIT_UNIT);
+            // int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, this.ic.getnofSoldiers());
+            if (errorcode == OperationValidator.VALID) {
+                this.ic.subSoldiers(n);
+                // debug
+                System.out.println("Now have soldiers: " + this.ic.getnofSoldiers());
+                this.ic.showInfoPane();
+            }
+            else {
+                ErrorAlerts.inValidOpAlert(errorcode);
+            }
             
-            this.ic.subSoldiers(n);
-            System.out.println(n);
-            this.ic.showInfoPane();
         });
         cancelBtn.setOnAction(e -> this.ic.showInfoPane());
         

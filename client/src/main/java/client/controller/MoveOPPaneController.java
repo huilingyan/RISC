@@ -3,7 +3,6 @@ package client.controller;
 import java.util.ArrayList;
 
 import client.ArmySlider;
-import client.ErrorMsgBox;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -29,14 +28,14 @@ public class MoveOPPaneController implements PaneController {
 
     @Override
     public AnchorPane getCurrPane() {
-        Territory terr =gc.getWorldmap().getTerritoryByName(terrName);
+        Territory terr = this.gc.getWorldmap().getTerritoryByName(terrName);
 
         Text costNotification = new Text("Move will cost food = the sum of territory sizes the path travelled including the destination\n x number of soldiers moved.");
         Text selectArmy = new Text("Move the slider to select how many soldiers you want to move:");
         ArmySlider amsld = new ArmySlider(terr.getDefender());
         Text selectDest = new Text("Select the destination where the army will go:");
         ChoiceBox<String> chBox = new ChoiceBox<>();
-        ArrayList<String> ownTnames = gc.getWorldmap().getOwnTerritoryListName(gc.getPid());
+        ArrayList<String> ownTnames = this.gc.getWorldmap().getOwnTerritoryListName(gc.getPid());
         chBox.getItems().addAll(ownTnames);
         chBox.setValue(ownTnames.get(0));
 
@@ -45,20 +44,19 @@ public class MoveOPPaneController implements PaneController {
         ButtonBar BtnBar = new ButtonBar();
         BtnBar.getButtons().addAll(proceedBtn, cancelBtn);
         proceedBtn.setOnAction(e -> {
-          MoveOperation mop = new MoveOperation(terrName, chBox.getValue(), amsld.getArmy());
-          int errorcode = gc.getOperationValidator().isValidMoveOperation(mop);
-          if(errorcode==OperationValidator.VALID){
-            //gc.addMoveOP(new MoveOperation(terrName, chBox.getValue(), amsld.getArmy()));
-            gc.moved();
-            System.out.println(amsld.getArmy().getSoldierNumber(0));
-            System.out.println(chBox.getValue());
-            gc.showInfoPane();
-          }
-          else {
-            ErrorMsgBox.display(errorcode);
-          }
+            MoveOperation mop = new MoveOperation(terrName, chBox.getValue(), amsld.getArmy());
+            int errorcode = this.gc.getOperationValidator().isValidMoveOperation(mop);
+            if(errorcode == OperationValidator.VALID) {
+                this.gc.moved();
+                System.out.println(amsld.getArmy().getSoldierNumber(0));
+                System.out.println(chBox.getValue());
+                this.gc.showInfoPane();
+            }
+            else {
+                ErrorAlerts.inValidOpAlert(errorcode);
+            }
           });
-        cancelBtn.setOnAction(e -> gc.showInfoPane());
+        cancelBtn.setOnAction(e -> this.gc.showInfoPane());
 
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);

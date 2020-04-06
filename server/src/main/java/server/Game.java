@@ -16,6 +16,7 @@ public class Game {
     private Map map; // game map
     private ArrayList<Player> playerList; // list of players
     private HashMap<Integer, Action> tempActionList; // store temperary actions in each turn
+    private boolean full;
 
     // initialize a game
     public Game(int g_id, int player_num, Map m, Player first_player) {
@@ -25,7 +26,10 @@ public class Game {
         map = m;
         playerList = new ArrayList<Player>();
         playerList.add(first_player); // put the first player into playerlist
+        System.out.println("Add the first player to game " + g_id);
+        System.out.println("Player num: " + playerNum);
         tempActionList = new HashMap<Integer, Action>(); // empty action list
+        full = false;
     }
 
     // default constuctor: game with gid=0, stage=ERROR
@@ -36,6 +40,7 @@ public class Game {
         map = new Map();
         playerList = new ArrayList<Player>();
         tempActionList = new HashMap<Integer, Action>(); // empty action list
+        full = false;
     }
 
     public HashMap<Integer, Action> getTempActionList(){
@@ -68,10 +73,19 @@ public class Game {
 
     public synchronized void addPlayer(Player p) {
         playerList.add(p);
+        System.out.println("Add a player " + p.getUsername());
+        System.out.println("Player number in player list: " + playerList.size());
+        if (playerList.size()==playerNum){
+            System.out.println("Set full to true");
+            full = true;
+        }
     }
 
     public boolean isFull() {
-        return playerNum == playerList.size();
+        // boolean full = (playerNum - playerList.size()==0);
+        // boolean full = (playerList.size() > 1);
+        // System.out.println(full);
+        return full;
     }
 
     public synchronized void addTempAction(int pid, Action ac) {
