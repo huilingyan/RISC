@@ -162,12 +162,11 @@ public class GameHandler extends Handler {
       Territory t_defender = worldmap.getTerritoryByName(t_entry.getKey());
       int defender_id = t_defender.getOwnership();
       Army defender_army = t_defender.getDefender();
+      int original_defender_id = t_defender.getOwnership();
       //initialize winner
       int winner_id = defender_id;
       Army winner_army = defender_army;
-      //initialize loser
-      int loser_id = defender_id;
-        
+           
       // Get all the entries in the map into a list
       List<HashMap.Entry<Integer, Army>> entry = new ArrayList<>(t_entry.getValue().entrySet());
       // Shuffle the list, randomize attack sequence
@@ -186,11 +185,11 @@ public class GameHandler extends Handler {
         if (attacker_army.getTotalSoldiers() <= 0) {
           winner_id = defender_id;
           winner_army = defender_army;
-          loser_id = attacker_id;
+          
         } else {
           winner_id = attacker_id;
           winner_army = attacker_army;
-          loser_id = defender_id;
+          
           //attacker becomes defender for possible upcoming attacks
           defender_id = winner_id;
           defender_army = winner_army;
@@ -208,7 +207,7 @@ public class GameHandler extends Handler {
         //otherwise territoryNum do not change
         
         worldmap.getPlayerStatByPid(winner_id).addTerritoryNum(1);
-        worldmap.getPlayerStatByPid(loser_id).subtractTerritoryNum(1);
+        worldmap.getPlayerStatByPid(original_defender_id).subtractTerritoryNum(1);
 
       }
     }
