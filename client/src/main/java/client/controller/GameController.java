@@ -132,13 +132,14 @@ public class GameController extends SceneController {
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
             ErrorAlerts.WaitForOtherPlayers();
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
-            if (!servermsg.getMap().getPlayerStatByName(this.player_name).hasTerritory()) { // if lost during game
-                this.mc.showLoserBox(this.player_name, servermsg);
-            }
+            
             if (servermsg.getStage() == 3) { // if game over
                 this.mc.gameOverAlertBox(this.player_name, servermsg);
             }
-            else if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1)) {
+            if (!servermsg.getMap().getPlayerStatByName(this.player_name).hasTerritory()) { // if lost during game
+                this.mc.showLoserBox(this.player_name, servermsg);
+            }
+            if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1)) {
                 System.out.println("Unexpected game stage!");
             }
             else {
