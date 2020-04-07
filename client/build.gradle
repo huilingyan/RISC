@@ -11,15 +11,22 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application.
     id 'application'
-
+    
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 
 application {
     // Define the main class for the application.
-    mainClassName = 'client.Gameclient'
+    //   mainClassName = 'client.guitest_long'
+    mainClassName = 'client.RISC_GUI'
+}
+
+javafx {
+    version = "14"
+    modules = [ 'javafx.controls','javafx.base' ]
 }
 
 run{
-standardInput=System.in
+    standardInput = System.in
 }

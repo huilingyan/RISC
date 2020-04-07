@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import shared.*;
-
+/*
 public class InitializeMapTest {
   @Test
   public void testInitializeMap2() {
@@ -64,3 +64,4 @@ public class InitializeMapTest {
   }
 
 }
+*/

@@ -8,25 +8,24 @@ import shared.*;
 public class InitHandler extends Handler {
 
   @Override
-  public ArrayList<Territory> handleAction(
-         ArrayList<Territory> map, Action action){
-    //ArrayList<Territory> newmap = map;//this copy will affect original map
-    ArrayList<Territory> newmap = copyMap(map);
-    //deep copy, do not affect original map
+  public Map handleAction(
+         Map worldmap, Action action){
+    //deep copy
+    Map new_worldmap = new Map(worldmap);
     
     List<InitOperation> initList = action.getInitOperations();
     for (int i = 0; i < initList.size(); i++) {
       InitOperation initOp = initList.get(i);
       String dest = initOp.getDest();
-      int num = initOp.getNum();
+      Army army_depoly = initOp.getArmy();
       //System.out.println("dest:" + dest + " num:" + num);
-      Territory t_dest = findTerritorybyString(newmap, dest);
+      Territory t_dest = new_worldmap.getTerritoryByName(dest);
       if (t_dest != null) {
-        t_dest.addDefender(num);
+        t_dest.addDefender(army_depoly);
       }
      }
 
 
-    return newmap;
+    return new_worldmap;
   }
 }
