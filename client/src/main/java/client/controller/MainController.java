@@ -105,7 +105,7 @@ public class MainController {
             showWinnerBox();
         }
         else {
-            showLoserBox(pname, servermsg);
+            showFinalLoserBox();
         }
     }
 
@@ -128,6 +128,28 @@ public class MainController {
             showRoomScene(room_msg);
         }
     }
+
+    public void showFinalLoserBox() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("You lost");
+        alert.setHeaderText("You lost! Please exit:");
+ 
+        ButtonType exit = new ButtonType("Exit");
+ 
+        alert.getButtonTypes().clear(); 
+        alert.getButtonTypes().addAll(exit);
+ 
+        // option != null.
+        Optional<ButtonType> option = alert.showAndWait();
+ 
+        if (option.get() == exit) {
+            this.switchoutMsg();
+            RoomMessage room_msg = (RoomMessage)recvFromServer();
+            showRoomScene(room_msg);
+        }
+    }
+
+
 
     public void showLoserBox(String pname, ServerMessage servermsg) {
         Alert alert = new Alert(AlertType.CONFIRMATION);

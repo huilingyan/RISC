@@ -22,7 +22,7 @@ public class Map implements Serializable {
     public static final int INIT_UNIT = 15; // initial total units (in territory group) per player
     public static final int INIT_T_SIZE = 5; // initial total size (in territory group) per player
     public static final int INIT_FOOD_PROD = 10; // initial total food production (in territory group) per player
-    public static final int INIT_GOLD_PROD = 10; // initial total gold production (in territory group) per player
+    public static final int INIT_GOLD_PROD = 20; // initial total gold production (in territory group) per player
     public static final String[] TERRITORY_NAME_LIST = {"Pikachu", "Ditto", "Gengar", "Eevee", "Snorlax", "Mew", "Psyduck", "Magneton", "Vulpix", "Jumpluff", "Bulbasaur", "Charmandar", "Squirtle", "Pidgey", "Caterpie", "Rattata"};
     // blue, red, green, yellow, purple
     public static final String[] COLOR_LIST = {"87CEFA", "F08080", "90EE90", "FFE4B5", "DDA0DD"};  // hardcoded color list

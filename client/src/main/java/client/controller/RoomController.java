@@ -109,7 +109,8 @@ public class RoomController extends SceneController {
                         ErrorAlerts.invalidRoom(roomNum);
                     }
                     else {
-                        this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action())); 
+                        this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
+                        ErrorAlerts.WaitForJoin();
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
                         System.out.println("Game id is " + servermsg.getGameID());
                         this.mc.setWorldMap(servermsg.getMap());  // set map
@@ -187,6 +188,7 @@ public class RoomController extends SceneController {
                     else {
                         this.mc.sendToServer(new ClientMessage(roomNum, 0, new Action()));
                         System.out.println("Sent client message");
+                        ErrorAlerts.WaitForJoin();
                         // ErrorAlerts.deployArmyPrompt();
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
                         // debug stage number
