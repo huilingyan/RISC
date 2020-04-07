@@ -178,4 +178,16 @@ public class ErrorAlerts {
         alert.showAndWait();
     }
 
+    public static void WaitForJoin() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Please Wait");
+
+        alert.setHeaderText(null);
+        alert.setContentText("Please wait for other players to join...");
+ 
+        alert.showAndWait();
+    }
+
+
+
 }
