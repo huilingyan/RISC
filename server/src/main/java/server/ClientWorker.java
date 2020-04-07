@@ -32,7 +32,7 @@ public class ClientWorker extends Thread {
             if (clientMsg == null) {
                 break;
             }
-            int gid = clientMsg.getGameID(); // TODO: can cause null pointer exception if client disconnect
+            int gid = clientMsg.getGameID(); 
             if (gid == 0) { // switch out, send back RoomMessage, no wait
                 // debug
                 System.out.println("player " + player.getUsername() + " switch out of the game");
