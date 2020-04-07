@@ -27,6 +27,7 @@ public class MapTest {
     m4.addPlayerStat(new PlayerStat(0, "p0", 10, 10, 3, "87CEFA"));
     m4.addTerritory(new Territory(0, 0, "test", 3, 9, 6));
     
-    assert(1);
+    
+    //assert();
   }
 }
