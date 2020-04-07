@@ -116,6 +116,9 @@ public class GameController extends SceneController {
             this.mc.showRoomScene(room_msg);            
         });
         Button upgradeMaxTechbtn = new Button("Upgrade Max Tech Lv");
+        if (!this.worldmap.getPlayerStatByName(this.player_name).hasTerritory()) {
+            upgradeMaxTechbtn.setDisable(true);
+        }
         upgradeMaxTechbtn.setOnAction(e -> {
 
             int errorcode = this.ov.isValidUpgradeMaxTechLv();
