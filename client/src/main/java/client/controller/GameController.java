@@ -132,6 +132,9 @@ public class GameController extends SceneController {
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
             ErrorAlerts.WaitForOtherPlayers();
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
+            if (!servermsg.getMap().getPlayerStatByName(this.player_name).hasTerritory()) { // if lost during game
+                this.mc.showLoserBox(this.player_name, servermsg);
+            }
             if (servermsg.getStage() == 3) { // if game over
                 this.mc.gameOverAlertBox(this.player_name, servermsg);
             }
@@ -143,7 +146,7 @@ public class GameController extends SceneController {
                 int pid = servermsg.getMap().getPidByName(this.player_name);
                 int room_number = servermsg.getGameID();
                 this.mc.showGameScene(room_number, pid); 
-                }          
+            }          
         });
 
         FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn, endTurnbtn);
