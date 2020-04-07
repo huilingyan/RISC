@@ -16,6 +16,7 @@ import shared.OperationValidator;
 import shared.RoomMessage;
 import shared.ServerMessage;
 import shared.Territory;
+import shared.GameMessage;
 
 public class GameController extends SceneController {
 
@@ -128,26 +129,28 @@ public class GameController extends SceneController {
         });
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
-            //try{Thread.sleep(5000);}catch(InterruptedException ex){System.out.println(ex);}  
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
             ErrorAlerts.WaitForOtherPlayers();
             ServerMessage servermsg = (ServerMessage)this.mc.recvFromServer();
+            this.mc.setWorldMap(servermsg.getMap());
             
-            if (servermsg.getStage() == 3) { // if game over
+            if (servermsg.getStage() == GameMessage.GAME_OVER) { // if game over
                 this.mc.gameOverAlertBox(this.player_name, servermsg);
             }
-            if (!servermsg.getMap().getPlayerStatByName(this.player_name).hasTerritory()) { // if lost during game
-                this.mc.showLoserBox(this.player_name, servermsg);
-            }
-            if ((servermsg.getStage() == 0) || (servermsg.getStage() == 1)) {
-                System.out.println("Unexpected game stage!");
+            else if (servermsg.getStage() == GameMessage.GAME_PLAY) { // if game play
+                if (!servermsg.getMap().getPlayerStatByName(this.player_name).hasTerritory()) { // if lost during game
+                    this.mc.showLoserBox(this.player_name, servermsg);
+                }
+                else {
+                    int pid = servermsg.getMap().getPidByName(this.player_name);
+                    int room_number = servermsg.getGameID();
+                    this.mc.showGameScene(room_number, pid);
+                }               
             }
             else {
-                this.mc.setWorldMap(servermsg.getMap());  
-                int pid = servermsg.getMap().getPidByName(this.player_name);
-                int room_number = servermsg.getGameID();
-                this.mc.showGameScene(room_number, pid); 
-            }          
+                System.out.println("Unexpected game stage!");
+            }
+                               
         });
 
         FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn, endTurnbtn);
