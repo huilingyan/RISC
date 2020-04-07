@@ -125,7 +125,7 @@ public class Army implements Serializable{
     ArrayList<Integer> bonusList = new ArrayList<Integer>(Arrays.asList(0,1,3,5,8,11,15));    
     return bonusList.get(lv);
   }
-  
+  /*
   public void subtractSoldiersFromHighestLv(int num){
   	int total_soldiers = getTotalSoldiers();
   	if(total_soldiers <= num){
@@ -145,7 +145,7 @@ public class Army implements Serializable{
       }
   	}
   }
-
+  */
   public int calculateUpgradeCost(Army army_upgrade) {
      
      ArrayList<Integer> upgrade_cost_list =
