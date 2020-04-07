@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 public class MapTest {
   @Test
   public void test_shortestPath() {
+    
     Map worldmap = MapGenerator.gamemapGenerator();
+    Map test1 = MapGenerator.initmapGenerator();
     assertEquals(-1, worldmap.CostofShortestPath("Ditto", "Charmandar"));
     assertEquals(-1, worldmap.CostofShortestPath("Ditto", "Pidgey"));
     assertEquals(0, worldmap.CostofShortestPath("Ditto", "Ditto"));
@@ -24,10 +26,31 @@ public class MapTest {
     Map m4 = new Map(m1);
     m4.setTerritories(new ArrayList<Territory>());
     m4.setPlayerStats(new ArrayList<PlayerStat>());
+    assert(m4.getTerritoryByTid(0) == null);
+    assert(m4.getTerritoryByName("test") == null);
+    assert(m4.getTerritoryNameByTid(0) == null);
+    assert(m4.getPlayerStatByPid(0) == null);
+    assert(m4.getPlayerStatByName("p0") == null);
+    assert (m4.getPidByName("p0") == -1);
+    m4.addPlayerStat(new PlayerStat(1, "p1", 10, 10, 3, "87CEFB"));
+    m4.addTerritory(new Territory(1, 1, "test2", 3, 9, 6));
     m4.addPlayerStat(new PlayerStat(0, "p0", 10, 10, 3, "87CEFA"));
     m4.addTerritory(new Territory(0, 0, "test", 3, 9, 6));
     
-    
-    //assert();
+    assert(m4.getTerritoryByTid(0) != null);
+    assert(m4.getTerritoryByName("test") != null);
+    assert(m4.getTerritoryNameByTid(0).equals("test") == true);
+    assert(m4.getPlayerStatByPid(0) != null);
+    assert(m4.getPlayerStatByName("p0") != null);
+    assert(m4.getPidByName("p0") == 0);
+
+    m4.getOwnTerritoryListName(0);
+    m4.getEnermyTerritoryListName(0);
+    m4.updateUnitandResource();
+    assert (m4.getPlayerStatByPid(0).getFood() == 19);
+    assert (m4.getPlayerStatByPid(0).getGold() == 16);
+    assert (m4.getTerritoryByTid(0).getDefender().getTotalSoldiers() == 1);
+    m4.getTerritoryNum();
+    System.out.println("Map test passed");
   }
 }

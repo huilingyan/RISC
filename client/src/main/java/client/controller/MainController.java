@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import java.util.Optional;
+import shared.GameMessage;
 // import shared.Action;
 
 import client.GameClient;
@@ -150,7 +151,6 @@ public class MainController {
     }
 
 
-
     public void showLoserBox(String pname, ServerMessage servermsg) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Game Over");
@@ -164,23 +164,17 @@ public class MainController {
  
         Optional<ButtonType> option = alert.showAndWait();
  
-        if (option.get() == exit) {
+        if (option.get() == exit) { // if exit
             this.switchoutMsg();
             RoomMessage room_msg = (RoomMessage)recvFromServer();
             showRoomScene(room_msg);
         } 
-        else if (option.get() == watch) {
-            sendToServer(new ClientMessage(servermsg.getGameID(), servermsg.getStage(), new Action())); // watch the game
-            ServerMessage newservermsg = (ServerMessage)recvFromServer();
-            int pid = newservermsg.getMap().getPidByName(pname);
-            if (newservermsg.getStage()== 1) { // initialize
-                showInitScene(newservermsg.getGameID(), pid);
-            }
-            else if (newservermsg.getStage() == 2) { // playing game
-                showGameScene(newservermsg.getGameID(), pid);
+        else { // if watch
+            if (servermsg.getStage() == GameMessage.GAME_PLAY) { // playing game
+                int pid = servermsg.getMap().getPidByName(pname);
+                showGameScene(servermsg.getGameID(), pid);
             }
         }
-
     }
 
     public void sendToServer(Object obj) {
