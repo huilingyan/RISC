@@ -5,7 +5,7 @@
 build
 
 # Ignore .java~
-*.java~
+**/*.java~
 
 # Ignore bin/**/.class
 **/bin/**/*.class
