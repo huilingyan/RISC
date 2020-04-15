@@ -26,14 +26,17 @@ public class Territory implements Serializable{
   public static final int ROW_NUM = 4;
 
   
-  private int ownership;//set to player id 1-5 who owns the territory
-  private int tid; //territory id, 1-16
+  private int ownership;//set to player id 0-4 who owns the territory
+  private int tid; //territory id, 0-15
   private String name; //territory name
   //private int x,y; //location coordinate
   private Army defender; //currently only have num_units field
   private ArrayList<Integer> neighborList;//can change to List
   //neighbor list index 0-5 in counterclock direction
   //stored tid of the neighbor
+  private int size;//the larger the size, the more food will cost to go through this territory
+  private int food_resource;
+  private int gold_resource;//resources to upgrade the technology
 
   // Initialize a territory with 0 defender
   public Territory(int pid, int t_id, String t_name) {
@@ -47,6 +50,29 @@ public class Territory implements Serializable{
     for (int i = 0; i < MAX_NEIGHBOR; i++) {
       neighborList.add(-1);   // -1 means no neighbor
     }
+  }
+
+  // Initialize a territory with 0 defender
+  public Territory(int pid, int t_id, String t_name,int t_size, int t_food, int t_gold) {
+    //constructor that creates empty adj list
+    ownership = pid;
+    tid = t_id;
+    name = t_name;
+    defender = new Army(0);
+    neighborList = new ArrayList<Integer>();
+    // initialize neighbor list with all null
+    for (int i = 0; i < MAX_NEIGHBOR; i++) {
+      neighborList.add(-1);   // -1 means no neighbor
+    }
+    this.size = t_size;
+    this.food_resource = t_food;
+    this.gold_resource = t_gold;
+  }
+
+  public void set_terr_attributes(int t_size, int t_food, int t_gold) {
+    this.size = t_size;
+    this.food_resource = t_food;
+    this.gold_resource = t_gold;
   }
 
   /******
@@ -65,7 +91,10 @@ public class Territory implements Serializable{
     ownership = rhs.ownership;
     tid = rhs.tid;
     name = rhs.name;
-    defender = new Army(rhs.defender.getUnitNumber());
+    this.size = rhs.size;
+    this.food_resource = rhs.food_resource;
+    this.gold_resource = rhs.gold_resource;
+    defender = new Army(rhs.defender);
     neighborList = new ArrayList<Integer>(rhs.getNeighborList());
     //may need to throw exception here if rhs doesn't have some fields
   }
@@ -95,12 +124,24 @@ public class Territory implements Serializable{
     return name;
   }
 
-  public void setDefenderNum(int num) {
-    defender.setUnitNumber(num);
+  public int getSize() {
+    return size;
   }
 
-  public int getDefenderNum() {//separate method from Army class
-    return defender.getUnitNumber();
+  public int getFood() {
+    return food_resource;
+  }
+
+  public int getGold() {
+    return gold_resource;
+  }
+
+  public void setDefender(Army rhs) {
+    defender=rhs;
+  }
+
+  public Army getDefender() {//separate method from Army class
+    return defender;
   }
 
   public void setNeighborList(ArrayList<Integer> adjList){
@@ -191,12 +232,12 @@ public class Territory implements Serializable{
     return neighborList.get(index);
   }
 
-  public void addDefender(int num) {
-    defender.addUnits(num);
+  public void addDefender(Army rhs) {
+    defender.joinArmy(rhs);
   }
 
-  public void subtractDefender(int num){
-    defender.subtractUnits(num);
+  public void subtractDefender(Army rhs){
+    defender.subtractArmy(rhs);
   }
 
   public int countNeighbors() {

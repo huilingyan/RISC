@@ -10,8 +10,18 @@ The server hostname and port are stored in shared/src/main/resources/config.prop
 
 Please change the host information as needed before starting the Gameserver program.
 
+To run the server, type `gradle run-server` on terminal; to run a game client, type `./gradlew run-client` .
+
+Multiple games and players are allowed in evolution 2.
+
 ## Evolution 1
 Commit ID: 5b74d244
+
+## Evolution 2
+Commit ID: 9bebbe4e
+
+## Project Documentation
+[Google docs](https://drive.google.com/drive/folders/1HKee59YFFU2iZOK2iDAKOgeY09z0fdPw?usp=sharing)
 
 ## Coverage
 [Detailed coverage](https://ll199.pages.oit.duke.edu/ece651-spr20-g2/dashboard.html)

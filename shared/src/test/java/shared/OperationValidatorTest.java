@@ -2,157 +2,163 @@ package shared;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// import org.graalvm.compiler.lir.StandardOp.MoveOp;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 public class OperationValidatorTest {
   @Test
-  public void testOperationValidator() {
-
-    Displayer dp = Displayer.getInstance();
-
-    // create territories
-    Territory t1 = new Territory(0, 1, "One");
-    Territory t2 = new Territory(0, 2, "Two");
-    Territory t3 = new Territory(0, 3, "Three");
-
-    Territory t4 = new Territory(1, 4, "Four");
-    Territory t5 = new Territory(1, 5, "Five");
-    Territory t6 = new Territory(1, 6, "Six");
-
-    Territory t7 = new Territory(2, 7, "Seven");
-    Territory t8 = new Territory(2, 8, "Eight");
-    Territory t9 = new Territory(2, 9, "Nine");
-
-    // set neighbours for each of them
-    t1.setNeighbor(1, 2);
-    t1.setNeighbor(3, 5);
-
-    t2.setNeighbor(2, 3);
-    t2.setNeighbor(3, 4);
-    t2.setNeighbor(4, 1);
-
-    t3.setNeighbor(1, 6);
-    t3.setNeighbor(3, 7);
-    t3.setNeighbor(4, 4);
-    t3.setNeighbor(5, 2);
-
-    t4.setNeighbor(0, 2);
-    t4.setNeighbor(1, 3);
-    t4.setNeighbor(2, 7);
-    t4.setNeighbor(4, 5);
-    t4.setNeighbor(5, 1);
-
-    t5.setNeighbor(0, 1);
-    t5.setNeighbor(1, 4);
-    t5.setNeighbor(3, 9);
-
-    t6.setNeighbor(4, 3);
-
-    t7.setNeighbor(0, 3);
-    t7.setNeighbor(2, 8);
-    t7.setNeighbor(5, 4);
-
-    t8.setNeighbor(5, 7);
-
-    t9.setNeighbor(0, 5);
-
-    ArrayList<Territory> curr_map = new ArrayList<Territory>();
-    curr_map.add(t1);
-    curr_map.add(t2);
-    curr_map.add(t3);
-
-    curr_map.add(t4);
-    curr_map.add(t5);
-    curr_map.add(t6);
-
-    curr_map.add(t7);
-    curr_map.add(t8);
-    curr_map.add(t9);
-
-    OperationValidator v0 = new OperationValidator(0, curr_map);
-    OperationValidator v1 = new OperationValidator(1, curr_map);
-    OperationValidator v2 = new OperationValidator(2, curr_map);
-
-
-    // create operations
-    // set total unit number
-    int totalunit = 20;
-
-    // init operation
-    InitOperation iop1 = new InitOperation("One", 6);
-    InitOperation iop2 = new InitOperation("Two", 7);
-    InitOperation iop3 = new InitOperation("Three", 7); 
-
-    InitOperation iop4 = new InitOperation("fkaoevl", 10); // invalid dest
-    InitOperation iop5 = new InitOperation("Five", 5);
-    InitOperation iop6 = new InitOperation("Six", 6); 
-
-    InitOperation iop7 = new InitOperation("Seven", 8);
-    InitOperation iop8 = new InitOperation("Eight", 6); 
-    InitOperation iop9 = new InitOperation("Nine", 7); // no enough units
-    InitOperation iop10 = new InitOperation("Nine", -1); // no enough units
+  public void test_operationvalidator() {
+    shared.Map worldmap = MapGenerator.gamemapGenerator();
+    //PlayerStat p0 = new PlayerStat(0, "p0", 113, 40, 4, "87CEFA");
+    //pid 0, food 113, gold 40, 4 territories tid 1,4,9,5
     
-    assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop1, totalunit));
-    dp.deployUnits(iop1);
+    //ArrayList<Integer> tids = new ArrayList<Integer>(Arrays.asList(1, 4, 9, 5, 10, 13, 2, 6, 11));
+    
+    //Army army = new Army(new ArrayList<Integer>(Arrays.asList(7,6,5,4,3,2,1)));
+    OperationValidator v0 = new OperationValidator(0, worldmap);
+    Map updated_map = v0.getCurrentMapState();
+    System.out.println("territory 1: " + updated_map.getTerritoryNameByTid(1) + " owner: " + updated_map.getTerritoryByTid(1).getOwnership());
+    assert (updated_map.getPlayerStatByPid(0).getFood() == 113);
+    InitOperation initop1 = new InitOperation("Ditto", new Army(1));
+    assert (v0.isValidInitOperation(initop1, 29) == VALID);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 8);
+    
+    InitOperation initop2 = new InitOperation("Ditt", new Army(1));
+    assert(v0.isValidInitOperation(initop2, 29) == INVALID_DEST);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 8);
 
-    assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop2, totalunit));
-    assertEquals(OperationValidator.VALID, v0.isValidInitOperation(iop3, totalunit));
-
-    assertEquals(OperationValidator.INVALID_DEST, v1.isValidInitOperation(iop4, totalunit));
-    assertEquals(OperationValidator.VALID, v1.isValidInitOperation(iop5, totalunit));
-    assertEquals(OperationValidator.VALID, v1.isValidInitOperation(iop6, totalunit));
-
-    assertEquals(OperationValidator.VALID, v2.isValidInitOperation(iop7, totalunit));
-    assertEquals(OperationValidator.VALID, v2.isValidInitOperation(iop8, totalunit));
-    assertEquals(OperationValidator.NO_ENOUGH_UNITS, v2.isValidInitOperation(iop9, totalunit));
-    assertEquals(OperationValidator.ILLEGAL_NUM, v2.isValidInitOperation(iop10, totalunit));
+    InitOperation initop3 = new InitOperation("Ditto", new Army(1));
+    assert(v0.isValidInitOperation(initop3, 28) == NOT_ENOUGH_UNITS);
+    
+    InitOperation initop4 = new InitOperation("Ditto", new Army(-1));
+    assert (v0.isValidInitOperation(initop4, 29) == ILLEGAL_NUM);
 
     
-
-    // move operations
-    MoveOperation mop1 = new MoveOperation("One", "Three", 2); // valid move
-    MoveOperation mop2 = new MoveOperation("One", "Eight", 2); // invalid dest
-    MoveOperation mop3 = new MoveOperation("One", "Two", 10); // no enough units
-    MoveOperation mop4 = new MoveOperation("Six", "Two", 1); // invalid src
-    MoveOperation mop5 = new MoveOperation("One", "Three", -2); // invalid number
-    MoveOperation mop6 = new MoveOperation("One", "One", 1); // src same as dest
-    MoveOperation mop7 = new MoveOperation("Five", "Six", 1); // no path
-    MoveOperation mop8 = new MoveOperation("Two", "One", 1); // invalid src
-
-    assertEquals(OperationValidator.VALID, v0.isValidMoveOperation(mop1));
-    dp.moveUnits(mop1);
-
-    assertEquals(OperationValidator.INVALID_DEST, v0.isValidMoveOperation(mop2));
-    assertEquals(OperationValidator.NO_ENOUGH_UNITS, v0.isValidMoveOperation(mop3));
-    assertEquals(OperationValidator.INVALID_SRC, v0.isValidMoveOperation(mop4));
-    assertEquals(OperationValidator.ILLEGAL_NUM, v0.isValidMoveOperation(mop5));
-    assertEquals(OperationValidator.DEST_SAME_AS_SRC, v0.isValidMoveOperation(mop6));
-    assertEquals(OperationValidator.INVALID_PATH, v1.isValidMoveOperation(mop7));
-    assertEquals(OperationValidator.VALID, v0.isValidMoveOperation(mop8));
+    System.out.println("initOperation validator test passed");
 
 
+    Army a1 = new Army();
+    a1.addSoldiers(1, 1);
+    UpgradeOperation uop1 = new UpgradeOperation("Ditto", new Army(1), a1);
+    assert (v0.isValidUpgradeOperation(uop1) == VALID);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 7);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(1) == 7);
+      
+    UpgradeOperation uop2 = new UpgradeOperation("Ditt", new Army(1), a1);
+    assert (v0.isValidUpgradeOperation(uop2) == INVALID_DEST);
 
-    // attack operations
-    AttackOperation aop1 = new AttackOperation("One", "Five", 1); // valid move
-    AttackOperation aop2 = new AttackOperation("One", "Two", 2); // invalid dest
-    AttackOperation aop3 = new AttackOperation("One", "Seven", 2); // not adjacent
-    AttackOperation aop4 = new AttackOperation("One", "Five", -1); // invalid number
-    AttackOperation aop5 = new AttackOperation("Nine", "Five", 1); // invalid src
-    AttackOperation aop6 = new AttackOperation("One", "Five", 20); // no enough units
+    UpgradeOperation uop3 = new UpgradeOperation("Ditto", new Army(2), a1);
+    assert (v0.isValidUpgradeOperation(uop3) == ILLEGAL_NUM);
 
+    Army a4 = new Army();
+    a4.addSoldiers(2, 99);
+    UpgradeOperation uop4 = new UpgradeOperation("Ditto", new Army(99), a4);
+    //System.out.println(v0.isTerritoryHaveEnoughArmy(new Army(99), v0.getCurrentMapState().getTerritoryByTid(1)));
+    //System.out.println("uop4 return " + v0.isValidUpgradeOperation(uop4));
+    assert (v0.isValidUpgradeOperation(uop4) == NOT_ENOUGH_UNITS);
 
-    assertEquals(OperationValidator.VALID, v0.isValidAttackOperation(aop1));
-    dp.attackUnits(aop1);
-    assertEquals(OperationValidator.INVALID_DEST, v0.isValidAttackOperation(aop2));
-    assertEquals(OperationValidator.NOT_ADJACENT, v0.isValidAttackOperation(aop3));
-    assertEquals(OperationValidator.ILLEGAL_NUM, v0.isValidAttackOperation(aop4));
-    assertEquals(OperationValidator.INVALID_SRC, v0.isValidAttackOperation(aop5));
-    assertEquals(OperationValidator.NO_ENOUGH_UNITS, v0.isValidAttackOperation(aop6));
+    Army a5 = new Army();
+    a5.addSoldiers(4, 2);
+    UpgradeOperation uop5 = new UpgradeOperation("Ditto", new Army(2), a5);
+    assert (v0.isValidUpgradeOperation(uop5) == NOT_ENOUGH_GOLD);
 
+    Army a6 = new Army();
+    a6.addSoldiers(2, 1);
+    UpgradeOperation uop6 = new UpgradeOperation("Ditto", new Army(1), a6);
+    assert (v0.isValidUpgradeOperation(uop6) == EXCEED_MAX_LV);
+    
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 7);
 
+    System.out.println("upgradeOperation validator test passed");
+    
+    MoveOperation moveop0 = new MoveOperation("Mew", "Ditto", new Army(7));
+    MoveOperation moveop1 = new MoveOperation("Snorlax", "Ditto", new Army(7));
+    assert (v0.isValidMoveOperation(moveop0) == VALID);
+    assert (v0.isValidMoveOperation(moveop1) == VALID);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 21);
+    assert (v0.getCurrentMapState().getTerritoryByTid(4).getDefender().getSoldierNumber(0) == 0);
+    
+
+    MoveOperation moveop2 = new MoveOperation("Pikachu", "Snorlax", new Army(2));
+    assert (v0.isValidMoveOperation(moveop2) == INVALID_SRC);
+
+    MoveOperation moveop3 = new MoveOperation("Ditto", "Snorlax", new Army(-2));
+    assert (v0.isValidMoveOperation(moveop3) == ILLEGAL_NUM);
+
+    MoveOperation moveop4 = new MoveOperation("Ditto", "Snorlax", new Army(99));
+    assert (v0.isValidMoveOperation(moveop4) == NOT_ENOUGH_UNITS);
+
+    MoveOperation moveop5 = new MoveOperation("Ditto", "Snorlx", new Army(1));
+    assert (v0.isValidMoveOperation(moveop5) == INVALID_DEST);
+
+    MoveOperation moveop6 = new MoveOperation("Ditto", "Ditto", new Army(1));
+    assert (v0.isValidMoveOperation(moveop6) == DEST_SAME_AS_SRC);
+    v0.getCurrentMapState().getTerritoryByTid(4).setOwnership(1);
+    v0.getCurrentMapState().getTerritoryByTid(5).setOwnership(1);
+    //invalid path test
+    MoveOperation moveop7 = new MoveOperation("Ditto", "Jumpluff", new Army(1));
+    assert (v0.isValidMoveOperation(moveop7) == INVALID_PATH);
+    v0.getCurrentMapState().getTerritoryByTid(4).setOwnership(0);
+    v0.getCurrentMapState().getTerritoryByTid(5).setOwnership(0);
+
+    MoveOperation moveop8 = new MoveOperation("Ditto", "Jumpluff", new Army(14));
+    assert (v0.isValidMoveOperation(moveop8) == NOT_ENOUGH_FOOD);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 21);
+    MoveOperation moveop9 = new MoveOperation("Ditto", "Jumpluff", new Army(11));
+    assert (v0.isValidMoveOperation(moveop9) == VALID);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 10);
+     assert (v0.getCurrentMapState().getPlayerStatByPid(0).getFood() == 5);
+    
+    System.out.println("moveOperation validator test passed");
+
+    AttackOperation atkop1 = new AttackOperation("Ditto", "Gengar", new Army(1));
+    assert (v0.isValidAttackOperation(atkop1) == VALID);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 9);
+    
+    AttackOperation atkop2 = new AttackOperation("Dito", "Gengar", new Army(1));
+    assert (v0.isValidAttackOperation(atkop2) == INVALID_SRC);
+
+    AttackOperation atkop3 = new AttackOperation("Ditto", "Gengar", new Army(-1));
+    assert (v0.isValidAttackOperation(atkop3) == ILLEGAL_NUM);
+
+    AttackOperation atkop4 = new AttackOperation("Ditto", "Gengar", new Army(99));
+    assert (v0.isValidAttackOperation(atkop4) == NOT_ENOUGH_UNITS);
+    
+    AttackOperation atkop5 = new AttackOperation("Ditto", null, new Army(1));
+    assert (v0.isValidAttackOperation(atkop5) == INVALID_DEST);
+
+    AttackOperation atkop6 = new AttackOperation("Ditto","Psyduck", new Army(1));
+    assert (v0.isValidAttackOperation(atkop6) == NOT_ADJACENT);
+
+    AttackOperation atkop7 = new AttackOperation("Ditto", "Gengar", new Army(5));
+    assert (v0.isValidAttackOperation(atkop7) == NOT_ENOUGH_FOOD);
+    assert (v0.getCurrentMapState().getTerritoryByTid(1).getDefender().getSoldierNumber(0) == 9);
+    assert (v0.getCurrentMapState().getPlayerStatByPid(0).getFood() == 4);
+    
+    System.out.println("attackOperation validator test passed");
+
+    assert (v0.isValidUpgradeMaxTechLv() == NOT_ENOUGH_GOLD);
+    v0.getCurrentMapState().getPlayerStatByPid(0).addGold(99);
+    assert (v0.isValidUpgradeMaxTechLv() == VALID);
+    
+    assert (v0.isValidUpgradeMaxTechLv() == REPEATED_UPGRADE_MAX_TECH_LV);
+    OperationValidator v1 = new OperationValidator(1, worldmap);
+    v1.getCurrentMapState().getPlayerStatByPid(1).setMaxTechLvl(99);
+    assert (v1.isValidUpgradeMaxTechLv() == EXCEED_MAX_LV);
+    
+    System.out.println("upgrade max tech lv validator test passed");
+
+    v1.getAction();
   }
-
+  public static final int VALID = 1;
+  public static final int INVALID_DEST = -1;
+  public static final int NOT_ENOUGH_UNITS = -2; //ev2: change no to not
+  public static final int ILLEGAL_NUM = -3;
+  public static final int INVALID_SRC = -4;
+  public static final int INVALID_PATH = -5;
+  public static final int NOT_ADJACENT = -6;
+  public static final int DEST_SAME_AS_SRC = -7;
+  public static final int NOT_ENOUGH_FOOD = -8;// 4 new flags for ev2
+  public static final int NOT_ENOUGH_GOLD = -9;
+  public static final int EXCEED_MAX_LV = -10;
+  public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
 }
