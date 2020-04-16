@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import javax.persistence.*;
 
 /****
  * A class to represent a player (user) on game server side
  ******/
+@Entity
 public class Player {
 
+  @Id
   private String username; // user name
+  @Column
   private String password; // user passwors
   private Socket clientSocket; // connected socket
   private ObjectOutputStream out;
@@ -19,6 +23,9 @@ public class Player {
   private boolean connected; // socket connection status
   private int activeGid;  // gameID of active game, 0 if in not on name
   private boolean loggedin;   // mark if user's loggedin
+
+  public Player(){
+  }
 
   /***
    * Initialize a Player object with a connected socket, and initialize its
