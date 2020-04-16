@@ -1,6 +1,8 @@
 package shared;
 
-public class ChatMessage {
+import java.io.Serializable;
+
+public class ChatMessage implements Serializable {
 
   private int fromPid;
   private int toPid;
