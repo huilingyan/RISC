@@ -12,8 +12,7 @@ public class Action implements Serializable {
   private ArrayList<UpgradeOperation> upgradeOperations;
   private HashMap<Integer, Boolean> upgradeMaxTechLv;//pid, upgrade or not
   private HashMap<Integer, Integer> allianceRequests;// pid1 allies pid2
-  private HashMap<Integer, Integer> newCards; //pid, cid
-  //which player uses which card
+  private HashMap<Integer, Boolean> useNewCards; //pid, whether to use card
   
   //first handle upgrade, then move, finally attack
   //gui should disable UpgradeUnits after client made a Move or Attack operation
@@ -25,7 +24,7 @@ public class Action implements Serializable {
     this.upgradeOperations = new ArrayList<UpgradeOperation>();
     this.upgradeMaxTechLv = new HashMap<Integer, Boolean>();
     this.allianceRequests = new HashMap<Integer, Integer>();
-    this.newCards = new HashMap<Integer, Integer>();
+    this.useNewCards = new HashMap<Integer, Boolean>();
   }
 
   public ArrayList<InitOperation> getInitOperations() {
@@ -52,8 +51,8 @@ public class Action implements Serializable {
     return allianceRequests;
   }
 
-  public HashMap<Integer, Integer> getNewCards(){
-    return newCards;
+  public HashMap<Integer, Boolean> getNewCards(){
+    return useNewCards;
   }
   
   public boolean isUpgradeMaxTechLv(int pid) {
@@ -90,24 +89,24 @@ public class Action implements Serializable {
     this.allianceRequests.put(pid1, pid2);
   }
 
-  public void useNewCard(int pid, int cid) {
-    //player pid choose to use card cid this turn
-    this.newCards.put(pid, cid);
+  public void useNewCard(int pid) {
+    //player pid choose to use card this turn
+    this.useNewCards.put(pid, true);
   }
 
-  public void concatInitOperation(Action clientaction) {
-      this.initOperations.addAll(clientaction.initOperations);
+  public void concatInitOperation(Action clientAction) {
+      this.initOperations.addAll(clientAction.initOperations);
   }
 
 
-  public void concatGameOperation(Action clientaction) {
+  public void concatGameOperation(Action clientAction) {
     
-    this.upgradeOperations.addAll(clientaction.upgradeOperations);
-    this.moveOperations.addAll(clientaction.moveOperations);
-    this.attackOperations.addAll(clientaction.attackOperations);
+    this.upgradeOperations.addAll(clientAction.upgradeOperations);
+    this.moveOperations.addAll(clientAction.moveOperations);
+    this.attackOperations.addAll(clientAction.attackOperations);
     //if any player choose to upgrade his max tech level, set it to true
     for (HashMap.Entry<Integer, Boolean> entry :
-    clientaction.getUpgradeMaxTechHashMap().entrySet()) {
+    clientAction.getUpgradeMaxTechHashMap().entrySet()) {
 
       if (entry.getValue()) {
         //replace is not suitable here because it doesn't replace null value
@@ -118,7 +117,7 @@ public class Action implements Serializable {
 
     //combine alliance requests
     for (HashMap.Entry<Integer, Integer> entry :
-    clientaction.getAllianceRequests().entrySet()) {
+    clientAction.getAllianceRequests().entrySet()) {
       if (!allianceRequests.containsKey(entry.getKey())) {
         //if player has no alliance requests with another player
         //add request to hashmap
@@ -128,12 +127,11 @@ public class Action implements Serializable {
     }
 
     //combine card activation
-    for (HashMap.Entry<Integer, Integer> entry :
-    clientaction.getNewCards().entrySet()) {
-      if (!newCards.containsKey(entry.getKey())) {
-        //if player didn't use any card this turn
-        //add card to hashmap
-        newCards.put(entry.getKey(), entry.getValue());
+    for (HashMap.Entry<Integer, Boolean> entry :
+    clientAction.getNewCards().entrySet()) {
+      if (!useNewCards.containsKey(entry.getKey())) {
+        //add whether to use card to hashmap
+        useNewCards.put(entry.getKey(), entry.getValue());
       }
     }
   }
