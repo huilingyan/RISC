@@ -23,6 +23,7 @@ public class HibernateUtil {
                         .configure(HibernateUtil.class.getResource("/hibernate.cfg.xml"));
                 // TODO: manually add entity classes
                 configuration.addAnnotatedClass(UserInfo.class);
+                configuration.addAnnotatedClass(Game.class);
                 StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
                 serviceRegistryBuilder.applySettings(configuration.getProperties());
                 ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
@@ -61,6 +62,24 @@ public class HibernateUtil {
         }
     }
 
+    public static void addGame(Game g){
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            session.save(g);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
     public static boolean addUserInfoIfNone(UserInfo u) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
@@ -69,8 +88,8 @@ public class HibernateUtil {
         try {
             tx = session.beginTransaction();
             List<UserInfo> user = session.createQuery("SELECT u FROM UserInfo u " + "where u.username like :name")
-                    .setParameter("name", (String)u.getUsername()).list();
-            if (user.size()==0){
+                    .setParameter("name", (String) u.getUsername()).list();
+            if (user.size() == 0) {
                 add = true;
                 session.save(u);
             }
@@ -86,20 +105,45 @@ public class HibernateUtil {
         return add;
     }
 
-    public static List<UserInfo> getUserInfoList(){
+    public static List<UserInfo> getUserInfoList() {
         Session session = sessionFactory.openSession();
         List<UserInfo> users = session.createQuery("SELECT a FROM UserInfo a", UserInfo.class).getResultList();
         session.close();
         return users;
     }
 
-    public static void updateUserInfo(UserInfo user){
+    public static List<Game> getGameList() {
+        Session session = sessionFactory.openSession();
+        List<Game> games = session.createQuery("SELECT a FROM Game a", Game.class).getResultList();
+        session.close();
+        return games;
+    }
+
+    public static void updateUserInfo(UserInfo user) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
 
         try {
             tx = session.beginTransaction();
             session.update(user);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static void updateGame(Game g) {
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            session.update(g);
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) {

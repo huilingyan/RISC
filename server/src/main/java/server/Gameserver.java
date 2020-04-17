@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -19,12 +20,12 @@ import shared.*;
 public class Gameserver {
 
   private ServerSocket mySocket; // server socket
-  private ArrayList<Player> userList; // list of Player
+  private HashMap<String, Player> userList; // list of Player
   private ArrayList<Game> gameList; // list of games
-  private int currentGid = 10; // gid start from 10
+  private int nextGid = 10; // gid start from 10
 
   public Gameserver() {
-    userList = new ArrayList<Player>();
+    userList = new HashMap<String, Player>();
     gameList = new ArrayList<Game>();
     // hibernate = new HibernateUtil();
   }
@@ -38,8 +39,8 @@ public class Gameserver {
     loadUsers();
     // add admin users to list, if not exist
     addAdminUsers();
-    // TODO: load games from database
-
+    // TODO: load games from database, update nextGid
+    loadGames();
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
@@ -57,8 +58,19 @@ public class Gameserver {
         u.setOffline();
         HibernateUtil.updateUserInfo(u);
       }
-      addUser(new Player(u));
+      appendUser(new Player(u));
     }
+  }
+
+  // TODO: link with users?
+  private void loadGames() {
+    List<Game> games = HibernateUtil.getGameList();
+    int currentGid = 9;
+    for (Game g : games) {
+      appendGame(g);
+      currentGid = Math.max(currentGid, g.getGid()); // update currentGid
+    }
+    nextGid = currentGid++;
   }
 
   /***
@@ -68,8 +80,8 @@ public class Gameserver {
     // admin1 to admin4
     for (int i = 1; i < 5; i++) {
       UserInfo user = new UserInfo("admin" + i, "1234");
-      if (HibernateUtil.addUserInfoIfNone(user)) {  // successfully saved to db
-        addUser(new Player(user));
+      if (HibernateUtil.addUserInfoIfNone(user)) { // successfully saved to db
+        appendUser(new Player(user));
       }
     }
 
@@ -113,10 +125,8 @@ public class Gameserver {
    * @return
    */
   public boolean hasUser(String name) {
-    for (Player p : userList) {
-      if (p.getUsername().equals(name)) {
-        return true;
-      }
+    if (userList.containsKey(name)) {
+      return true;
     }
     return false;
   }
@@ -133,10 +143,9 @@ public class Gameserver {
     if (!hasUser(name)) {
       return false;
     }
-    for (Player p : userList) {
-      if (p.getUsername().equals(name) && p.getPassword().equals(password) && (!p.isLoggedin())) {
-        return true;
-      }
+    Player p = userList.get(name);
+    if (p.getPassword().equals(password) && (!p.isLoggedin())) {
+      return true;
     }
     return false;
   }
@@ -151,23 +160,23 @@ public class Gameserver {
     ArrayList<Room> rooms = new ArrayList<Room>();
     for (Game g : gameList) {
       // filled active game with the player in, or not filled game
-      if (g.hasPlayer(name) && g.getStage() < GameMessage.GAME_OVER || !g.isFull()) {
-        rooms.add(new Room(g.getGid(), g.getPlayerNum(), g.isFull()));
+      if (g.hasPlayer(name) && g.getStage() < GameMessage.GAME_OVER || !g.isFilled()) {
+        rooms.add(new Room(g.getGid(), g.getPlayerNum(), g.isFilled()));
       }
     }
     return rooms;
   }
 
   public synchronized Player updateSocketForUser(String name, Player p) {
-    for (Player old : userList) {
-      if (old.getUsername().equals(name)) {
-        System.out.println("update socket info");
-        old.updateSocketandStreams(p); // connected is set to true
-        return old;
-      }
-    }
-    System.out.println("Error: user not found");
-    return null; // not found, return null
+    Player old = userList.get(name);
+    System.out.println("update socket info");
+    old.updateSocketandStreams(p); // connected is set to true
+    return old;
+    
+  }
+
+  public void appendUser(Player p) {
+    userList.put(p.getUsername(), p);
   }
 
   /**
@@ -176,27 +185,64 @@ public class Gameserver {
    * 
    * @param p
    */
-  public void addUser(Player p) {
+  public void addUserCopyToList(Player p) {
     Player copy = new Player(p);
     copy.setConnected(false);
     copy.setLoggedin(false);
     synchronized (this) {
-      userList.add(copy); // add a copy of Player p to the list
+      userList.put(copy.getUsername(), copy); // add a copy of Player p to the list
     }
 
   }
 
+  private void appendGame(Game g) {
+    gameList.add(g);
+  }
+
   private synchronized void addGame(Game g) {
     gameList.add(g);
-    currentGid++; // increment gid counter
+    nextGid++; // increment gid counter
   }
 
   public Game startNewGame(int playerNum, UserInfo firstP) {
     // generate a new map with only territory list
     Map m = new Map(initializeTerritoryList(playerNum));
-    Game g = new Game(currentGid, playerNum, m, firstP);
+    Game g = new Game(nextGid, playerNum, m, firstP.getUsername());
     addGame(g);
     return g;
+  }
+
+  /***
+   * @return true if all active player has sent action to server, which means one
+   *         turn just finished
+   */
+  public boolean turnFinished(Game g) {
+    for (String name : g.getPlayerList()) {
+      Player p = userList.get(name);
+      if (p.isConnected() && p.isLoggedin() && p.getActiveGid() == g.getGid()) {
+        int pid = g.getPidByName(p.getUsername());
+        if (!g.getTempActionList().containsKey(pid)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /***
+   * Check if the game has no active player
+   * 
+   * @return
+   */
+  public boolean noActivePlayer(Game g) {
+    for (String name : g.getPlayerList()) {
+      Player p = userList.get(name);
+      // is active player
+      if (p.isConnected() && p.isLoggedin() && p.getActiveGid() == g.getGid()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /***

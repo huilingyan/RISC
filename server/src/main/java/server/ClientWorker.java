@@ -77,7 +77,7 @@ public class ClientWorker extends Thread {
             if (!g.hasPlayer(player.getUsername()) && g.getStage() == GameMessage.WAIT_FOR_PLAYERS) {
                 // debug
                 System.out.println("player " + player.getUsername() + " joins game " + gid);
-                g.addPlayer(player.getUserInfo());
+                g.addPlayer(player.getUsername());
             } else { // switch in: should add temp action to game, otherwise it stucks
                 System.out.println("player " + player.getUsername() + " switch in game " + gid);
                 int pid = g.getPidByName(player.getUsername());
@@ -157,7 +157,7 @@ public class ClientWorker extends Thread {
                     player.setUpUserInfo(name, password);
                     // save userinfo to database
                     HibernateUtil.addUserInfo(player.getUserInfo());
-                    boss.addUser(player); // add to list, synchronized, player is copied and set disconnected and not
+                    boss.addUserCopyToList(player); // add to list, synchronized, player is copied and set disconnected and not
                                           // logged in
                     // success message
                     msg = new RoomMessage(true); // empty room list for new user

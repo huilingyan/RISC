@@ -46,6 +46,7 @@ public class Player {
   }
 
   // constructor that recover Player from saved UserInfo
+  // DO NOT deep copy 
   public Player(UserInfo user){
     userInfo = user;
   }

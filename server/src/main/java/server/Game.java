@@ -1,6 +1,6 @@
 package server;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.HashMap;
 
 import javax.persistence.*;
@@ -20,17 +20,21 @@ public class Game {
 
     private int playerNum; // number of players
     private int stage; // game stage
-    private Map map; // game map
 
-    @OneToMany(mappedBy="game")
-    @OrderColumn(name="user_index")
-    private ArrayList<UserInfo> playerList; // list of players
+    @Lob
+    private shared.Map map; // game map
 
-    @OneToMany
-    @MapKeyColumn(name="pid")
-    private HashMap<Integer, Action> tempActionList; // store temperary actions in each turn
+    // @OneToMany(mappedBy="game")
+    // @OrderColumn(name="user_index")
+    @ElementCollection
+    private List<String> playerList; // list of player names
 
-    private boolean full; // true if game is full, else false
+    // @OneToMany
+    // @MapKeyColumn(name="pid")
+    @ElementCollection
+    private java.util.Map<Integer, Action> tempActionList; // store temperary actions in each turn
+
+    private boolean filled; // true if game is full, else false
 
     /****
      * Initialize a game with gid, player number, map and first player. Stage is
@@ -41,17 +45,17 @@ public class Game {
      * @param m
      * @param first_player
      */
-    public Game(int g_id, int player_num, Map m, UserInfo first_player) {
+    public Game(int g_id, int player_num, shared.Map m, String firstName) {
         gid = g_id;
         playerNum = player_num;
         stage = GameMessage.WAIT_FOR_PLAYERS; // game start at stage 0
         map = m;
-        playerList = new ArrayList<UserInfo>();
-        playerList.add(first_player); // put the first player into playerlist
+        playerList = new ArrayList<String>();
+        playerList.add(firstName); // put the first player into playerlist
         System.out.println("Add the first player to game " + g_id);
         System.out.println("Player num: " + playerNum);
         tempActionList = new HashMap<Integer, Action>(); // empty action list
-        full = false;
+        filled = false;
     }
 
     /**
@@ -61,13 +65,25 @@ public class Game {
         gid = 0;
         playerNum = 0;
         stage = GameMessage.ERROR;
-        map = new Map();
-        playerList = new ArrayList<UserInfo>();
+        map = new shared.Map();
+        playerList = new ArrayList<String>();
         tempActionList = new HashMap<Integer, Action>(); // empty action list
-        full = false;
+        filled = false;
     }
 
-    public HashMap<Integer, Action> getTempActionList() {
+    // copy constructor
+    // TODO
+    // public Game(Game rhs){
+    //     gid = rhs.getGid();
+    //     playerNum = rhs.getPlayerNum();
+    //     stage = rhs.getStage();
+    //     map = new Map(rhs.getMap());
+    //     playerList = new ArrayList<UserInfo>(); // empty player list
+    //     tempActionList = new HashMap<Integer, Action>(); // empty action list
+    //     full = rhs.isFull();
+    // }
+
+    public java.util.Map<Integer, Action> getTempActionList() {
         return tempActionList;
     }
 
@@ -77,13 +93,13 @@ public class Game {
      * 
      * @param p
      */
-    public synchronized void addPlayer(UserInfo u) {
-        playerList.add(u);
-        System.out.println("Add a player " + u.getUsername());
+    public synchronized void addPlayer(String name) {
+        playerList.add(name);
+        System.out.println("Add a player " + name);
         System.out.println("Player number in player list: " + playerList.size());
         if (playerList.size() == playerNum) {
             System.out.println("Set full to true");
-            full = true;
+            filled = true;
         }
     }
 
@@ -128,8 +144,8 @@ public class Game {
      * @return
      */
     public boolean hasPlayer(String name) {
-        for (UserInfo u : playerList) {
-            if (u.getUsername().equals(name)) {
+        for (String n : playerList) {
+            if (n.equals(name)) {
                 return true;
             }
         }
@@ -142,9 +158,8 @@ public class Game {
     public void setPlayerStats() {
         ArrayList<PlayerStat> playerStats = new ArrayList<PlayerStat>();
         for (int i = 0; i < playerNum; i++) {
-            UserInfo u = playerList.get(i);
-            PlayerStat pStat = new PlayerStat(i, u.getUsername(), Map.INIT_FOOD, Map.INIT_GOLD, Map.INIT_T_NUM,
-                    Map.COLOR_LIST[i]);
+            PlayerStat pStat = new PlayerStat(i, playerList.get(i), shared.Map.INIT_FOOD, shared.Map.INIT_GOLD, shared.Map.INIT_T_NUM,
+                    shared.Map.COLOR_LIST[i]);
             playerStats.add(pStat);
         }
         synchronized (this) {
@@ -153,35 +168,35 @@ public class Game {
 
     }
 
-    /***
-     * @return true if all active player has sent action to server, which means one
-     *         turn just finished
-     */
-    public boolean turnFinished() {
-        for (UserInfo u : playerList) {
-            if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
-                int pid = getPidByName(u.getUsername());
-                if (!tempActionList.containsKey(pid)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+    // /***
+    //  * @return true if all active player has sent action to server, which means one
+    //  *         turn just finished
+    //  */
+    // public boolean turnFinished() {
+    //     for (UserInfo u : playerList) {
+    //         if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
+    //             int pid = getPidByName(u.getUsername());
+    //             if (!tempActionList.containsKey(pid)) {
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     return true;
+    // }
 
-    /***
-     * Check if the game has no active player
-     * 
-     * @return
-     */
-    public boolean noActivePlayer() {
-        for (UserInfo u : playerList) {
-            // is active player
-            if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
-                return false;
-            }
-        }
-        return true;
-    }
+    // /***
+    //  * Check if the game has no active player
+    //  * 
+    //  * @return
+    //  */
+    // public boolean noActivePlayer() {
+    //     for (UserInfo u : playerList) {
+    //         // is active player
+    //         if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
 
 }
