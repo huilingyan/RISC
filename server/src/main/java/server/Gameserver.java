@@ -19,17 +19,15 @@ public class Gameserver {
   private ArrayList<Player> userList; // list of Player
   private ArrayList<Game> gameList; // list of games
   private int currentGid = 10; // gid start from 10
-  private ArrayList<ClientWorker> clientThreads;
+  // private HibernateUtil hibernate;
+
 
   public Gameserver() {
     userList = new ArrayList<Player>();
     gameList = new ArrayList<Game>();
-    clientThreads = new ArrayList<ClientWorker>();  // ClientWorkers
+    // hibernate = new HibernateUtil();
   }
 
-  public ArrayList<ClientWorker> getClientThreads(){
-    return clientThreads;
-  }
 
   /***
    * Run the server
@@ -44,9 +42,6 @@ public class Gameserver {
       while ((newSocket = acceptConnection()) == null) {
       } // loops until accept one connection
       ClientWorker worker = new ClientWorker(newSocket, this);
-      synchronized(this){
-        clientThreads.add(worker);  // add ClientWorker to the list
-      }
       worker.start();
     }
   }
@@ -56,6 +51,7 @@ public class Gameserver {
    */
   private void addAdminUsers(){
     addUser(new Player("admin1", "1234"));
+    HibernateUtil.addUser(new UserInfo("admin1", "1234"));
     addUser(new Player("admin2", "1234"));
     addUser(new Player("admin3", "1234"));
     addUser(new Player("admin4", "1234"));
@@ -171,7 +167,7 @@ public class Gameserver {
     currentGid++;   // increment gid counter
   }
 
-  public Game startNewGame(int playerNum, Player firstP) {
+  public Game startNewGame(int playerNum, UserInfo firstP) {
     // generate a new map with only territory list
     Map m = new Map(initializeTerritoryList(playerNum));
     Game g = new Game(currentGid, playerNum, m, firstP);
@@ -332,6 +328,11 @@ public class Gameserver {
       }
     }
     return null;
+  }
+
+  public void deleteGame(Game g) {
+    gameList.remove(g);
+    // TODO: delete from database
   }
 
   public static void main(String[] args) {

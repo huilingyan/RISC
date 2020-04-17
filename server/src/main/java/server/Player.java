@@ -5,20 +5,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import lombok.*;
 
 /****
  * A class to represent a player (user) on game server side
  ******/
+@Getter
+@Setter
 public class Player {
 
-  private String username; // user name
-  private String password; // user passwors
+  private UserInfo userInfo;  
   private Socket clientSocket; // connected socket
   private ObjectOutputStream out;
   private ObjectInputStream in;
-  private boolean connected; // socket connection status
-  private int activeGid;  // gameID of active game, 0 if in not on name
-  private boolean loggedin;   // mark if user's loggedin
+
 
   /***
    * Initialize a Player object with a connected socket, and initialize its
@@ -27,29 +27,22 @@ public class Player {
    * @param socket
    */
   public Player(Socket socket) {
-    setSocketandOutputStream(socket);
-    activeGid = 0;  // initialize active game to 0 (not at game)
-    loggedin = false;  // user not logged in
+    userInfo = new UserInfo();
+    setSocketandOutputStream(socket);  // put at the end to set connect to true
   }
 
   // copy constructor
   public Player(Player rhs) {
-    username = rhs.getUsername();
-    password = rhs.getPassword();
+    
+    userInfo = rhs.getUserInfo();
     clientSocket = rhs.getSocket();
     out = rhs.getOutputStream();
     in = rhs.getInputStream();
-    connected = rhs.isConnected();
-    activeGid = rhs.getActiveGid();
-    loggedin = rhs.isLoggedin();
   }
 
   // default constructor that has no binding socket
   public Player(String name, String pass_word){
-    connected = false;
-    activeGid = 0;
-    loggedin = false;
-    setUpUserInfo(name, pass_word);
+    userInfo = new UserInfo(name, pass_word);
   }
   
   /****
@@ -57,11 +50,11 @@ public class Player {
    * right before recv UserMessage from socket.
    ****/
   public void setUpInputStream() {
-    if (connected) {
+    if (userInfo.isConnected()) {
       try {
         in = new ObjectInputStream(clientSocket.getInputStream());
       } catch (IOException e) {
-        connected = false;
+        userInfo.setConnected(false);
       }
     }
   }
@@ -72,21 +65,22 @@ public class Player {
    * @param pass_word
    */
   public void setUpUserInfo(String name, String pass_word){
-    username = name;
-    password = pass_word;
+    userInfo.setUsername(name);
+    userInfo.setPassword(pass_word);
   }
 
   public void setSocketandOutputStream(Socket socket){
     clientSocket = socket;
-    connected = true;
+    userInfo.setConnected(true);
     // initialize ObjectOutputStream
     try {
       out = new ObjectOutputStream(clientSocket.getOutputStream());
       out.flush();
     } catch (IOException e) {
-      connected = false;
+      userInfo.setConnected(false);
     }
   }
+
 
   /****
    * Close all opened outputstream and inputstream and the socket
@@ -102,11 +96,11 @@ public class Player {
    * Send the object from server side to the player if is connected
    ****/
   public void sendObject(Object obj) {// send object to this player
-    if (connected) {
+    if (userInfo.isConnected()) {
       try {
         out.writeObject(obj);
       } catch (IOException e) {
-        connected = false;
+        userInfo.setConnected(false);
       }
     }
   }
@@ -115,14 +109,14 @@ public class Player {
    * Recv an object from player if is connected if not connected, return null
    ****/
   public Object recvObject() {// receive object from this player
-    if (connected) {
+    if (userInfo.isConnected()) {
       try {
         Object ob = in.readObject();
         return ob;
       } catch (IOException e) {
         // IOException - Any of the usual Input/Output related exceptions.
         System.out.println("IOException when recv");
-        connected = false;
+        userInfo.setConnected(false);
       } catch (ClassNotFoundException e) {
         // ClassNotFoundException - Class of a serialized object cannot be found.
         System.out.println("ClassNotFoundException when recv");
@@ -131,76 +125,41 @@ public class Player {
     return null;
   }
 
-  /****
-   * Send an int to the player if connected
-   ****/
-  public void sendInt(int val) {// send int to this player
-    if (connected) {
-      try {
-        out.writeInt(val);
-        out.flush();
-      } catch (IOException e) {
-        connected = false;
-      }
-    }
-  }
-
-  /***
-   * Recv a non-negative int from the player if connected if not connected, return
-   * -1
-   ****/
-  public int recvPosInt() {// receive int (>=0) from this player
-    if (connected) {
-      try {
-        return in.readInt();
-      } catch (EOFException e) {
-        // EOFException - If end of file is reached.
-        connected = false;
-      }
-
-      catch (IOException e) {
-        // IOException - If other I/O error has occurred.
-        connected = false;
-      }
-    }
-    return -1;
-  }
-
   public void updateSocketandStreams(Player p){
     clientSocket = p.getSocket();
     in = p.getInputStream();
     out = p.getOutputStream();
-    connected = true;   // is connected
+    userInfo.setConnected(true);   // is connected
     
   }
 
   public void setUsername(String p_name) {
-    username = p_name;
+    userInfo.setUsername(p_name);
   }
 
   public String getUsername() {
-    return username;
+    return userInfo.getUsername();
   }
 
   public void setPassword(String pass_word){
-    password = pass_word;
+    userInfo.setPassword(pass_word);
   }
 
   public String getPassword(){
-    return password;
+    return userInfo.getPassword();
   }
 
   public void setActiveGid(int gid){
-    activeGid = gid;
+    userInfo.setActiveGid(gid);
   }
 
   public int getActiveGid(){
-    return activeGid;
+    return userInfo.getActiveGid();
   }
 
-  public void switchOut(){
-    activeGid = 0;
-  }
+  // public void switchOut(){
+  //   userInfo.setActiveGid(0);
+  // }
 
   public Socket getSocket() {
     return clientSocket;
@@ -215,19 +174,19 @@ public class Player {
   }
 
   public void setConnected(boolean bool) {
-    connected = bool;
+    userInfo.setConnected(bool);
   }
 
   public boolean isConnected() {
-    return connected;
+    return userInfo.isConnected();
   }
 
   public void setLoggedin(boolean bool){
-    loggedin = bool;
+    userInfo.setLoggedin(bool);
   }
 
   public boolean isLoggedin() {
-    return loggedin;
+    return userInfo.isLoggedin();
   }
 
 }
