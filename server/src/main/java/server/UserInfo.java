@@ -55,4 +55,8 @@ public class UserInfo {
         loggedin = false;
     }
 
+    public boolean isOffline(){
+        return activeGid==0 && (!connected) && (!loggedin);
+    }
+
 }

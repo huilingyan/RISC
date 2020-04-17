@@ -6,7 +6,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+
+import org.hibernate.Hibernate;
 
 import shared.*;
 
@@ -31,8 +34,12 @@ public class Gameserver {
    */
   public void run() {
     bindSocket(); // initialize server socket
-    // add default users to list
+    // load users from database
+    loadUsers();
+    // add admin users to list, if not exist
     addAdminUsers();
+    // TODO: load games from database
+    
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
@@ -43,15 +50,27 @@ public class Gameserver {
     }
   }
 
+  private void loadUsers() {
+    List<UserInfo> users = HibernateUtil.getUserInfoList();
+    for (UserInfo u : users) {
+      if (!u.isOffline()) {
+        u.setOffline();
+        HibernateUtil.updateUserInfo(u);
+      }
+      addUser(new Player(u));
+    }
+  }
+
   /***
-   * Add 4 admin users to userlist
+   * Add 4 admin users to userlist, if not exist
    */
   private void addAdminUsers() {
     // admin1 to admin4
     for (int i = 1; i < 5; i++) {
       UserInfo user = new UserInfo("admin" + i, "1234");
-      HibernateUtil.addUserIfNone(user);
-      addUser(new Player(user));
+      if (HibernateUtil.addUserInfoIfNone(user)) {  // successfully saved to db
+        addUser(new Player(user));
+      }
     }
 
   }
