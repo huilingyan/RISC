@@ -37,6 +37,7 @@ public class GameWorker extends Thread {
                     game.setPlayerStats();
                     // change stage to initialize units
                     game.setStage(GameMessage.INITIALIZE_UNITS);
+                    HibernateUtil.updateGame(game);  // update game in database
                     synchronized (game) {
                         notifyClientWorkers();
                     }
@@ -113,6 +114,8 @@ public class GameWorker extends Thread {
         game.clearTempActions();
         // update stage
         game.setStage(GameMessage.GAME_PLAY);
+        // update game in db
+        HibernateUtil.updateGame(game);
 
     }
 
@@ -140,6 +143,8 @@ public class GameWorker extends Thread {
         game.setMap(newMap);
         // clear tempActionList
         game.clearTempActions();
+        // update game in db
+        HibernateUtil.updateGame(game);
 
     }
 

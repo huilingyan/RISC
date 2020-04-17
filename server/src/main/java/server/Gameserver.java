@@ -39,8 +39,10 @@ public class Gameserver {
     loadUsers();
     // add admin users to list, if not exist
     addAdminUsers();
-    // TODO: load games from database, update nextGid
+    // load games from database, update nextGid
     loadGames();
+    // run gameworkers on existing games
+    startGameWorkers();
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
@@ -48,6 +50,13 @@ public class Gameserver {
       } // loops until accept one connection
       ClientWorker worker = new ClientWorker(newSocket, this);
       worker.start();
+    }
+  }
+
+  private void startGameWorkers(){
+    for (Game g: gameList){
+      GameWorker gWorker = new GameWorker(g, this);
+      gWorker.start();
     }
   }
 
@@ -62,15 +71,18 @@ public class Gameserver {
     }
   }
 
-  // TODO: link with users?
   private void loadGames() {
     List<Game> games = HibernateUtil.getGameList();
     int currentGid = 9;
     for (Game g : games) {
+      if (!g.getTempActionList().isEmpty()){
+        g.setTempActionList(new HashMap<Integer, Action>());
+        HibernateUtil.updateGame(g);
+      }
       appendGame(g);
       currentGid = Math.max(currentGid, g.getGid()); // update currentGid
     }
-    nextGid = currentGid++;
+    nextGid = currentGid + 1;
   }
 
   /***
@@ -201,6 +213,8 @@ public class Gameserver {
 
   private synchronized void addGame(Game g) {
     gameList.add(g);
+    // save game to database
+    HibernateUtil.addGame(g);
     nextGid++; // increment gid counter
   }
 
@@ -222,6 +236,8 @@ public class Gameserver {
       if (p.isConnected() && p.isLoggedin() && p.getActiveGid() == g.getGid()) {
         int pid = g.getPidByName(p.getUsername());
         if (!g.getTempActionList().containsKey(pid)) {
+          // debug
+          // System.out.println("pid " + pid + "is in game but not yet sends action");
           return false;
         }
       }
@@ -402,7 +418,8 @@ public class Gameserver {
 
   public void deleteGame(Game g) {
     gameList.remove(g);
-    // TODO: delete from database
+    // delete from database
+    HibernateUtil.deleteGame(g);
   }
 
   public static void main(String[] args) {

@@ -26,12 +26,12 @@ public class Game {
 
     // @OneToMany(mappedBy="game")
     // @OrderColumn(name="user_index")
-    @ElementCollection
+    @ElementCollection(fetch=FetchType.EAGER)
     private List<String> playerList; // list of player names
 
     // @OneToMany
     // @MapKeyColumn(name="pid")
-    @ElementCollection
+    @ElementCollection(fetch=FetchType.EAGER)
     private java.util.Map<Integer, Action> tempActionList; // store temperary actions in each turn
 
     private boolean filled; // true if game is full, else false
@@ -71,18 +71,7 @@ public class Game {
         filled = false;
     }
 
-    // copy constructor
-    // TODO
-    // public Game(Game rhs){
-    //     gid = rhs.getGid();
-    //     playerNum = rhs.getPlayerNum();
-    //     stage = rhs.getStage();
-    //     map = new Map(rhs.getMap());
-    //     playerList = new ArrayList<UserInfo>(); // empty player list
-    //     tempActionList = new HashMap<Integer, Action>(); // empty action list
-    //     full = rhs.isFull();
-    // }
-
+    
     public java.util.Map<Integer, Action> getTempActionList() {
         return tempActionList;
     }
@@ -101,6 +90,8 @@ public class Game {
             System.out.println("Set full to true");
             filled = true;
         }
+        // update game in db
+        HibernateUtil.updateGame(this);
     }
 
     /**
@@ -158,8 +149,8 @@ public class Game {
     public void setPlayerStats() {
         ArrayList<PlayerStat> playerStats = new ArrayList<PlayerStat>();
         for (int i = 0; i < playerNum; i++) {
-            PlayerStat pStat = new PlayerStat(i, playerList.get(i), shared.Map.INIT_FOOD, shared.Map.INIT_GOLD, shared.Map.INIT_T_NUM,
-                    shared.Map.COLOR_LIST[i]);
+            PlayerStat pStat = new PlayerStat(i, playerList.get(i), shared.Map.INIT_FOOD, shared.Map.INIT_GOLD,
+                    shared.Map.INIT_T_NUM, shared.Map.COLOR_LIST[i]);
             playerStats.add(pStat);
         }
         synchronized (this) {
@@ -168,35 +159,5 @@ public class Game {
 
     }
 
-    // /***
-    //  * @return true if all active player has sent action to server, which means one
-    //  *         turn just finished
-    //  */
-    // public boolean turnFinished() {
-    //     for (UserInfo u : playerList) {
-    //         if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
-    //             int pid = getPidByName(u.getUsername());
-    //             if (!tempActionList.containsKey(pid)) {
-    //                 return false;
-    //             }
-    //         }
-    //     }
-    //     return true;
-    // }
-
-    // /***
-    //  * Check if the game has no active player
-    //  * 
-    //  * @return
-    //  */
-    // public boolean noActivePlayer() {
-    //     for (UserInfo u : playerList) {
-    //         // is active player
-    //         if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
 
 }
