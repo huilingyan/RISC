@@ -44,6 +44,11 @@ public class Player {
   public Player(String name, String pass_word){
     userInfo = new UserInfo(name, pass_word);
   }
+
+  // constructor that recover Player from saved UserInfo
+  public Player(UserInfo user){
+    userInfo = user;
+  }
   
   /****
    * Initialize an inputstream from the socket. Usually is called in gameserver

@@ -1,5 +1,7 @@
 package server;
 
+import java.util.List;
+
 import org.hibernate.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -46,6 +48,29 @@ public class HibernateUtil {
         try {
             tx = session.beginTransaction();
             session.save(u);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static void addUserIfNone(UserInfo u) {
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            // TODO: check user
+            List<UserInfo> user = session.createQuery("select u " + "from UserInfo u " + "where u.username like :name")
+                    .setParameter("name", u.getUsername()).list();
+            if (user.size()==0){
+                session.save(u);
+            }
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) {

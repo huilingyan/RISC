@@ -19,15 +19,12 @@ public class Gameserver {
   private ArrayList<Player> userList; // list of Player
   private ArrayList<Game> gameList; // list of games
   private int currentGid = 10; // gid start from 10
-  // private HibernateUtil hibernate;
-
 
   public Gameserver() {
     userList = new ArrayList<Player>();
     gameList = new ArrayList<Game>();
     // hibernate = new HibernateUtil();
   }
-
 
   /***
    * Run the server
@@ -49,12 +46,14 @@ public class Gameserver {
   /***
    * Add 4 admin users to userlist
    */
-  private void addAdminUsers(){
-    addUser(new Player("admin1", "1234"));
-    HibernateUtil.addUser(new UserInfo("admin1", "1234"));
-    addUser(new Player("admin2", "1234"));
-    addUser(new Player("admin3", "1234"));
-    addUser(new Player("admin4", "1234"));
+  private void addAdminUsers() {
+    // admin1 to admin4
+    for (int i = 1; i < 5; i++) {
+      UserInfo user = new UserInfo("admin" + i, "1234");
+      HibernateUtil.addUserIfNone(user);
+      addUser(new Player(user));
+    }
+
   }
 
   /****
@@ -90,6 +89,7 @@ public class Gameserver {
 
   /**
    * Check if user with the given username existed in server memory
+   * 
    * @param name
    * @return
    */
@@ -103,7 +103,9 @@ public class Gameserver {
   }
 
   /***
-   * Check if username exists, password matches, and the user is currently logged out
+   * Check if username exists, password matches, and the user is currently logged
+   * out
+   * 
    * @param name
    * @param password
    * @return
@@ -122,6 +124,7 @@ public class Gameserver {
 
   /***
    * Return the roomlist visible to the player, given the username
+   * 
    * @param name
    * @return
    */
@@ -149,7 +152,9 @@ public class Gameserver {
   }
 
   /**
-   * Add a copy of Player p to the list, and set connected and logged in to be false
+   * Add a copy of Player p to the list, and set connected and logged in to be
+   * false
+   * 
    * @param p
    */
   public void addUser(Player p) {
@@ -164,7 +169,7 @@ public class Gameserver {
 
   private synchronized void addGame(Game g) {
     gameList.add(g);
-    currentGid++;   // increment gid counter
+    currentGid++; // increment gid counter
   }
 
   public Game startNewGame(int playerNum, UserInfo firstP) {
