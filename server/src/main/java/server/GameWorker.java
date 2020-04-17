@@ -69,6 +69,8 @@ public class GameWorker extends Thread {
             } // switch
         } // while
           // gameover, gameworker exits
+          boss.deleteGame(game);  // delete game
+
     }
 
     private void notifyClientWorkers() {
