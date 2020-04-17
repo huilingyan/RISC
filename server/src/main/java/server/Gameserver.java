@@ -39,7 +39,7 @@ public class Gameserver {
     // add admin users to list, if not exist
     addAdminUsers();
     // TODO: load games from database
-    
+
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
@@ -158,7 +158,7 @@ public class Gameserver {
     return rooms;
   }
 
-  public synchronized Player updateUser(String name, Player p) {
+  public synchronized Player updateSocketForUser(String name, Player p) {
     for (Player old : userList) {
       if (old.getUsername().equals(name)) {
         System.out.println("update socket info");

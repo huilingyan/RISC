@@ -34,7 +34,7 @@ public class Player {
   // copy constructor
   public Player(Player rhs) {
     
-    userInfo = rhs.getUserInfo();
+    userInfo = new UserInfo(rhs.getUserInfo());
     clientSocket = rhs.getSocket();
     out = rhs.getOutputStream();
     in = rhs.getInputStream();

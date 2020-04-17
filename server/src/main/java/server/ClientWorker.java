@@ -32,7 +32,7 @@ public class ClientWorker extends Thread {
             if (clientMsg == null) {
                 break;
             }
-            int gid = clientMsg.getGameID(); 
+            int gid = clientMsg.getGameID();
             if (gid == 0) { // switch out, send back RoomMessage, no wait
                 // debug
                 System.out.println("player " + player.getUsername() + " switch out of the game");
@@ -47,7 +47,7 @@ public class ClientWorker extends Thread {
                         waitOnGame(g);
                     }
                     // debug
-                    System.out.println("Finish waiting on gameworker");
+                    // System.out.println("Finish waiting on gameworker");
                 } else if (boss.hasActiveGame(gid)) { // game exists
                     g = boss.getGame(gid);
                     synchronized (g) {
@@ -106,7 +106,7 @@ public class ClientWorker extends Thread {
         // debug
         System.out.println("player " + player.getUsername() + " starts a new game");
         Game g = boss.startNewGame(playerNum, player.getUserInfo()); // new game
-        player.getUserInfo().setActiveGid(g.getGid()); // set active gid to player
+        player.setActiveGid(g.getGid()); // set active gid to player
         GameWorker gWorker = new GameWorker(g, boss); // start game worker
         gWorker.start();
         return g;
@@ -146,8 +146,8 @@ public class ClientWorker extends Thread {
                     // find available rooms and update msg
                     msg = new RoomMessage(boss.gatherRooms(name));
                     // update the old player's socket and set as player field
-                    player = boss.updateUser(name, player);
-                    player.getUserInfo().setLoggedin(true); // successfully logged in
+                    player = boss.updateSocketForUser(name, player);
+                    player.setLoggedin(true); // successfully logged in
                     success = true;
                 }
             } else {
@@ -155,6 +155,8 @@ public class ClientWorker extends Thread {
                 if (!boss.hasUser(name)) {
                     // successfully registered
                     player.setUpUserInfo(name, password);
+                    // save userinfo to database
+                    HibernateUtil.addUserInfo(player.getUserInfo());
                     boss.addUser(player); // add to list, synchronized, player is copied and set disconnected and not
                                           // logged in
                     // success message
@@ -166,7 +168,7 @@ public class ClientWorker extends Thread {
             System.out.println("Send room message to player " + player.getUsername());
             System.out.println("isValid: " + msg.isValid());
             player.sendObject(msg);
-            if (!player.getUserInfo().isConnected()) {
+            if (!player.isConnected()) {
                 return;
             }
         } // while
