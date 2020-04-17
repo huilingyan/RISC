@@ -77,7 +77,7 @@ public class ClientWorker extends Thread {
             if (!g.hasPlayer(player.getUsername()) && g.getStage() == GameMessage.WAIT_FOR_PLAYERS) {
                 // debug
                 System.out.println("player " + player.getUsername() + " joins game " + gid);
-                g.addPlayer(player);
+                g.addPlayer(player.getUserInfo());
             } else { // switch in: should add temp action to game, otherwise it stucks
                 System.out.println("player " + player.getUsername() + " switch in game " + gid);
                 int pid = g.getPidByName(player.getUsername());
@@ -105,8 +105,8 @@ public class ClientWorker extends Thread {
     private Game createNewGame(int playerNum) {
         // debug
         System.out.println("player " + player.getUsername() + " starts a new game");
-        Game g = boss.startNewGame(playerNum, player); // new game
-        player.setActiveGid(g.getGid()); // set active gid to player
+        Game g = boss.startNewGame(playerNum, player.getUserInfo()); // new game
+        player.getUserInfo().setActiveGid(g.getGid()); // set active gid to player
         GameWorker gWorker = new GameWorker(g, boss); // start game worker
         gWorker.start();
         return g;
@@ -147,7 +147,7 @@ public class ClientWorker extends Thread {
                     msg = new RoomMessage(boss.gatherRooms(name));
                     // update the old player's socket and set as player field
                     player = boss.updateUser(name, player);
-                    player.setLoggedin(true); // successfully logged in
+                    player.getUserInfo().setLoggedin(true); // successfully logged in
                     success = true;
                 }
             } else {
@@ -166,7 +166,7 @@ public class ClientWorker extends Thread {
             System.out.println("Send room message to player " + player.getUsername());
             System.out.println("isValid: " + msg.isValid());
             player.sendObject(msg);
-            if (!player.isConnected()) {
+            if (!player.getUserInfo().isConnected()) {
                 return;
             }
         } // while

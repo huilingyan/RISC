@@ -5,19 +5,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import javax.persistence.*;
 import lombok.*;
 
 /****
  * A class to represent a player (user) on game server side
  ******/
-@javax.persistence.Entity
 @Getter
 @Setter
-@NoArgsConstructor
 public class Player {
 
-  private UserInfo userInfo;  // TODO
+  private UserInfo userInfo;  
   private Socket clientSocket; // connected socket
   private ObjectOutputStream out;
   private ObjectInputStream in;
@@ -45,8 +42,7 @@ public class Player {
 
   // default constructor that has no binding socket
   public Player(String name, String pass_word){
-    userInfo = new UserInfo();
-    setUpUserInfo(name, pass_word);
+    userInfo = new UserInfo(name, pass_word);
   }
   
   /****
@@ -137,29 +133,29 @@ public class Player {
     
   }
 
-  // public void setUsername(String p_name) {
-  //   userInfo.setUsername(p_name);
-  // }
+  public void setUsername(String p_name) {
+    userInfo.setUsername(p_name);
+  }
 
-  // public String getUsername() {
-  //   return userInfo.getUsername();
-  // }
+  public String getUsername() {
+    return userInfo.getUsername();
+  }
 
-  // public void setPassword(String pass_word){
-  //   userInfo.setPassword(pass_word);
-  // }
+  public void setPassword(String pass_word){
+    userInfo.setPassword(pass_word);
+  }
 
-  // public String getPassword(){
-  //   return userInfo.getPassword();
-  // }
+  public String getPassword(){
+    return userInfo.getPassword();
+  }
 
-  // public void setActiveGid(int gid){
-  //   userInfo.setActiveGid(gid);
-  // }
+  public void setActiveGid(int gid){
+    userInfo.setActiveGid(gid);
+  }
 
-  // public int getActiveGid(){
-  //   return userInfo.getActiveGid();
-  // }
+  public int getActiveGid(){
+    return userInfo.getActiveGid();
+  }
 
   // public void switchOut(){
   //   userInfo.setActiveGid(0);
@@ -177,20 +173,20 @@ public class Player {
     return out;
   }
 
-  // public void setConnected(boolean bool) {
-  //   connected = bool;
-  // }
+  public void setConnected(boolean bool) {
+    userInfo.setConnected(bool);
+  }
 
-  // public boolean isConnected() {
-  //   return connected;
-  // }
+  public boolean isConnected() {
+    return userInfo.isConnected();
+  }
 
-  // public void setLoggedin(boolean bool){
-  //   loggedin = bool;
-  // }
+  public void setLoggedin(boolean bool){
+    userInfo.setLoggedin(bool);
+  }
 
-  // public boolean isLoggedin() {
-  //   return loggedin;
-  // }
+  public boolean isLoggedin() {
+    return userInfo.isLoggedin();
+  }
 
 }

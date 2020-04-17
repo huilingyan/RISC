@@ -1,12 +1,19 @@
 package server;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import lombok.*;
 
+// TODO: persistence annotation
+@Entity
 @Getter
 @Setter
 public class UserInfo {
 
+    @Id
     private String username; // user name
+
     private String password; // user passwors
     private boolean connected; // socket connection status
     private boolean loggedin; // mark if user's loggedin
@@ -14,6 +21,16 @@ public class UserInfo {
 
     // default constructor
     public UserInfo() {
+        username = "";
+        password = "";
+        connected = false;
+        loggedin = false;
+        activeGid = 0;
+    }
+
+    public UserInfo(String name, String pin){
+        username = name;
+        password = pin;
         connected = false;
         loggedin = false;
         activeGid = 0;
@@ -30,6 +47,12 @@ public class UserInfo {
 
     public void switchOut() {
         activeGid = 0;
+    }
+
+    public void setOffline(){
+        activeGid = 0;
+        connected = false;
+        loggedin = false;
     }
 
 }

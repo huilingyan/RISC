@@ -22,7 +22,7 @@
         <property name="hibernate.hbm2ddl.auto">create</property>
   
         <!-- Annotated entity classes -->
-        <mapping class="server.Player"/>
+        <mapping class="server.UserInfo"/>
          
     </session-factory>
 </hibernate-configuration>

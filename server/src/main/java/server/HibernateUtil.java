@@ -17,8 +17,8 @@ public class HibernateUtil {
             if (sessionFactory == null) {
                 Configuration configuration = new Configuration()
                         .configure(HibernateUtil.class.getResource("/hibernate.cfg.xml"));
-
-                configuration.addAnnotatedClass(Player.class);
+                // TODO: manually add entity classes
+                configuration.addAnnotatedClass(UserInfo.class);
                 StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
                 serviceRegistryBuilder.applySettings(configuration.getProperties());
                 ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
@@ -39,13 +39,13 @@ public class HibernateUtil {
         getSessionFactory().close();
     }
 
-    public static void addPlayer(Player p) {
+    public static void addUser(UserInfo u) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
 
         try {
             tx = session.beginTransaction();
-            session.save(p);
+            session.save(u);
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) {

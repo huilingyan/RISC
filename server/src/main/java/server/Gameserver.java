@@ -51,7 +51,7 @@ public class Gameserver {
    */
   private void addAdminUsers(){
     addUser(new Player("admin1", "1234"));
-    HibernateUtil.addPlayer(new Player("admin1", "1234"));
+    HibernateUtil.addUser(new UserInfo("admin1", "1234"));
     addUser(new Player("admin2", "1234"));
     addUser(new Player("admin3", "1234"));
     addUser(new Player("admin4", "1234"));
@@ -167,7 +167,7 @@ public class Gameserver {
     currentGid++;   // increment gid counter
   }
 
-  public Game startNewGame(int playerNum, Player firstP) {
+  public Game startNewGame(int playerNum, UserInfo firstP) {
     // generate a new map with only territory list
     Map m = new Map(initializeTerritoryList(playerNum));
     Game g = new Game(currentGid, playerNum, m, firstP);

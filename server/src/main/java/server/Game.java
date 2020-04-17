@@ -23,8 +23,8 @@ public class Game {
     private Map map; // game map
 
     @OneToMany(mappedBy="game")
-    @OrderColumn(name="player_index")
-    private ArrayList<Player> playerList; // list of players
+    @OrderColumn(name="user_index")
+    private ArrayList<UserInfo> playerList; // list of players
 
     @OneToMany
     @MapKeyColumn(name="pid")
@@ -41,12 +41,12 @@ public class Game {
      * @param m
      * @param first_player
      */
-    public Game(int g_id, int player_num, Map m, Player first_player) {
+    public Game(int g_id, int player_num, Map m, UserInfo first_player) {
         gid = g_id;
         playerNum = player_num;
         stage = GameMessage.WAIT_FOR_PLAYERS; // game start at stage 0
         map = m;
-        playerList = new ArrayList<Player>();
+        playerList = new ArrayList<UserInfo>();
         playerList.add(first_player); // put the first player into playerlist
         System.out.println("Add the first player to game " + g_id);
         System.out.println("Player num: " + playerNum);
@@ -62,7 +62,7 @@ public class Game {
         playerNum = 0;
         stage = GameMessage.ERROR;
         map = new Map();
-        playerList = new ArrayList<Player>();
+        playerList = new ArrayList<UserInfo>();
         tempActionList = new HashMap<Integer, Action>(); // empty action list
         full = false;
     }
@@ -71,48 +71,20 @@ public class Game {
         return tempActionList;
     }
 
-    public int getGid() {
-        return gid;
-    }
-
-    public int getPlayerNum() {
-        return playerNum;
-    }
-
-    public Map getMap() {
-        return map;
-    }
-
-    public synchronized void setMap(Map m) {
-        map = m;
-    }
-
-    public int getStage() {
-        return stage;
-    }
-
-    public synchronized void setStage(int s) {
-        stage = s;
-    }
-
     /**
      * Add a player p to playerlist. If after adding the game reaches full, set full
      * to true
      * 
      * @param p
      */
-    public synchronized void addPlayer(Player p) {
-        playerList.add(p);
-        System.out.println("Add a player " + p.getUsername());
+    public synchronized void addPlayer(UserInfo u) {
+        playerList.add(u);
+        System.out.println("Add a player " + u.getUsername());
         System.out.println("Player number in player list: " + playerList.size());
         if (playerList.size() == playerNum) {
             System.out.println("Set full to true");
             full = true;
         }
-    }
-
-    public boolean isFull() {
-        return full;
     }
 
     /**
@@ -156,8 +128,8 @@ public class Game {
      * @return
      */
     public boolean hasPlayer(String name) {
-        for (Player p : playerList) {
-            if (p.getUsername().equals(name)) {
+        for (UserInfo u : playerList) {
+            if (u.getUsername().equals(name)) {
                 return true;
             }
         }
@@ -170,8 +142,8 @@ public class Game {
     public void setPlayerStats() {
         ArrayList<PlayerStat> playerStats = new ArrayList<PlayerStat>();
         for (int i = 0; i < playerNum; i++) {
-            Player p = playerList.get(i);
-            PlayerStat pStat = new PlayerStat(i, p.getUsername(), Map.INIT_FOOD, Map.INIT_GOLD, Map.INIT_T_NUM,
+            UserInfo u = playerList.get(i);
+            PlayerStat pStat = new PlayerStat(i, u.getUsername(), Map.INIT_FOOD, Map.INIT_GOLD, Map.INIT_T_NUM,
                     Map.COLOR_LIST[i]);
             playerStats.add(pStat);
         }
@@ -186,9 +158,9 @@ public class Game {
      *         turn just finished
      */
     public boolean turnFinished() {
-        for (Player p : playerList) {
-            if (p.isConnected() && p.isLoggedin() && p.getActiveGid() == gid) {
-                int pid = getPidByName(p.getUsername());
+        for (UserInfo u : playerList) {
+            if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
+                int pid = getPidByName(u.getUsername());
                 if (!tempActionList.containsKey(pid)) {
                     return false;
                 }
@@ -203,9 +175,9 @@ public class Game {
      * @return
      */
     public boolean noActivePlayer() {
-        for (Player p : playerList) {
+        for (UserInfo u : playerList) {
             // is active player
-            if (p.isConnected() && p.isLoggedin() && p.getActiveGid() == gid) {
+            if (u.isConnected() && u.isLoggedin() && u.getActiveGid() == gid) {
                 return false;
             }
         }
