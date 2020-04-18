@@ -19,10 +19,11 @@
         <property name="show_sql">true</property>
   
         <!-- Create database on startup -->
-        <property name="hibernate.hbm2ddl.auto">create</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
   
         <!-- Annotated entity classes -->
         <mapping class="server.UserInfo"/>
+        <mapping class="server.Game"/>
          
     </session-factory>
 </hibernate-configuration>

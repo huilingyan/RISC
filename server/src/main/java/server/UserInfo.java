@@ -1,7 +1,8 @@
 package server;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import java.util.ArrayList;
+
+import javax.persistence.*;
 
 import lombok.*;
 
@@ -53,6 +54,10 @@ public class UserInfo {
         activeGid = 0;
         connected = false;
         loggedin = false;
+    }
+
+    public boolean isOffline(){
+        return activeGid==0 && (!connected) && (!loggedin);
     }
 
 }

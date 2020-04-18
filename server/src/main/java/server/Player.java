@@ -34,7 +34,7 @@ public class Player {
   // copy constructor
   public Player(Player rhs) {
     
-    userInfo = rhs.getUserInfo();
+    userInfo = new UserInfo(rhs.getUserInfo());
     clientSocket = rhs.getSocket();
     out = rhs.getOutputStream();
     in = rhs.getInputStream();
@@ -43,6 +43,12 @@ public class Player {
   // default constructor that has no binding socket
   public Player(String name, String pass_word){
     userInfo = new UserInfo(name, pass_word);
+  }
+
+  // constructor that recover Player from saved UserInfo
+  // DO NOT deep copy 
+  public Player(UserInfo user){
+    userInfo = user;
   }
   
   /****
