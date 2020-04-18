@@ -1,5 +1,7 @@
 package client.controller;
 
+import client.model.ChatModel;
+import client.model.PrintMessage;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,17 +13,27 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import shared.ChatMessage;
 
-public class ChatBox {
-  public ChatBox() {
+public class ChatBox implements PrintMessage{
+  private TextArea mesgs;
+  private ChatModel chatM;
+  public ChatBox(ChatModel CM) {
+    
+    this.mesgs = new TextArea();
+    this.mesgs.setPrefHeight(450);
+    this.chatM = CM;
+    this.chatM.startreadthread(this);
   }
+
+  public void clearchathistory() {
+    mesgs.clear();
+  }
+  
   public void displaychatbox() {
     Stage window = new Stage();
     window.initModality(Modality.NONE);
     window.setTitle("WeeChat");
-
-    TextArea mesgs = new TextArea();
-    mesgs.setPrefHeight(450);
 
     TextField inputF = new TextField();
     inputF.setPrefHeight(50);
@@ -32,7 +44,8 @@ public class ChatBox {
     clrBtn.setOnAction(e->inputF.clear());
     Button sendBtn = new Button("Send");
     sendBtn.setOnAction(e -> {
-        mesgs.appendText(inputF.getText()+"\n");
+        mesgs.appendText("Me:"+inputF.getText()+"\n");
+        chatM.sendonemessage(new ChatMessage(0, 1,inputF.getText()));
         inputF.clear();
     });
     Text txt1 = new Text("To");
@@ -49,4 +62,9 @@ public class ChatBox {
     window.setScene(sc);
     window.show();
   }
+
+@Override
+public void printMsg(ChatMessage cm) {
+  mesgs.appendText("Server:"+cm.getMessage()+"\n");	
+}
 }

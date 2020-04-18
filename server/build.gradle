@@ -19,7 +19,8 @@ plugins {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'server.Gameserver'
+    //mainClassName = 'server.Gameserver'
+mainClassName = 'server.EchoChatServer'
 }
 
 
