@@ -43,6 +43,9 @@ public class Gameserver {
     loadGames();
     // run gameworkers on existing games
     startGameWorkers();
+    // create a thread for ChatServer
+    ChatServer charServer = new ChatServer();
+    charServer.start();
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;

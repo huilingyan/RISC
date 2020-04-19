@@ -71,6 +71,7 @@ subprojects {
         // compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
         // https://mvnrepository.com/artifact/org.hibernate.javax.persistence/hibernate-jpa-2.1-api
         compile group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
     }
     test {
         testLogging {
@@ -92,15 +93,14 @@ project(':shared') {
 project(':server') {
   dependencies {
     implementation project(':shared')
-
-
-
+    // compile 'org.apache.commons:commons-lang3:3.10'
   }
 }
 
 project(':client') {
   dependencies {
     implementation project(':shared')
+    // compile 'org.apache.commons:commons-lang3:3.10'
   }
 }
 

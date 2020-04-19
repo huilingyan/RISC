@@ -8,6 +8,7 @@ import java.net.Socket;
 import shared.Action;
 import shared.ClientMessage;
 import shared.Config;
+import shared.ChatMessage;
 
 public class GameClient {
 
@@ -15,6 +16,9 @@ public class GameClient {
     Socket serverSocket; // set up when connect
     ObjectInputStream inStream; // set up right before first recv
     ObjectOutputStream outStream; // set up when connect
+    // The socket and stream for chatserver
+    Socket chatSocket; // socket for chatserver
+    ObjectOutputStream chatOutStream; // stream for chatserver
     /****
     Connect to the server host provided in config file
     ***/
@@ -26,11 +30,31 @@ public class GameClient {
             Socket newSocket = new Socket(host, Integer.parseInt(port)); 
             this.serverSocket = newSocket;
         } catch (IOException e) {
-            System.out.println("Cannnot connect to server at " + host + ": " + port); 
+            System.out.println("Cannot connect to server at " + host + ": " + port); 
         }
         // open outputstream
         try {
             this.outStream = new ObjectOutputStream(this.serverSocket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("fail to set up ObjectOutputStream");
+        } 
+    }
+    /****
+    Connect to the ChatServer
+    ***/
+    public void connectToChatServer() {
+        Config config = new Config("config.properties"); 
+        String host = config.readProperty("hostname"); 
+        String chat_port = config.readProperty("chat_port");
+        try {
+            this.chatSocket = new Socket(host, Integer.parseInt(chat_port)); 
+        } catch (IOException e) {
+            System.out.println("Cannot connect to chatServer at " + host + ": " + chat_port); 
+        }
+        // open outputstream
+        try {
+            this.chatOutStream = new ObjectOutputStream(this.chatSocket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("fail to set up ObjectOutputStream");
@@ -47,7 +71,7 @@ public class GameClient {
         }        
     }
     /****
-    Recv an object from servre, return null on error
+    Recv an object from server, return null on error
     ****/
     public Object recvObject() {
         try {
@@ -73,6 +97,17 @@ public class GameClient {
             System.exit(0); // exit program if server's down }
         }
     }
+    /****
+    Send chatMessage to chatServer
+    *****/
+    public void sendChatMsg(ChatMessage chatMsg) {
+        try {
+            this.chatOutStream.writeObject(chatMsg); 
+        } catch (IOException e) {
+            closeSocket();
+            System.exit(0); // exit program if server's down }
+        }
+    }
     /***
      Send switch out message to server
     ***/
@@ -83,7 +118,8 @@ public class GameClient {
     Close the socket and any open output/input stream
     ****/
     public void closeSocket() {
-        try { 
+        try {
+            chatOutStream.close(); 
             outStream.close();
         } catch (IOException e) {
             e.printStackTrace();
