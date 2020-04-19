@@ -18,10 +18,15 @@ plugins {
 
 }
 
+// dependencies {
+//     compile 'org.apache.commons:commons-lang3:3.10'
+//   }
+
 
 application {
     // Define the main class for the application.
     mainClassName = 'server.Gameserver'
+    // mainClassName = 'server.ChatServer'
 }
 
 

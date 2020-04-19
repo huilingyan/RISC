@@ -134,6 +134,9 @@ public class InitController extends SceneController {
             this.mc.setWorldMap(servermsg.getMap()); 
             int pid = servermsg.getMap().getPidByName(this.player_name);
             int room_num = servermsg.getGameID();
+            // TODO: hard code dest for test; change back later
+            // TODO: put this in setOnAction of chat button
+            this.mc.sendChatMessage(player_name, "zxc", "Hello from player " + player_name);
             this.mc.showGameScene(room_num, pid);
             
         });

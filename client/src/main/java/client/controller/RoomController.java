@@ -120,6 +120,9 @@ public class RoomController extends SceneController {
                         int stage = servermsg.getStage();
                         if (stage == GameMessage.INITIALIZE_UNITS) {
                             this.mc.showInitScene(gid, pid);
+                            // // TODO: hard code dest for test; change back later
+                            // // TODO: put this in setOnAction of chat button
+                            // this.mc.sendChatMessage(playername, "zxc", "Hello from player " + playername);
                             ErrorAlerts.deployArmyPrompt();
                         } 
                         else if (stage == GameMessage.GAME_PLAY) {   

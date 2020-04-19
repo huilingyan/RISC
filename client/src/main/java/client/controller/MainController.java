@@ -31,7 +31,8 @@ public class MainController {
     // Map worldmap = MapGenerator.initmapGenerator(); // dummy model
 
     public void initializeSocketConnection() {
-        this.getGameClient().connectToServer(); 
+        this.getGameClient().connectToServer();
+        this.getGameClient().connectToChatServer();
         this.getGameClient().setUpInputStream();
     }
 
@@ -90,7 +91,6 @@ public class MainController {
         this.gameController = new GameController(this.getWorldMap(), this.getPlayerName(), room_num, pid);
         this.gameController.setMainController(this);
         updateCurrScene(this.gameController);
-        // window.setScene(gameController.getCurrScene());
     }
 
     public void updateCurrScene(SceneController sc) {
@@ -192,6 +192,16 @@ public class MainController {
 
     public void switchoutMsg() {
         this.getGameClient().sendSwitchOutMsg();
+    }
+
+    public void sendToChatServer(ChatMessage chatMsg) {
+        this.getGameClient().sendChatMsg(chatMsg);
+    }
+
+    // test method for chat
+    public void sendChatMessage(String from, String to, String str) {
+        ChatMessage chatMsg = new ChatMessage(from, to, str);
+        this.sendToChatServer(chatMsg);
     }
 
 }
