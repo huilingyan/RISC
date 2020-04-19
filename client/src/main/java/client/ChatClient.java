@@ -18,9 +18,12 @@ import shared.*;
 public class ChatClient extends Thread {
 
     SocketChannel chatChannel = null;
+    String clientName;
 
     // constructor
-    public ChatClient() {}
+    public ChatClient(String username) {
+        this.clientName = username;
+    }
  
     @Override
     public void run() {
@@ -55,23 +58,42 @@ public class ChatClient extends Thread {
         ByteBuffer readBuffer = ByteBuffer.allocate(1024);
         // ByteBuffer writeBuffer = ByteBuffer.wrap("Hey Dude!".getBytes());
                
-        ChatMessage chatMsgSent = new ChatMessage(0, 1, "Msg from player");
-        ByteBuffer writeBuffer = ByteBuffer.wrap(SerializationUtils.serialize(chatMsgSent));
-        this.chatChannel.write(writeBuffer);
-        writeBuffer.clear();
-
-        readBuffer.clear();
-        this.chatChannel.read(readBuffer);
-        String recv = new String(readBuffer.array()).trim();
-        // debug
-        System.out.println("Received back from server: " + recv);
+        // readBuffer.clear();
+        // this.chatChannel.read(readBuffer);
+        // String recv = new String(readBuffer.array()).trim();
+        // // debug
+        // System.out.println("Received back from server: " + recv);
+        while (true) {
+            int readBytes = this.chatChannel.read(readBuffer);
+            if (readBytes == 0) {
+                continue;
+            }
+            while (readBytes > 0) {
+                readBuffer.flip();
+                while (readBuffer.hasRemaining()) {
+                    // System.out.print((char) readBuffer.get());
+                    readBuffer.get();
+                }                                                          
+                readBuffer.clear();
+                readBytes = this.chatChannel.read(readBuffer);
+            }
+            if (readBytes == -1) {
+                // key.cancel();
+                this.chatChannel.close();
+            }
+            ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
+            // String recv = new String(readBuffer.array()).trim();
+            // debug
+            System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
+            System.out.println("To: " + chatMsgRecv.getDestPlayerName());
+            System.out.println("Saying: " + chatMsgRecv.getMessage());
+        }
 
     }
 
-
     public static void main(String[] args) {
         // run the game
-        ChatClient chatClient = new ChatClient();
+        ChatClient chatClient = new ChatClient("Player");
         chatClient.run();
     }
 

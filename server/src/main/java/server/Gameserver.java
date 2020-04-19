@@ -44,8 +44,8 @@ public class Gameserver {
     // run gameworkers on existing games
     startGameWorkers();
     // create a thread for ChatServer
-    ChatServer charServer = new ChatServer();
-    charServer.start();
+    ChatServer chatServer = new ChatServer(this);
+    chatServer.start();
     // accept connection and assign to a ClientWorker
     while (true) {
       Socket newSocket;
@@ -423,6 +423,10 @@ public class Gameserver {
     gameList.remove(g);
     // delete from database
     HibernateUtil.deleteGame(g);
+  }
+
+  public int getActiveGidByName(String username) {
+    return this.userList.get(username).getActiveGid();
   }
 
   public static void main(String[] args) {

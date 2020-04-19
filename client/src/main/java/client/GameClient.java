@@ -48,8 +48,10 @@ public class GameClient {
         String host = config.readProperty("hostname"); 
         String chat_port = config.readProperty("chat_port");
         try {
-            this.chatSocket = new Socket(host, Integer.parseInt(chat_port)); 
+            Socket newChatSocket = new Socket(host, Integer.parseInt(chat_port));
+            this.chatSocket = newChatSocket; 
         } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("Cannot connect to chatServer at " + host + ": " + chat_port); 
         }
         // open outputstream

@@ -199,10 +199,8 @@ public class MainController {
     }
 
     // test method for chat
-    // TODO: method to get my own pid
-    public void sendChatMessage(int destPid, String str) {
-        int ownPid = this.getWorldMap().getPidByName(this.getPlayerName());
-        ChatMessage chatMsg = new ChatMessage(ownPid, destPid, str);
+    public void sendChatMessage(String from, String to, String str) {
+        ChatMessage chatMsg = new ChatMessage(from, to, str);
         this.sendToChatServer(chatMsg);
     }
 
