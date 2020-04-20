@@ -45,7 +45,7 @@ public class ChatBox implements PrintMessage{
     Button sendBtn = new Button("Send");
     sendBtn.setOnAction(e -> {
         mesgs.appendText("Me:"+inputF.getText()+"\n");
-        chatM.sendonemessage(new ChatMessage(0, 1,inputF.getText()));
+        chatM.sendonemessage(new ChatMessage("Long", "server",inputF.getText()));
         inputF.clear();
     });
     Text txt1 = new Text("To");
