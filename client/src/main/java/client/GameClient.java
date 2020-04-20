@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-
+import org.apache.commons.lang3.SerializationUtils;
 import shared.Action;
 import shared.ClientMessage;
 import shared.Config;
 import shared.ChatMessage;
+import java.nio.charset.StandardCharsets;
+import java.math.BigInteger;
 
 public class GameClient {
 
@@ -48,7 +50,10 @@ public class GameClient {
         String host = config.readProperty("hostname"); 
         String chat_port = config.readProperty("chat_port");
         try {
+            System.out.println("Enter connectToChatServer class");
             Socket newChatSocket = new Socket(host, Integer.parseInt(chat_port));
+            // System.exit(0);
+            // System.out.println("New socket created"); 
             this.chatSocket = newChatSocket; 
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,10 +109,24 @@ public class GameClient {
     *****/
     public void sendChatMsg(ChatMessage chatMsg) {
         try {
-            this.chatOutStream.writeObject(chatMsg); 
+            byte[] chatBytes = SerializationUtils.serialize(chatMsg);
+            // debug
+            String str = new String(chatBytes, StandardCharsets.UTF_8);
+            String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
+            System.out.println(newStr);
+            System.out.println(new String(chatBytes, StandardCharsets.UTF_8));
+            
+            
+
+
+            String sent = new String(chatBytes, StandardCharsets.UTF_8);
+            System.out.println("SENT: " + sent);
+            // this.chatOutStream.writeObject(chatMsg);
+            this.chatOutStream.write(chatBytes);
+            this.chatOutStream.flush();
         } catch (IOException e) {
             closeSocket();
-            System.exit(0); // exit program if server's down }
+            System.exit(0); // exit program if server's down 
         }
     }
     /***

@@ -9,6 +9,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.channels.Selector;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.Iterator;
 import java.lang.String;
@@ -16,6 +17,7 @@ import java.lang.Integer;
 import java.util.HashMap; 
 import java.util.Map;
 import java.net.Socket;
+import java.math.BigInteger;
 import shared.*;
 
 /****
@@ -42,9 +44,11 @@ public class ChatServer extends Thread {
             this.process();
 
         } catch (IOException e) {    
-            e.printStackTrace();  
-
-        } finally {
+            e.printStackTrace();
+        } catch (InterruptedException e) {    
+            e.printStackTrace();
+        } 
+        finally {
             try {
                 if (this.selector != null) {
                     this.selector.close();
@@ -58,7 +62,7 @@ public class ChatServer extends Thread {
         }
     }
 
-    public void init() throws IOException {  
+    public void init() throws IOException, InterruptedException {  
 
         this.ssc = ServerSocketChannel.open(); // open channel
         Config config = new Config("config.properties");
@@ -70,13 +74,13 @@ public class ChatServer extends Thread {
         this.ssc.register(selector, SelectionKey.OP_ACCEPT); // register channel with the selector
     }
 
-    public void process() throws IOException {   
+    public void process() throws IOException, InterruptedException {   
 
         while (true) {           
-            int nRead = this.selector.selectNow();
-            if (nRead == 0) {
-                continue;
-            }       
+            int nRead = this.selector.select();
+            // if (nRead == 0) {
+            //     continue;
+            // }       
             Set<SelectionKey> selectedKeys = this.selector.selectedKeys();
             Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
@@ -88,10 +92,15 @@ public class ChatServer extends Thread {
                         SocketChannel clientChannel = this.ssc.accept();
                         clientChannel.configureBlocking(false);
                         clientChannel.register(selector, SelectionKey.OP_READ);
+                        sleep(100);
+                        ByteBuffer readBuffer = ByteBuffer.allocate(256);
+                        int readBytes = clientChannel.read(readBuffer);
+                        readBuffer.clear();
                         //debug
                         System.out.println("Accepted a connection!");
     
                     } else if (key.isReadable()) {
+                        System.out.println("Enter readable if clause");
                         SocketChannel clientChannel = (SocketChannel)key.channel();
                         ByteBuffer readBuffer = ByteBuffer.allocate(1024);
                         int readBytes = clientChannel.read(readBuffer);
@@ -109,8 +118,17 @@ public class ChatServer extends Thread {
                             // key.cancel();
                             clientChannel.close();
                         }
-                        ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
+                        // debug
+                        String str = new String(readBuffer.array(), StandardCharsets.UTF_8);
+                        String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
+                        System.out.println(newStr);
+                        System.out.println(new String(readBuffer.array(), StandardCharsets.UTF_8));
+
+
                         // String recv = new String(readBuffer.array()).trim();
+                        // String recv = new String(readBuffer.array(), StandardCharsets.UTF_8).trim();
+                        // System.out.println("RECEIVED: " + recv);
+                        ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
                         // debug
                         System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
                         System.out.println("To: " + chatMsgRecv.getDestPlayerName());
@@ -141,7 +159,7 @@ public class ChatServer extends Thread {
         // System.out.println("Confirm message sent");
 
         String destPlayerName = chatMsgRecv.getDestPlayerName();
-        if (destPlayerName == null) { // init message from players
+        if (destPlayerName.isEmpty()) { // init message from players
             this.socketMap.put(chatMsgRecv.getSrcPlayerName(), clientChannel);
             // send confirm msg back
             sendConfirmMsg(clientChannel, chatMsgRecv.getSrcPlayerName());

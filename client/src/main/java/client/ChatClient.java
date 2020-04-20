@@ -19,10 +19,12 @@ public class ChatClient extends Thread {
 
     SocketChannel chatChannel = null;
     String clientName;
+    // InetSocketAddress socket;
 
     // constructor
     public ChatClient(String username) {
         this.clientName = username;
+        // this.socket = socket;
     }
  
     @Override
@@ -46,6 +48,7 @@ public class ChatClient extends Thread {
 
     public void init() throws IOException {      
         this.chatChannel = SocketChannel.open();
+        // this.chatChannel.bind(this.socket);
         // this.chatChannel.configureBlocking(false);
         Config config = new Config("config.properties"); 
         String host = config.readProperty("hostname"); 
@@ -81,6 +84,7 @@ public class ChatClient extends Thread {
                 // key.cancel();
                 this.chatChannel.close();
             }
+
             ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
             // String recv = new String(readBuffer.array()).trim();
             // debug
