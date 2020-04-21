@@ -81,6 +81,7 @@ public class GameClient {
         try {
             this.chatChannel = SocketChannel.open();
             this.chatChannel.connect(new InetSocketAddress(host, Integer.parseInt(chat_port)));
+            chatChannel.configureBlocking(false);
             // debug
             System.out.println("Address: " + this.chatChannel.socket().getLocalAddress());
             System.out.println("Port num: " + this.chatChannel.socket().getLocalPort());

@@ -117,7 +117,7 @@ public class InitController extends SceneController {
         switchoutbtn.setPadding(new Insets(5, 5, 5, 5));
         switchoutbtn.setOnAction(e -> {            
             this.mc.switchoutMsg(); // send switchout message to server
-            // this.mc.endChatClient();
+            this.mc.endChatClient();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
             this.mc.showRoomScene(room_msg);
             

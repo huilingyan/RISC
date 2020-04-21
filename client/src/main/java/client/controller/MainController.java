@@ -231,9 +231,11 @@ public class MainController {
 
     public void endChatClient() {
         // try {
-            this.getChatClient().interrupt(); // kill the chatclient thread
+            System.out.println("Try to kill chatclient");
+            this.getChatClient().exit();
+            // this.getChatClient().interrupt(); // kill the chatclient thread
             // debug
-            System.out.println("ChatClient thread killed");
+            // System.out.println("ChatClient thread killed");
 
         // } catch (ClosedByInterruptException e) {
             // this.getChatChannel().close();

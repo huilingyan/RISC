@@ -10,6 +10,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Iterator;
 import java.lang.String;
 import java.math.BigInteger;
@@ -21,29 +22,41 @@ public class ChatClient extends Thread {
 
     SocketChannel chatChannel = null;
     String clientName;
+    // boolean exit = false;
+    private final AtomicBoolean exit = new AtomicBoolean(false);
 
     // constructor
     public ChatClient(String username, SocketChannel chatChannel) {
         this.clientName = username;
         this.chatChannel = chatChannel;
     }
+
+    public void exit(){
+        exit.set(true);
+        System.out.println("set exit to true in chatclient");
+    }
+
+    // public boolean getExit(){
+    //     return exit;
+    // }
  
     @Override
     public void run() {
         try {
             this.init();
             this.process();
+            System.out.println("chatclient exits");
 
         } catch (IOException e) {    
             e.printStackTrace();       
         } finally {
-            try {
-                if (this.chatChannel != null) {
-                    this.chatChannel.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // try {
+            //     if (this.chatChannel != null) {
+            //         this.chatChannel.close();
+            //     }
+            // } catch (IOException e) {
+            //     e.printStackTrace();
+            // }
         } 
     }
 
@@ -65,7 +78,7 @@ public class ChatClient extends Thread {
         // ChatMessage msg = new ChatMessage("user1", "user2", "test message");
         
         // ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
-        ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+        // ByteBuffer readBuffer = ByteBuffer.allocate(1024);
         // byte[] chatBytes = SerializationUtils.serialize(msg);
         // String str = new String(chatBytes, StandardCharsets.UTF_8);
         // System.out.println(str);
@@ -87,8 +100,10 @@ public class ChatClient extends Thread {
         // String recv = new String(readBuffer.array()).trim();
         // // debug
         // System.out.println("Received back from server: " + recv);
-        while (true) {
+        while (!exit.get()) {
+            ByteBuffer readBuffer = ByteBuffer.allocate(1024);
             int readBytes = this.chatChannel.read(readBuffer);
+            // System.out.println(readBytes);
             if (readBytes == 0) {
                 continue;
             }
@@ -113,7 +128,7 @@ public class ChatClient extends Thread {
                 this.chatChannel.close();
                 System.out.println("close channel");
             }
-            System.out.println(readBuffer.array().length);
+            // System.out.println(readBuffer.array().length);
             ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
             readBuffer.clear();
             // String recv = new String(readBuffer.array()).trim();

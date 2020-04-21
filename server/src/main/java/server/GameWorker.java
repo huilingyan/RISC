@@ -75,7 +75,7 @@ public class GameWorker extends Thread {
     }
 
     private void notifyClientWorkers() {
-        System.out.println("Game worker notifies all client workers");
+        // System.out.println("Game worker notifies all client workers");
         game.notifyAll(); // notify clientworkers
     }
 
@@ -121,7 +121,7 @@ public class GameWorker extends Thread {
 
     private void updateOneTurn() {
         // debug
-        System.out.println("All players finished one turn in game " + game.getGid());
+        // System.out.println("All players finished one turn in game " + game.getGid());
         // validate actions
         Map gameMap = game.getMap();
         Action ac = validateAllGameOperations(game.getTempActionList(), gameMap);
@@ -135,7 +135,7 @@ public class GameWorker extends Thread {
             game.setStage(GameMessage.GAME_OVER);
         } else if (boss.noActivePlayer(game)) {
             // if no active player, do nothing
-            System.out.println("No active player in game " + game.getGid());
+            // System.out.println("No active player in game " + game.getGid());
         } else {
             newMap.updateUnitandResource();
         }

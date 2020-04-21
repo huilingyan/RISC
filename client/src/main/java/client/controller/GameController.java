@@ -112,7 +112,7 @@ public class GameController extends SceneController {
         switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #ff7575;");
         switchoutbtn.setOnAction(e -> {
             this.mc.switchoutMsg(); // send switchout message to server
-            // this.mc.endChatClient();
+            this.mc.endChatClient();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();           
             this.mc.showRoomScene(room_msg);            
         });
