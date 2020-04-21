@@ -66,7 +66,7 @@ public class LoginController extends SceneController {
                 System.out.println("Login result: " + room_msg.isValid());
                 if (room_msg.isValid()) {
                     // send init message to chatserver
-                    this.mc.sendChatMessage("user1", "user2", "test message");
+                    this.mc.sendChatMessage(userinput.getText(), "", "Init msg from " + userinput.getText());
                     this.mc.showRoomScene(room_msg);
                 } else {
                     ErrorAlerts.invalidLogin(); // pop up alert box

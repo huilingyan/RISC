@@ -8,9 +8,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import java.util.Optional;
 import shared.GameMessage;
-// import shared.Action;
+import java.nio.channels.SocketChannel;
+import java.nio.channels.ClosedByInterruptException;
 
 import client.GameClient;
+import client.ChatClient;
 import client.Model;
 
 public class MainController {
@@ -56,12 +58,24 @@ public class MainController {
         return this.gamemodel.worldmap;
     }
 
+    public ChatClient getChatClient() {
+        return this.gamemodel.chatClient;
+    }
+
+    public SocketChannel getChatChannel() {
+        return this.gamemodel.gclient.getChatChannel();
+    }
+
     public void setStage(Stage stage) {
         this.window = stage;
     }
 
     public void setPlayerName(String pname) {
         this.gamemodel.player_name = pname;
+    }
+
+    public void setChatClient(String playerName, SocketChannel chatChannel) {
+        this.gamemodel.chatClient = new ChatClient(playerName, chatChannel);
     }
 
     public void setWorldMap(Map m) {
@@ -207,5 +221,24 @@ public class MainController {
         ChatMessage chatMsg = new ChatMessage(from, to, str);
         this.sendToChatServer(chatMsg);
     }
+
+    public void startChatClient(String playerName, SocketChannel chatChannel) {
+        this.setChatClient(playerName, chatChannel);
+        this.getChatClient().start();
+        // debug
+        System.out.println("Started a chatClient thread");
+    }
+
+    public void endChatClient() {
+        // try {
+            this.getChatClient().interrupt(); // kill the chatclient thread
+            // debug
+            System.out.println("ChatClient thread killed");
+
+        // } catch (ClosedByInterruptException e) {
+            // this.getChatChannel().close();
+        // }        
+    }
+
 
 }

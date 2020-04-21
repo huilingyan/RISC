@@ -56,18 +56,18 @@ public class InitOpPaneController implements PaneController {
         proceedBtn.setOnAction(e -> {
             int n = (int) NofArmySlider.getValue();
             // debug
-            System.out.println("soldiers to deploy: " + n);
+            // System.out.println("soldiers to deploy: " + n);
             Army army = new Army(n);
             // validate operation
             InitOperation iop = new InitOperation(terrName, army);
             // debug
-            System.out.println("Current soldier number: " + this.ic.getnofSoldiers());
+            // System.out.println("Current soldier number: " + this.ic.getnofSoldiers());
             int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, Map.INIT_UNIT);
             // int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, this.ic.getnofSoldiers());
             if (errorcode == OperationValidator.VALID) {
                 this.ic.subSoldiers(n);
                 // debug
-                System.out.println("Now have soldiers: " + this.ic.getnofSoldiers());
+                // System.out.println("Now have soldiers: " + this.ic.getnofSoldiers());
                 this.ic.showInfoPane();
             }
             else {

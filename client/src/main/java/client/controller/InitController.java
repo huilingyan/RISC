@@ -117,6 +117,7 @@ public class InitController extends SceneController {
         switchoutbtn.setPadding(new Insets(5, 5, 5, 5));
         switchoutbtn.setOnAction(e -> {            
             this.mc.switchoutMsg(); // send switchout message to server
+            // this.mc.endChatClient();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
             this.mc.showRoomScene(room_msg);
             
@@ -137,6 +138,8 @@ public class InitController extends SceneController {
             // TODO: hard code dest for test; change back later
             // TODO: put this in setOnAction of chat button
             this.mc.sendChatMessage(player_name, "zxc", "Hello from player " + player_name);
+            // debug
+            System.out.println("chat msg sent from initcontroller");
             this.mc.showGameScene(room_num, pid);
             
         });
@@ -154,13 +157,13 @@ public class InitController extends SceneController {
     }
 
     private Group generateMap() {
-        // debug
-        for (Territory t : this.worldmap.getTerritories()) {
-            System.out.println("Territory id: " + t.getTid());
-            System.out.println("Territory name: " + t.getName());
-            System.out.println("Belongs to: " + t.getOwnership());
-        }
-        System.out.println("");
+        // // debug
+        // for (Territory t : this.worldmap.getTerritories()) {
+        //     System.out.println("Territory id: " + t.getTid());
+        //     System.out.println("Territory name: " + t.getName());
+        //     System.out.println("Belongs to: " + t.getOwnership());
+        // }
+        // System.out.println("");
 
         Group buttongroup = new Group();
         int init_x = 50;

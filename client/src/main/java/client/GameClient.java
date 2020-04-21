@@ -81,6 +81,10 @@ public class GameClient {
         try {
             this.chatChannel = SocketChannel.open();
             this.chatChannel.connect(new InetSocketAddress(host, Integer.parseInt(chat_port)));
+            // debug
+            System.out.println("Address: " + this.chatChannel.socket().getLocalAddress());
+            System.out.println("Port num: " + this.chatChannel.socket().getLocalPort());
+
         } catch (IOException e) {
             System.out.println("IOException when connects to chat server");
             e.printStackTrace();
@@ -146,6 +150,7 @@ public class GameClient {
         ByteBuffer writeBuffer = ByteBuffer.wrap(chatBytes);
         try {
             this.chatChannel.write(writeBuffer);
+            System.out.println("Send chat message to chatServer!");
         } catch (IOException e) {
             System.out.println("IOException when send message to chat server");
             e.printStackTrace();
@@ -224,6 +229,10 @@ public class GameClient {
             e.printStackTrace();
             System.out.println("Failed to close");
         }
+    }
+
+    public SocketChannel getChatChannel() {
+        return this.chatChannel;
     }
 
 }

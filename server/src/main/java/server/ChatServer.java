@@ -45,19 +45,10 @@ public class ChatServer extends Thread {
             this.init();
             this.process();
 
-<<<<<<< HEAD
-        } catch (IOException e) {    
-            e.printStackTrace();
-        } catch (InterruptedException e) {    
-            e.printStackTrace();
-        } 
-        finally {
-=======
         } catch (IOException e) {
             e.printStackTrace();
 
         } finally {
->>>>>>> d41fb28d89b0b97984349a5bd48b1fa9782e23d3
             try {
                 if (this.selector != null) {
                     this.selector.close();
@@ -71,11 +62,7 @@ public class ChatServer extends Thread {
         }
     }
 
-<<<<<<< HEAD
-    public void init() throws IOException, InterruptedException {  
-=======
     public void init() throws IOException {
->>>>>>> d41fb28d89b0b97984349a5bd48b1fa9782e23d3
 
         this.ssc = ServerSocketChannel.open(); // open channel
         Config config = new Config("config.properties");
@@ -140,14 +127,14 @@ public class ChatServer extends Thread {
                         // String recv = new String(readBuffer.array()).trim();
                         // String recv = new String(readBuffer.array(), StandardCharsets.UTF_8).trim();
                         // System.out.println("RECEIVED: " + recv);
-                        ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
+                        // ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
                         // debug
                         System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
                         System.out.println("To: " + chatMsgRecv.getDestPlayerName());
                         System.out.println("Saying: " + chatMsgRecv.getMessage());
                         // System.out.println("Server received: " + recv);
                         HandleChatMsg(clientChannel, chatMsgRecv);
-                        key.cancel();
+                        // key.cancel();
 
                     } else {
                         System.out.println("Wrong type of channel!"); // if received connectable channel
@@ -174,6 +161,8 @@ public class ChatServer extends Thread {
         String destPlayerName = chatMsgRecv.getDestPlayerName();
         if (destPlayerName.isEmpty()) { // init message from players
             this.socketMap.put(chatMsgRecv.getSrcPlayerName(), clientChannel);
+            // debug
+            System.out.println("Put the socket of " + chatMsgRecv.getSrcPlayerName() + " into map!");
             // send confirm msg back
             sendConfirmMsg(clientChannel, chatMsgRecv.getSrcPlayerName());
 

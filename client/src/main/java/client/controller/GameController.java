@@ -112,6 +112,7 @@ public class GameController extends SceneController {
         switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #ff7575;");
         switchoutbtn.setOnAction(e -> {
             this.mc.switchoutMsg(); // send switchout message to server
+            // this.mc.endChatClient();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();           
             this.mc.showRoomScene(room_msg);            
         });
@@ -178,12 +179,12 @@ public class GameController extends SceneController {
         for (int i = 0; i < Territory.MAP_SIZE; i++) {
             String t_name = this.worldmap.getTerritoryNameByTid(i);
             if (t_name != null) {
-                // debug
-                System.out.println(" tid: " + i + " name: " + t_name);
+                // // debug
+                // System.out.println(" tid: " + i + " name: " + t_name);
                 Button button = new Button(t_name);
                 // get the button colour according to player
                 int pid = this.worldmap.getTerritoryByName(t_name).getOwnership();
-                System.out.println("pid: " + pid);
+                // System.out.println("pid: " + pid);
                 String color = this.worldmap.getPlayerStatByPid(pid).getColor();
 
                 button.setPrefWidth(100);

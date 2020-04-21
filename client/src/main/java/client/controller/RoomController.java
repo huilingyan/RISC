@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import java.nio.channels.SocketChannel;
 
 import shared.*;
 
@@ -116,13 +117,13 @@ public class RoomController extends SceneController {
                         this.mc.setWorldMap(servermsg.getMap());  // set map
                         int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
                         int gid = servermsg.getGameID();
+                        // create chatclient thread
+                        SocketChannel chatChannel = this.mc.getChatChannel();
+                        this.mc.startChatClient(playername, chatChannel);
                         // debug stage number
                         int stage = servermsg.getStage();
                         if (stage == GameMessage.INITIALIZE_UNITS) {
                             this.mc.showInitScene(gid, pid);
-                            // // TODO: hard code dest for test; change back later
-                            // // TODO: put this in setOnAction of chat button
-                            // this.mc.sendChatMessage(playername, "zxc", "Hello from player " + playername);
                             ErrorAlerts.deployArmyPrompt();
                         } 
                         else if (stage == GameMessage.GAME_PLAY) {   
@@ -194,6 +195,9 @@ public class RoomController extends SceneController {
                         ErrorAlerts.WaitForJoin();
                         // ErrorAlerts.deployArmyPrompt();
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
+                        // create chatclient thread
+                        SocketChannel chatChannel = this.mc.getChatChannel();
+                        this.mc.startChatClient(playername, chatChannel);
                         // debug stage number
                         int stage = servermsg.getStage();
                         if (stage != GameMessage.INITIALIZE_UNITS) {
