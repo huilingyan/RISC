@@ -120,6 +120,7 @@ public class RoomController extends SceneController {
                         // create chatclient thread
                         SocketChannel chatChannel = this.mc.getChatChannel();
                         this.mc.startChatClient(playername, chatChannel);
+                        this.mc.showChatBox();
                         // debug stage number
                         int stage = servermsg.getStage();
                         if (stage == GameMessage.INITIALIZE_UNITS) {
@@ -198,6 +199,7 @@ public class RoomController extends SceneController {
                         // create chatclient thread
                         SocketChannel chatChannel = this.mc.getChatChannel();
                         this.mc.startChatClient(playername, chatChannel);
+                        this.mc.showChatBox();
                         // debug stage number
                         int stage = servermsg.getStage();
                         if (stage != GameMessage.INITIALIZE_UNITS) {

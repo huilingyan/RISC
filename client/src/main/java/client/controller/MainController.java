@@ -25,6 +25,7 @@ public class MainController {
     private RoomController roomController;
     private InitController initController;
     private GameController gameController;
+    private ChatController chatController;
     // model instances
     Model gamemodel = new Model();
 
@@ -89,6 +90,16 @@ public class MainController {
         this.roomController.setMainController(this);
         this.roomController.setRoomMessage(rmsg);
         updateCurrScene(this.roomController);
+    }
+
+    public void showChatBox() {
+        this.chatController = new ChatController(this.getChatClient());
+        this.chatController.setMainController(this);
+        this.chatController.displayChatBox();
+    }
+
+    public void closeChatWindow() {
+        this.chatController.closeChatBox();
     }
 
     public void showInitScene(int room_num, int pid) {

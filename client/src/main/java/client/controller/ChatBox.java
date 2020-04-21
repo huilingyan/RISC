@@ -63,8 +63,8 @@ public class ChatBox implements PrintMessage{
     window.show();
   }
 
-@Override
-public void printMsg(ChatMessage cm) {
-  mesgs.appendText("Server:"+cm.getMessage()+"\n");	
-}
+  @Override
+  public void printMsg(ChatMessage cm) {
+    mesgs.appendText("Server:"+cm.getMessage()+"\n");	
+  }
 }
