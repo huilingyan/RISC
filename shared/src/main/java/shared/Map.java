@@ -12,11 +12,6 @@ import java.util.Arrays;
  */
 public class Map implements Serializable {
 
-    /**
-   * TODO: UID
-   */
-    private static final long serialVersionUID = -346790680799127139L;
-
     private ArrayList<Territory> territories;
     private ArrayList<PlayerStat> playerStats;
 

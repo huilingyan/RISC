@@ -13,12 +13,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.Iterator;
 import java.lang.String;
+import java.math.BigInteger;
 import java.lang.Integer;
-import java.util.HashMap; 
+import java.util.HashMap;
 import java.util.Map;
 import java.net.Socket;
 import java.math.BigInteger;
 import shared.*;
+import java.nio.charset.StandardCharsets;
 
 /****
  * A class that implements the chat between players(server side)
@@ -30,25 +32,32 @@ public class ChatServer extends Thread {
     private ServerSocketChannel ssc = null;
     private Selector selector = null;
     private Gameserver boss;
-    private HashMap<String, SocketChannel> socketMap = new HashMap<> ();
+    private HashMap<String, SocketChannel> socketMap = new HashMap<>();
 
     // constructor
     public ChatServer(Gameserver gServer) {
         this.boss = gServer;
     }
- 
+
     @Override
     public void run() {
         try {
             this.init();
             this.process();
 
+<<<<<<< HEAD
         } catch (IOException e) {    
             e.printStackTrace();
         } catch (InterruptedException e) {    
             e.printStackTrace();
         } 
         finally {
+=======
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        } finally {
+>>>>>>> d41fb28d89b0b97984349a5bd48b1fa9782e23d3
             try {
                 if (this.selector != null) {
                     this.selector.close();
@@ -62,7 +71,11 @@ public class ChatServer extends Thread {
         }
     }
 
+<<<<<<< HEAD
     public void init() throws IOException, InterruptedException {  
+=======
+    public void init() throws IOException {
+>>>>>>> d41fb28d89b0b97984349a5bd48b1fa9782e23d3
 
         this.ssc = ServerSocketChannel.open(); // open channel
         Config config = new Config("config.properties");
@@ -74,13 +87,15 @@ public class ChatServer extends Thread {
         this.ssc.register(selector, SelectionKey.OP_ACCEPT); // register channel with the selector
     }
 
-    public void process() throws IOException, InterruptedException {   
+    public void process() throws IOException {
 
-        while (true) {           
-            int nRead = this.selector.select();
-            // if (nRead == 0) {
-            //     continue;
-            // }       
+        while (true) {
+            // debug
+            // System.out.println("Start a loop");
+            int nRead = this.selector.selectNow();
+            if (nRead == 0) {
+                continue;
+            }
             Set<SelectionKey> selectedKeys = this.selector.selectedKeys();
             Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
@@ -92,39 +107,36 @@ public class ChatServer extends Thread {
                         SocketChannel clientChannel = this.ssc.accept();
                         clientChannel.configureBlocking(false);
                         clientChannel.register(selector, SelectionKey.OP_READ);
-                        sleep(100);
-                        ByteBuffer readBuffer = ByteBuffer.allocate(256);
-                        int readBytes = clientChannel.read(readBuffer);
-                        readBuffer.clear();
-                        //debug
+                        // debug
                         System.out.println("Accepted a connection!");
-    
+
                     } else if (key.isReadable()) {
-                        System.out.println("Enter readable if clause");
-                        SocketChannel clientChannel = (SocketChannel)key.channel();
+                        SocketChannel clientChannel = (SocketChannel) key.channel();
                         ByteBuffer readBuffer = ByteBuffer.allocate(1024);
                         int readBytes = clientChannel.read(readBuffer);
-                        
-                        while (readBytes > 0) {
-                            readBuffer.flip();
-                            while (readBuffer.hasRemaining()) {
-                                // System.out.print((char) readBuffer.get());
-                                readBuffer.get();
-                            }                                                          
-                            readBuffer.clear();
-                            readBytes = clientChannel.read(readBuffer);
-                        }
+
+                        // while (readBytes > 0) {
+                        //     readBuffer.flip();
+                        //     while (readBuffer.hasRemaining()) {
+                        //         // System.out.print((char) readBuffer.get());
+                        //         readBuffer.get();
+                        //     }
+                        //     readBuffer.clear();
+                        //     readBytes = clientChannel.read(readBuffer);
+                        // }
                         if (readBytes == -1) {
                             // key.cancel();
                             clientChannel.close();
                         }
                         // debug
-                        String str = new String(readBuffer.array(), StandardCharsets.UTF_8);
-                        String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
-                        System.out.println(newStr);
-                        System.out.println(new String(readBuffer.array(), StandardCharsets.UTF_8));
-
-
+                        // String str = new String(readBuffer.array(), StandardCharsets.UTF_8);
+                        // System.out.println(new String(chatBytes, StandardCharsets.UTF_8));
+                        // String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
+                        // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
+                        // System.out.println(newStr);
+                        // System.out.println(new String(readBuffer.array(), StandardCharsets.UTF_8));
+                        ChatMessage chatMsgRecv = (ChatMessage) SerializationUtils.deserialize(readBuffer.array());
+                        readBuffer.clear();
                         // String recv = new String(readBuffer.array()).trim();
                         // String recv = new String(readBuffer.array(), StandardCharsets.UTF_8).trim();
                         // System.out.println("RECEIVED: " + recv);
@@ -136,13 +148,14 @@ public class ChatServer extends Thread {
                         // System.out.println("Server received: " + recv);
                         HandleChatMsg(clientChannel, chatMsgRecv);
                         key.cancel();
-    
-                    }
-                    else {
+
+                    } else {
                         System.out.println("Wrong type of channel!"); // if received connectable channel
                     }
-                }                
+                }
                 keyIterator.remove(); // remove from sets as long as no data to process
+                // debug
+
             }
         }
     }
@@ -152,9 +165,9 @@ public class ChatServer extends Thread {
      */
     private void HandleChatMsg(SocketChannel clientChannel, ChatMessage chatMsgRecv) throws IOException {
         // String msgString = "user message stored";
-        // byte [] msg = msgString.getBytes();  
-        // ByteBuffer writebuffer = ByteBuffer.wrap(msg);  
-        // clientChannel.write(writebuffer); 
+        // byte [] msg = msgString.getBytes();
+        // ByteBuffer writebuffer = ByteBuffer.wrap(msg);
+        // clientChannel.write(writebuffer);
         // //debug
         // System.out.println("Confirm message sent");
 
@@ -163,21 +176,18 @@ public class ChatServer extends Thread {
             this.socketMap.put(chatMsgRecv.getSrcPlayerName(), clientChannel);
             // send confirm msg back
             sendConfirmMsg(clientChannel, chatMsgRecv.getSrcPlayerName());
-            
-        }
-        else { // process normal chat msg from players
+
+        } else { // process normal chat msg from players
             SocketChannel playerToSend = findChannelByPlayername(destPlayerName);
             if (playerToSend == null) { // if no such player
                 noSuchPlayer(clientChannel, chatMsgRecv.getSrcPlayerName());
 
-            }
-            else {
+            } else {
                 if (isActiveGame(chatMsgRecv)) { // if dest player is in the same game
                     ByteBuffer writeBuffer = ByteBuffer.wrap(SerializationUtils.serialize(chatMsgRecv));
                     playerToSend.write(writeBuffer);
                     writeBuffer.clear();
-                }
-                else { // if dest player is currently out of the game
+                } else { // if dest player is currently out of the game
                     inactiveGame(clientChannel, chatMsgRecv.getSrcPlayerName());
                 }
             }
@@ -204,37 +214,41 @@ public class ChatServer extends Thread {
     }
 
     /*
-      Confirm msg sent back to src player
-    */
+     * Confirm msg sent back to src player
+     */
     private void sendConfirmMsg(SocketChannel clientChannel, String srcPlayerName) throws IOException {
         ChatMessage confirmMsg = new ChatMessage("ChatServer", srcPlayerName, "User message received");
         ByteBuffer writeBuffer = ByteBuffer.wrap(SerializationUtils.serialize(confirmMsg));
-        clientChannel.write(writeBuffer);
-        writeBuffer.clear();        
-    }
-    /*
-      Error msg sent back to src player that the dest player does not exist
-    */
-    private void noSuchPlayer(SocketChannel clientChannel, String srcPlayerName) throws IOException {
-        ChatMessage noSuchPlayerMsg = new ChatMessage("ChatServer", srcPlayerName, "No such player exists!");
-        ByteBuffer writeBuffer = ByteBuffer.wrap(SerializationUtils.serialize(noSuchPlayerMsg));
         clientChannel.write(writeBuffer);
         writeBuffer.clear();
     }
 
     /*
-      Warning msg sent back to src player that the dest player is offline
-    */
+     * Error msg sent back to src player that the dest player does not exist
+     */
+    private void noSuchPlayer(SocketChannel clientChannel, String srcPlayerName) throws IOException {
+        ChatMessage noSuchPlayerMsg = new ChatMessage("ChatServer", srcPlayerName, "No such player exists!");
+        ByteBuffer writeBuffer = ByteBuffer.wrap(SerializationUtils.serialize(noSuchPlayerMsg));
+        clientChannel.write(writeBuffer);
+        // // debug
+        // System.out.println("Sent no such player message to client " + srcPlayerName);
+        writeBuffer.clear();
+    }
+
+    /*
+     * Warning msg sent back to src player that the dest player is offline
+     */
     private void inactiveGame(SocketChannel clientChannel, String srcPlayerName) throws IOException {
-        ChatMessage outOfGameMsg = new ChatMessage("ChatServer", srcPlayerName, "The player you're looking for is currently offline");
+        ChatMessage outOfGameMsg = new ChatMessage("ChatServer", srcPlayerName,
+                "The player you're looking for is currently offline");
         ByteBuffer writeBuffer = ByteBuffer.wrap(SerializationUtils.serialize(outOfGameMsg));
         clientChannel.write(writeBuffer);
         writeBuffer.clear();
     }
 
     // public static void main(String[] args) {
-    //     // run the game
-    //     ChatServer charServer = new ChatServer();
-    //     charServer.run();
-    //   }
+    // // run the game
+    // ChatServer charServer = new ChatServer();
+    // charServer.run();
+    // }
 }

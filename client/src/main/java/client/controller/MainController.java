@@ -32,7 +32,11 @@ public class MainController {
 
     public void initializeSocketConnection() {
         this.getGameClient().connectToServer();
+        // debug
+        // System.out.println("connected to gameserver");
         this.getGameClient().connectToChatServer();
+        // System.out.println("connected to chatserver");
+
         this.getGameClient().setUpInputStream();
     }
 

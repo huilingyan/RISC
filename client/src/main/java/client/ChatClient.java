@@ -12,6 +12,8 @@ import java.nio.channels.SelectionKey;
 import java.util.Set;
 import java.util.Iterator;
 import java.lang.String;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 
 import shared.*;
 
@@ -57,8 +59,25 @@ public class ChatClient extends Thread {
     }
 
     public void process() throws IOException {
+        // debug: send chatmessage
+        ChatMessage msg = new ChatMessage("user1", "user2", "test message");
+        
         // ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
         ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+        byte[] chatBytes = SerializationUtils.serialize(msg);
+        String str = new String(chatBytes, StandardCharsets.UTF_8);
+        System.out.println(str);
+        String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
+        // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
+        System.out.println(newStr);
+        ByteBuffer writeBuffer = ByteBuffer.wrap(chatBytes);
+        this.chatChannel.write(writeBuffer);
+        str = new String(chatBytes, StandardCharsets.UTF_8);
+        // System.out.println(new String(chatBytes, StandardCharsets.UTF_8));
+        newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
+        // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
+        System.out.println(newStr);
+        writeBuffer.clear();
         // ByteBuffer writeBuffer = ByteBuffer.wrap("Hey Dude!".getBytes());
                
         // readBuffer.clear();
@@ -71,21 +90,30 @@ public class ChatClient extends Thread {
             if (readBytes == 0) {
                 continue;
             }
-            while (readBytes > 0) {
-                readBuffer.flip();
-                while (readBuffer.hasRemaining()) {
-                    // System.out.print((char) readBuffer.get());
-                    readBuffer.get();
-                }                                                          
-                readBuffer.clear();
-                readBytes = this.chatChannel.read(readBuffer);
-            }
+            
+            // while (readBytes > 0) {
+            //     // debug
+            //     System.out.println("received message, length " + readBytes);
+            //     readBuffer.flip();
+            //     while (readBuffer.hasRemaining()) {
+            //         // System.out.print((char) readBuffer.get());
+            //         System.out.println("has remaining");
+            //         readBuffer.get();
+            //     }
+            //     System.out.println("out of has remaining loop");                                                          
+            //     readBuffer.clear();
+            //     System.out.println("clear read buffer");
+            //     readBytes = this.chatChannel.read(readBuffer);
+            //     System.out.println(readBytes);
+            // }
             if (readBytes == -1) {
                 // key.cancel();
                 this.chatChannel.close();
+                System.out.println("close channel");
             }
-
+            System.out.println(readBuffer.array().length);
             ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
+            readBuffer.clear();
             // String recv = new String(readBuffer.array()).trim();
             // debug
             System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
