@@ -1,5 +1,6 @@
 package server;
 
+import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -100,16 +101,23 @@ public class ChatServer extends Thread {
                     } else if (key.isReadable()) {
                         SocketChannel clientChannel = (SocketChannel) key.channel();
                         ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-                        int readBytes = clientChannel.read(readBuffer);
+                        int readBytes = 0;
+                        try {
+                            readBytes = clientChannel.read(readBuffer);
+                        } catch (IOException e) {
+                            System.out.println("connection reset by client");
+                            key.cancel();
+                            continue;
+                        }
 
                         // while (readBytes > 0) {
-                        //     readBuffer.flip();
-                        //     while (readBuffer.hasRemaining()) {
-                        //         // System.out.print((char) readBuffer.get());
-                        //         readBuffer.get();
-                        //     }
-                        //     readBuffer.clear();
-                        //     readBytes = clientChannel.read(readBuffer);
+                        // readBuffer.flip();
+                        // while (readBuffer.hasRemaining()) {
+                        // // System.out.print((char) readBuffer.get());
+                        // readBuffer.get();
+                        // }
+                        // readBuffer.clear();
+                        // readBytes = clientChannel.read(readBuffer);
                         // }
                         if (readBytes == -1) {
                             // key.cancel();
@@ -118,23 +126,47 @@ public class ChatServer extends Thread {
                         // debug
                         // String str = new String(readBuffer.array(), StandardCharsets.UTF_8);
                         // System.out.println(new String(chatBytes, StandardCharsets.UTF_8));
-                        // String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
+                        // String newStr = String.format("%040x", new BigInteger(1,
+                        // str.getBytes(StandardCharsets.UTF_8)));
                         // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
                         // System.out.println(newStr);
                         // System.out.println(new String(readBuffer.array(), StandardCharsets.UTF_8));
-                        ChatMessage chatMsgRecv = (ChatMessage) SerializationUtils.deserialize(readBuffer.array());
-                        readBuffer.clear();
-                        // String recv = new String(readBuffer.array()).trim();
-                        // String recv = new String(readBuffer.array(), StandardCharsets.UTF_8).trim();
-                        // System.out.println("RECEIVED: " + recv);
-                        // ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
-                        // debug
-                        System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
-                        System.out.println("To: " + chatMsgRecv.getDestPlayerName());
-                        System.out.println("Saying: " + chatMsgRecv.getMessage());
-                        // System.out.println("Server received: " + recv);
-                        HandleChatMsg(clientChannel, chatMsgRecv);
-                        // key.cancel();
+                        try {
+                            ChatMessage chatMsgRecv = (ChatMessage) SerializationUtils.deserialize(readBuffer.array());
+                            readBuffer.clear();
+                            // String recv = new String(readBuffer.array()).trim();
+                            // String recv = new String(readBuffer.array(), StandardCharsets.UTF_8).trim();
+                            // System.out.println("RECEIVED: " + recv);
+                            // ChatMessage chatMsgRecv =
+                            // (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
+                            // debug
+                            System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
+                            System.out.println("To: " + chatMsgRecv.getDestPlayerName());
+                            System.out.println("Saying: " + chatMsgRecv.getMessage());
+                            // System.out.println("Server received: " + recv);
+                            HandleChatMsg(clientChannel, chatMsgRecv);
+                            // key.cancel();
+                        } catch (SerializationException e) {
+                            System.out.println("stream corrupted while deserialization chatmessage");
+                            key.cancel();
+                        }
+                        // ChatMessage chatMsgRecv = (ChatMessage)
+                        // SerializationUtils.deserialize(readBuffer.array());
+                        // readBuffer.clear();
+                        // // String recv = new String(readBuffer.array()).trim();
+                        // // String recv = new String(readBuffer.array(),
+                        // StandardCharsets.UTF_8).trim();
+                        // // System.out.println("RECEIVED: " + recv);
+                        // // ChatMessage chatMsgRecv =
+                        // (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
+                        // // debug
+                        // System.out.println("The chat message is from: " +
+                        // chatMsgRecv.getSrcPlayerName());
+                        // System.out.println("To: " + chatMsgRecv.getDestPlayerName());
+                        // System.out.println("Saying: " + chatMsgRecv.getMessage());
+                        // // System.out.println("Server received: " + recv);
+                        // HandleChatMsg(clientChannel, chatMsgRecv);
+                        // // key.cancel();
 
                     } else {
                         System.out.println("Wrong type of channel!"); // if received connectable channel
@@ -159,17 +191,22 @@ public class ChatServer extends Thread {
         // System.out.println("Confirm message sent");
 
         String destPlayerName = chatMsgRecv.getDestPlayerName();
+        String srcPlayerName = chatMsgRecv.getSrcPlayerName();
         if (destPlayerName.isEmpty()) { // init message from players
-            this.socketMap.put(chatMsgRecv.getSrcPlayerName(), clientChannel);
+            if (socketMap.containsKey(srcPlayerName)) {
+                // contains the player name in map, previously logged out
+                socketMap.remove(srcPlayerName);
+            }
+            this.socketMap.put(srcPlayerName, clientChannel);
             // debug
-            System.out.println("Put the socket of " + chatMsgRecv.getSrcPlayerName() + " into map!");
+            System.out.println("Put the socket of " + srcPlayerName + " into map!");
             // send confirm msg back
-            sendConfirmMsg(clientChannel, chatMsgRecv.getSrcPlayerName());
+            sendConfirmMsg(clientChannel, srcPlayerName);
 
         } else { // process normal chat msg from players
             SocketChannel playerToSend = findChannelByPlayername(destPlayerName);
             if (playerToSend == null) { // if no such player
-                noSuchPlayer(clientChannel, chatMsgRecv.getSrcPlayerName());
+                noSuchPlayer(clientChannel, srcPlayerName);
 
             } else {
                 if (isActiveGame(chatMsgRecv)) { // if dest player is in the same game
@@ -177,7 +214,7 @@ public class ChatServer extends Thread {
                     playerToSend.write(writeBuffer);
                     writeBuffer.clear();
                 } else { // if dest player is currently out of the game
-                    inactiveGame(clientChannel, chatMsgRecv.getSrcPlayerName());
+                    inactiveGame(clientChannel, srcPlayerName);
                 }
             }
         }
