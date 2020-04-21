@@ -29,6 +29,7 @@ public class InitOpPaneController implements PaneController {
     @Override
     public AnchorPane getCurrPane() {
         Territory terr = ic.getWorldmap().getTerritoryByName(terrName);
+        PlayerStat ownerPS = ic.getWorldmap().getPlayerStatByPid(terr.getOwnership());
         boolean showiop = (terr.getOwnership() == ic.getPid()); // decide if show the slider
         
         GridPane grid = new GridPane();
@@ -77,7 +78,7 @@ public class InitOpPaneController implements PaneController {
         });
         cancelBtn.setOnAction(e -> this.ic.showInfoPane());
         
-        GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr);//text info about this territory
+        GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr,ownerPS);//text info about this territory
         
         VBox vb = new VBox();
         //vb.setPadding(new Insets(10));

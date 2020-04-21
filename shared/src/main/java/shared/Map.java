@@ -164,8 +164,9 @@ public class Map implements Serializable {
 
   public ArrayList<String> getOwnTerritoryListName(int pid) {
     ArrayList<String> list = new ArrayList<>();
+    PlayerStat ps = getPlayerStatByPid(pid);
     for (Territory t : territories) {
-      if (t.getOwnership() == pid) {
+      if (ownerstatus(t, ps)>=0) {
         list.add(t.getName());
       }
     }
@@ -184,7 +185,7 @@ public class Map implements Serializable {
 
   public int CostofShortestPath(String src, String dest) {
     //Dijkstra's algorithm
-    int masterPid = getTerritoryByName(src).getOwnership();
+    PlayerStat ps =this.getPlayerStatByPid(getTerritoryByName(src).getOwnership()) ;
     HashMap<String, Integer> distQ = new HashMap<>();
     HashMap<String, Integer> visited = new HashMap<>();
     distQ.put(src, 0);
@@ -202,7 +203,7 @@ public class Map implements Serializable {
       for (int tid : t.getNeighborList()) {
         if (tid != -1) {
           Territory neighbour = getTerritoryByTid(tid);
-          if (neighbour.getOwnership() == masterPid) {
+          if (ownerstatus(neighbour, ps)>=0) {
             String neigName = neighbour.getName();
             if (visited.containsKey(neigName) == false) {
               //this neighbout is not finally determined its minimum distance
@@ -240,6 +241,18 @@ public class Map implements Serializable {
     return s;
   }
 
+  public int ownerstatus(Territory t, PlayerStat ps) {
+    if (t.getOwnership() == ps.getPid()) {
+      return 0;//ps is the owner
+    }
+    PlayerStat ownerps = this.getPlayerStatByPid(t.getOwnership());
+    if (ownerps.getAid() == ps.getAid()) {
+      return 1;//ps is the alliance
+    }
+
+    return -1;//ps is the enermy
+  }
+  
   public void updateUnitandResource(){
     updateUnit();
     updateResource();

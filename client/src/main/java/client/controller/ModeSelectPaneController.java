@@ -7,6 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import shared.PlayerStat;
 import shared.Territory;
 
 public class ModeSelectPaneController implements PaneController {
@@ -24,10 +25,12 @@ public class ModeSelectPaneController implements PaneController {
     @Override
     public AnchorPane getCurrPane() {
         Territory terr = gc.getWorldmap().getTerritoryByName(terrName);
-        boolean showmodeBtn = (terr.getOwnership() == gc.getPid());//decide if show the selection buttons
+        PlayerStat masterPS = gc.getWorldmap().getPlayerStatByPid(gc.getPid());
+        PlayerStat ownerPS = gc.getWorldmap().getPlayerStatByPid(terr.getOwnership());
+        boolean showmodeBtn = ((gc.getWorldmap().ownerstatus(terr, masterPS)) >=0);//decide if show the selection buttons
         boolean hasmoved = gc.isMoved();//decide if show the upgrade button
 
-        GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr);//text info about this territory
+        GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr,ownerPS);//text info about this territory
 
         Button upgradeBtn = new Button("Upgrade");
         Button moveBtn = new Button("Move");
