@@ -50,23 +50,12 @@ public class ChatClient extends Thread {
         } catch (IOException e) {    
             e.printStackTrace();       
         } finally {
-            // try {
-            //     if (this.chatChannel != null) {
-            //         this.chatChannel.close();
-            //     }
-            // } catch (IOException e) {
-            //     e.printStackTrace();
-            // }
+
         } 
     }
 
     public void init() throws IOException {      
-        // this.chatChannel = SocketChannel.open();
-        // this.chatChannel.configureBlocking(false);
-        // Config config = new Config("config.properties"); 
-        // String host = config.readProperty("hostname"); 
-        // String chat_port = config.readProperty("chat_port");
-        // this.chatChannel.connect(new InetSocketAddress(host, Integer.parseInt(chat_port)));
+
         // debug
         System.out.println("Started a chatClient");       
         System.out.println("chatClient Address: " + this.chatChannel.socket().getLocalAddress());
@@ -74,32 +63,7 @@ public class ChatClient extends Thread {
     }
 
     public void process() throws IOException {
-        // debug: send chatmessage
-        // ChatMessage msg = new ChatMessage("user1", "user2", "test message");
-        
-        // ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
-        // ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-        // byte[] chatBytes = SerializationUtils.serialize(msg);
-        // String str = new String(chatBytes, StandardCharsets.UTF_8);
-        // System.out.println(str);
-        // String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
-        // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
-        // System.out.println(newStr);
-        // ByteBuffer writeBuffer = ByteBuffer.wrap(chatBytes);
-        // this.chatChannel.write(writeBuffer);
-        // str = new String(chatBytes, StandardCharsets.UTF_8);
-        // System.out.println(new String(chatBytes, StandardCharsets.UTF_8));
-        // newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
-        // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
-        // System.out.println(newStr);
-        // writeBuffer.clear();
-        // ByteBuffer writeBuffer = ByteBuffer.wrap("Hey Dude!".getBytes());
-               
-        // readBuffer.clear();
-        // this.chatChannel.read(readBuffer);
-        // String recv = new String(readBuffer.array()).trim();
-        // // debug
-        // System.out.println("Received back from server: " + recv);
+ 
         while (!exit.get()) {
             ByteBuffer readBuffer = ByteBuffer.allocate(1024);
             int readBytes = this.chatChannel.read(readBuffer);
@@ -131,7 +95,6 @@ public class ChatClient extends Thread {
             // System.out.println(readBuffer.array().length);
             ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
             readBuffer.clear();
-            // String recv = new String(readBuffer.array()).trim();
             // debug
             System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
             System.out.println("To: " + chatMsgRecv.getDestPlayerName());

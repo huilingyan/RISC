@@ -22,9 +22,6 @@ public class GameClient {
     Socket serverSocket; // set up when connect
     ObjectInputStream inStream; // set up right before first recv
     ObjectOutputStream outStream; // set up when connect
-    // The socket and stream for chatserver
-    // Socket chatSocket; // socket for chatserver
-    // ObjectOutputStream chatOutStream; // stream for chatserver
     SocketChannel chatChannel;
 
     /****
@@ -52,28 +49,6 @@ public class GameClient {
     /****
      * Connect to the ChatServer
      ***/
-    // public void connectToChatServer() {
-    // Config config = new Config("config.properties");
-    // String host = config.readProperty("hostname");
-    // String chat_port = config.readProperty("chat_port");
-    // try {
-    // Socket newChatSocket = new Socket(host, Integer.parseInt(chat_port));
-    // this.chatSocket = newChatSocket;
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // System.out.println("Cannot connect to chatServer at " + host + ": " +
-    // chat_port);
-    // }
-    // // open outputstream
-    // try {
-    // this.chatOutStream = new
-    // ObjectOutputStream(this.chatSocket.getOutputStream());
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // System.out.println("fail to set up ObjectOutputStream");
-    // }
-    // }
-
     public void connectToChatServer() {
         Config config = new Config("config.properties");
         String host = config.readProperty("hostname");

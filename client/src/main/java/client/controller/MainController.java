@@ -27,18 +27,10 @@ public class MainController {
     private GameController gameController;
     // model instances
     Model gamemodel = new Model();
-    // GameClient gclient;
-    // String player_name;
-
-    // Map worldmap = MapGenerator.initmapGenerator(); // dummy model
 
     public void initializeSocketConnection() {
         this.getGameClient().connectToServer();
-        // debug
-        // System.out.println("connected to gameserver");
         this.getGameClient().connectToChatServer();
-        // System.out.println("connected to chatserver");
-
         this.getGameClient().setUpInputStream();
     }
 
@@ -230,16 +222,8 @@ public class MainController {
     }
 
     public void endChatClient() {
-        // try {
             System.out.println("Try to kill chatclient");
-            this.getChatClient().exit();
-            // this.getChatClient().interrupt(); // kill the chatclient thread
-            // debug
-            // System.out.println("ChatClient thread killed");
-
-        // } catch (ClosedByInterruptException e) {
-            // this.getChatChannel().close();
-        // }        
+            this.getChatClient().exit();      
     }
 
 
