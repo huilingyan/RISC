@@ -28,6 +28,7 @@ public class InfoPaneController implements PaneController {
       grid.add(new Text("Food"),3,0);
       grid.add(new Text("Gold"),4,0);
       grid.add(new Text("Max tech"),5,0);
+      grid.add(new Text("Aliance ID"),6,0);
       
       ArrayList<PlayerStat> psList = this.worldmap.getPlayerStats();
       for (int i = 0; i < psList.size(); i++) {
@@ -41,6 +42,7 @@ public class InfoPaneController implements PaneController {
           grid.add(new Text(Integer.toString(ps.getFood())),3,row);
           grid.add(new Text(Integer.toString(ps.getGold())),4,row);
           grid.add(new Text(Integer.toString(ps.getMaxTechLvl())),5,row);
+          grid.add(new Text(Integer.toString(ps.getAid())),6,row);
       }
 
       AnchorPane anchorP = new AnchorPane(grid);

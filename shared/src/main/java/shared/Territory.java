@@ -30,7 +30,8 @@ public class Territory implements Serializable{
   private int tid; //territory id, 0-15
   private String name; //territory name
   //private int x,y; //location coordinate
-  private Army defender; //currently only have num_units field
+  private Army defender;
+  private Army friendDefender;//ally's army
   private ArrayList<Integer> neighborList;//can change to List
   //neighbor list index 0-5 in counterclock direction
   //stored tid of the neighbor
@@ -45,6 +46,7 @@ public class Territory implements Serializable{
     tid = t_id;
     name = t_name;
     defender = new Army(0);
+    friendDefender = new Army(0);
     neighborList = new ArrayList<Integer>();
     // initialize neighbor list with all null
     for (int i = 0; i < MAX_NEIGHBOR; i++) {
@@ -59,6 +61,7 @@ public class Territory implements Serializable{
     tid = t_id;
     name = t_name;
     defender = new Army(0);
+    friendDefender = new Army(0);
     neighborList = new ArrayList<Integer>();
     // initialize neighbor list with all null
     for (int i = 0; i < MAX_NEIGHBOR; i++) {
@@ -95,6 +98,7 @@ public class Territory implements Serializable{
     this.food_resource = rhs.food_resource;
     this.gold_resource = rhs.gold_resource;
     defender = new Army(rhs.defender);
+    friendDefender = new Army(rhs.friendDefender);
     neighborList = new ArrayList<Integer>(rhs.getNeighborList());
     //may need to throw exception here if rhs doesn't have some fields
   }
@@ -137,11 +141,19 @@ public class Territory implements Serializable{
   }
 
   public void setDefender(Army rhs) {
-    defender=rhs;
+    defender = new Army(rhs);//use copy constructor, more secure
   }
 
   public Army getDefender() {//separate method from Army class
     return defender;
+  }
+
+  public void setFriendDefender(Army rhs) {
+    friendDefender = new Army(rhs);//use copy constructor, more secure
+  }
+
+  public Army getFriendDefender() {
+    return friendDefender;
   }
 
   public void setNeighborList(ArrayList<Integer> adjList){
@@ -236,8 +248,16 @@ public class Territory implements Serializable{
     defender.joinArmy(rhs);
   }
 
-  public void subtractDefender(Army rhs){
+  public void subtractDefender(Army rhs) {
     defender.subtractArmy(rhs);
+  }
+
+  public void addFriendDefender(Army rhs) {
+    friendDefender.joinArmy(rhs);
+  }
+
+  public void subtractFriendDefender(Army rhs){
+    friendDefender.subtractArmy(rhs);
   }
 
   public int countNeighbors() {
