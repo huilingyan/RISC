@@ -252,6 +252,16 @@ public class Map implements Serializable {
 
     return -1;//ps is the enermy
   }
+
+  public ArrayList<String> getOtherPlayerNames(int pid) {
+    ArrayList<String> namelist = new ArrayList<>();
+    for (PlayerStat ps : playerStats) {
+      if (ps.getPid() != pid) {
+        namelist.add(ps.getPName());
+      }
+    }
+    return namelist;
+  }
   
   public void updateUnitandResource(){
     updateUnit();

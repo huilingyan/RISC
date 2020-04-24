@@ -11,12 +11,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import shared.ClientMessage;
+import shared.GameMessage;
 import shared.Map;
 import shared.OperationValidator;
 import shared.RoomMessage;
 import shared.ServerMessage;
 import shared.Territory;
-import shared.GameMessage;
 
 public class GameController extends SceneController {
 
@@ -130,6 +130,10 @@ public class GameController extends SceneController {
             }
 
         });
+
+        Button allyBtn = new Button("Make an ally");
+        allyBtn.setOnAction(e->showAllyPane());
+        
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
@@ -156,7 +160,7 @@ public class GameController extends SceneController {
                                
         });
 
-        FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn, endTurnbtn);
+        FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn,allyBtn, endTurnbtn);
         bottompane.setHgap(5); 
         root.setBottom(bottompane);
         bottompane.setPadding(new Insets(10, 10, 10, 10));       
@@ -199,6 +203,12 @@ public class GameController extends SceneController {
             }
         }
         return buttongroup;
+    }
+
+    public void showAllyPane() {
+      AllyPaneController aPC = new AllyPaneController();
+      aPC.setGameController(this);
+      updateRightPane(aPC);
     }
 
     public void showModePane(String t_name) {
