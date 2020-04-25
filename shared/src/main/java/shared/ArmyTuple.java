@@ -42,7 +42,15 @@ public class ArmyTuple {
   public int getAllyId(){
   	return allyid;
   }
-
+  
+  public void setHostId(int hid){
+  	hostid = hid;
+  }
+  
+  public void setAllyId(int fid){
+  	allyid = fid;
+  }
+  
   public Army getArmyByPid(int pid){
     if (pid == hostid) {
       return hostArmy;

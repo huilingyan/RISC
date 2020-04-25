@@ -56,7 +56,7 @@ public class PlayerStat implements Serializable {
     newCard = rhs.getNewCard();
     
     //deep copy, do not affect original cards
-    activatedCards = new HashMap<Integer, Integer>(activatedCards);
+    activatedCards = new HashMap<Integer, Integer>(rhs.activatedCards);
 
   }
 

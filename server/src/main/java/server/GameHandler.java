@@ -72,9 +72,10 @@ public class GameHandler extends Handler {
       System.out.println("dest:" + dest + " num:" + army_move.getTotalSoldiers());
       Territory t_src = new_worldmap.getTerritoryByName(src);
       Territory t_dest = new_worldmap.getTerritoryByName(dest);
-      int playerid = t_src.getOwnership();
+      int playerid;
       
       if (t_src != null && t_dest != null) {
+        playerid = t_src.getOwnership();
         t_src.subtractDefender(army_move);//src territory - unit
         if(new_worldmap.getPlayerStatByPid(playerid).isAllied() &&
            (new_worldmap.getPlayerStatByPid(t_dest.getOwnership()).getAid() ==
@@ -111,39 +112,55 @@ public class GameHandler extends Handler {
 
       Territory t_src = new_worldmap.getTerritoryByName(src);
       Territory t_dest = new_worldmap.getTerritoryByName(dest);
-      int playerid = t_src.getOwnership();
-       
+      int playerid;
+
       if (t_src != null && t_dest != null) {
+        playerid = t_src.getOwnership();
         //player attacks ally's territory
-        if (new_worldmap.getPlayerStatByPid(playerid).isAllied() &&
-            (new_worldmap.getPlayerStatByPid(t_dest.getOwnership()).getAid() ==
-                new_worldmap.getPlayerStatByPid(playerid).getAid())) {
+        if (new_worldmap.getPlayerStatByPid(playerid).isAllied()
+            && (new_worldmap.getPlayerStatByPid(t_dest.getOwnership()).getAid() == new_worldmap
+                .getPlayerStatByPid(playerid).getAid())) {
           //change aid and allied status for both players
           int allyid = t_dest.getOwnership();
           new_worldmap.breakAlliance(playerid, allyid);
-            
-          System.out.println("player " + playerid + " breaks alliance with player  " + t_dest.getOwnership());
-          
-          //return friendArmy to the nearest self-owned territory
-          //iterate all territories for both players
-          for (String tName : new_worldmap.getOwnTerritoryListName(playerid)) {
-            Territory t = new_worldmap.getTerritoryByName(tName);
-            //get former ally's nearest territory from t
-            //and move FriendAmry to there
-            new_worldmap.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
-            t.setFriendDefender(new Army());
-          }
 
-          for (String tName : new_worldmap.getOwnTerritoryListName(t_dest.getOwnership())) {
-            Territory t = new_worldmap.getTerritoryByName(tName);
-            
-            new_worldmap.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
-            t.setFriendDefender(new Army());
-          }
+          System.out.println("player " + playerid + " breaks alliance with player  " + t_dest.getOwnership());
+
+          new_worldmap = returnFriendArmy(new_worldmap, playerid, allyid);
         }
       }
     }
-   
+
+    return new_worldmap;
+  }
+
+  private shared.Map returnFriendArmy(shared.Map worldmap, int playerid, int allyid) {
+    shared.Map new_worldmap = new shared.Map(worldmap);
+    //return friendArmy to the nearest self-owned territory
+    //iterate all territories for both players
+    for (String tName : new_worldmap.getOwnTerritoryListName(playerid)) {
+      Territory t = new_worldmap.getTerritoryByName(tName);
+      if (t.getFriendDefender().getTotalSoldiers() > 0) {
+        //get former ally's nearest territory from t
+        //and move FriendAmry to there
+        new_worldmap.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
+        System.out.println("return player " + allyid + "'s army (" + t.getFriendDefender().getTotalSoldiers()
+                           + " units) from " + t.getName() + " to " + new_worldmap.getNearestTerritory(t, allyid).getName());
+        t.setFriendDefender(new Army());
+      }
+    }
+
+    for (String tName : new_worldmap.getOwnTerritoryListName(allyid)) {
+      Territory t = new_worldmap.getTerritoryByName(tName);
+      if (t.getFriendDefender().getTotalSoldiers() > 0) {
+        //get former ally's nearest territory from t
+        //and move FriendAmry to there
+        new_worldmap.getNearestTerritory(t, playerid).addDefender(t.getFriendDefender());
+        System.out.println("return player " + playerid + "'s army (" + t.getFriendDefender().getTotalSoldiers()
+            + " units) from " + t.getName() + " to " + new_worldmap.getNearestTerritory(t, playerid).getName());
+        t.setFriendDefender(new Army());
+      }
+    }
     return new_worldmap;
   }
   
@@ -201,10 +218,8 @@ public class GameHandler extends Handler {
             
           } else {
             //combine into tuple's ally(friend) army
-            combinedAttackMap.get(dest).get(allianceid).getFriendArmy().joinArmy(army_attack);
-            //ArmyTuple combinedArmyTuple = new ArmyTuple(army_attack, playerid);
-            //combinedArmyTuple.getHostArmy().joinArmy(combinedAttackMap.get(dest).get(playerid).getHostArmy());
-            //combinedAttackMap.get(dest).replace(playerid, combinedArmyTuple);
+            combinedAttackMap.get(dest).get(allianceid).setAllyId(playerid);
+            combinedAttackMap.get(dest).get(allianceid).getFriendArmy().joinArmy(army_attack);            
           }
         }
 
@@ -319,6 +334,7 @@ public class GameHandler extends Handler {
       //(if one side only has one soldier, the soldier can fight twice if he wins the first round)
       int attackerHighestBonus;//Math.max(,
       boolean attackerIsHost;
+      //on tie, choose host's soldier to fight
       if(attackerArmyTuple.getHostArmy().getHighestBonus() >=
           attackerArmyTuple.getFriendArmy().getHighestBonus()){
         attackerHighestBonus = attackerArmyTuple.getHostArmy().getHighestBonus();
@@ -456,14 +472,17 @@ public class GameHandler extends Handler {
        //if A send alliance request with B,
        //then B must send alliance request with A on the same turn,
        //otherwise alliance will not form
-       if(!new_worldmap.getPlayerStatByPid(entry.getKey()).isAllied() &&
-           !new_worldmap.getPlayerStatByPid(entry.getValue()).isAllied()) {
-         //change pid and allied status
-         new_worldmap.formAlliance(entry.getKey(), entry.getValue());
+       //e.g. request<0,1> must find request<1,0>
+       if(allianceMap.get(entry.getValue()) == entry.getKey()) {
+         //both player should be in unallied status to form new alliance
+         if(!new_worldmap.getPlayerStatByPid(entry.getKey()).isAllied() &&
+            !new_worldmap.getPlayerStatByPid(entry.getValue()).isAllied()) {
+           //change pid and allied status
+           new_worldmap.formAlliance(entry.getKey(), entry.getValue());
           
-         System.out.println("player " + entry.getKey() + " form alliance with player  " + entry.getValue());
+           System.out.println("player " + entry.getKey() + " form alliance with player  " + entry.getValue());
+         }
        }
-        
      }
      return new_worldmap;
   }

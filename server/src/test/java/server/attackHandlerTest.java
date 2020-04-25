@@ -78,7 +78,7 @@ public class attackHandlerTest {
     //-----------------------------------
     //instance of initHandler
     GameHandler h1 = new GameHandler();
-    shared.Map new_worldmap = h1.handleAttack(worldmap, attackAction);
+    shared.Map new_worldmap = h1.handleAction(worldmap, attackAction);
     
     System.out.println("p0 has " + new_worldmap.getPlayerStatByPid(0).getTerritoryNum());
     System.out.println("p1 has " + new_worldmap.getPlayerStatByPid(1).getTerritoryNum());
