@@ -21,17 +21,20 @@ public class OperationValidator {
   public static final int NOT_ENOUGH_GOLD = -9;
   public static final int EXCEED_MAX_LV = -10;
   public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
+  public static final int INVALID_ALLIANCE_REQUEST = -12;// 1 new flag for ev3
 
   private Action validatedaction;
   private shared.Map temp_map;//bad naming from ev1
   private int player_id;
   private boolean upgrade_max_tech_lv;
+  private boolean request_alliance;
 
   public OperationValidator(int pid, shared.Map curr_map) {
     this.validatedaction = new Action();//empty Action, only add valid ops
     this.temp_map = new shared.Map(curr_map);//deep copy original map
     this.player_id = pid;//store current player's pid
     this.upgrade_max_tech_lv = false;
+    this.request_alliance = false;
   }
 
   public Action getAction() {
@@ -147,10 +150,19 @@ public class OperationValidator {
     Territory t_to_move = temp_map.getTerritoryByName(dest);
     
     // 3.1 check if own territory
-    if ((t_to_move == null) || (!isOwnTerritory(t_to_move))) {
-      return INVALID_DEST;
+    if (t_to_move == null){
+        return INVALID_DEST;
     }
-
+    // can move to ally's territory
+    if ((!isOwnTerritory(t_to_move))) {
+      if(temp_map.getPlayerStatByPid(player_id).isAllied() &&
+           (temp_map.getPlayerStatByPid(t_to_move.getOwnership()).getAid() ==
+              temp_map.getPlayerStatByPid(player_id).getAid())) {
+        //allow moving to ally's territory
+      } else {
+        return INVALID_DEST;
+      }
+    }
     // 3.2 check if is different from src
     if (dest.equalsIgnoreCase(src)) {
       // if the dest is same as src
@@ -158,6 +170,7 @@ public class OperationValidator {
     }
 
     // 3.3 check if there's a path
+    // CostofShortestPath is updated, can move through ally's territory
     int move_dist = temp_map.CostofShortestPath(src, dest);
     if (move_dist < 0) {
       return INVALID_PATH;
@@ -172,8 +185,19 @@ public class OperationValidator {
     }
 
     // update temp_map: add and subtract army, deduct resources
-    t_to_remove.subtractDefender(moveop.getArmy());       
-    t_to_move.addDefender(moveop.getArmy());
+    
+    t_to_remove.subtractDefender(moveop.getArmy());
+    if ((!isOwnTerritory(t_to_move))) {
+      if(temp_map.getPlayerStatByPid(player_id).isAllied() &&
+           (temp_map.getPlayerStatByPid(t_to_move.getOwnership()).getAid() ==
+              temp_map.getPlayerStatByPid(player_id).getAid())) {
+        //allow moving to ally's territory
+        //add to FriendDefender instead of Defender
+        t_to_move.addFriendDefender(moveop.getArmy());
+      }
+    } else {
+      t_to_move.addDefender(moveop.getArmy());
+    }
     temp_map.getPlayerStatByPid(player_id).subtractFood(move_cost);
 
     // if valid, add to move operation
@@ -233,6 +257,27 @@ public class OperationValidator {
     
     // if valid, add to move operation
     validatedaction.addAttackOperation(attackop);
+    //Break alliance when current player attacks ally’s territory
+    if (temp_map.getPlayerStatByPid(player_id).isAllied()
+        && (temp_map.getPlayerStatByPid(t_to_move.getOwnership()).getAid() == temp_map.getPlayerStatByPid(player_id).getAid())) {
+      int allyid = t_to_move.getOwnership();
+      temp_map.breakAlliance(player_id, allyid);
+      //return FriendArmy to nearest territory
+      for (String tName : temp_map.getOwnTerritoryListName(player_id)) {
+        Territory t = temp_map.getTerritoryByName(tName);
+        if (t.getFriendDefender().getTotalSoldiers() > 0) {
+          temp_map.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
+          t.setFriendDefender(new Army());
+        }
+      }
+      for (String tName : temp_map.getOwnTerritoryListName(allyid)) {
+        Territory t = temp_map.getTerritoryByName(tName);
+        if (t.getFriendDefender().getTotalSoldiers() > 0) {
+          temp_map.getNearestTerritory(t, player_id).addDefender(t.getFriendDefender());
+          t.setFriendDefender(new Army());
+        }
+      }          
+    }
     return VALID;
 
   }
@@ -241,9 +286,9 @@ public class OperationValidator {
   public int isValidUpgradeMaxTechLv() {
     //should be called if player choose to upgrade his max technology level
     //i suppose the gui controller can call this method if button is clicked
-    if(upgrade_max_tech_lv){
-        //do not allow repeated upgrade
-        return REPEATED_UPGRADE_MAX_TECH_LV;
+    if (upgrade_max_tech_lv) {
+      //do not allow repeated upgrade
+      return REPEATED_UPGRADE_MAX_TECH_LV;
     }
     int tech_lv = temp_map.getPlayerStatByPid(player_id).getMaxTechLvl();
     if (tech_lv >= 6) {
@@ -253,8 +298,7 @@ public class OperationValidator {
 
     int gold_remain = temp_map.getPlayerStatByPid(player_id).getGold();
 
-    ArrayList<Integer> upgrade_cost_list =
-        new ArrayList<Integer>(Arrays.asList(0, 50, 75, 125, 200, 300));
+    ArrayList<Integer> upgrade_cost_list = new ArrayList<Integer>(Arrays.asList(0, 50, 75, 125, 200, 300));
     int upgrade_cost = upgrade_cost_list.get(tech_lv);
 
     if (gold_remain < upgrade_cost) {
@@ -268,6 +312,30 @@ public class OperationValidator {
     return VALID;
 
   }
+
+   public int isValidAllianceRequest(int topid) {
+     
+     if (request_alliance) {
+       //Cannot send multiple alliance requests in one turn
+       return INVALID_ALLIANCE_REQUEST;
+     }
+     if(temp_map.getPlayerStatByPid(player_id).isAllied() ||
+        temp_map.getPlayerStatByPid(topid).isAllied()){
+       //Cannot form alliance with players already allied
+       return INVALID_ALLIANCE_REQUEST;
+     }
+          
+     request_alliance = true;
+     validatedaction.addAllianceRequest(player_id, topid);
+     return VALID;
+   }
+
+  public int isValidCardUsage() {
+
+
+    validatedaction.useNewCard(player_id);
+    return VALID;
+   }
 
   //--------------------helper functions-------------------------
   // helper method: get the remaining number of unit for player
