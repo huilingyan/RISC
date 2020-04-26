@@ -39,6 +39,7 @@ public class PlayerStat implements Serializable {
     territoryNum = init_territoryNum;
     color = c;
 
+    newCard = 0;   // initial cid=0, regular cid 1-6
     activatedCards = new HashMap<Integer, Integer>();
   }
 

@@ -278,6 +278,14 @@ public class Map implements Serializable {
     }
   }
 
+  public void setNewCards(ArrayList<Integer> newCards){
+    int ind = 0;
+    for (PlayerStat ps : playerStats){
+      ps.setNewCard(newCards.get(ind));
+      ind++;
+    }
+  }
+
   public void formAlliance(int p1, int p2) {
     //this method must be placed outside of PlayerStat
     //because it needs to access other player's info

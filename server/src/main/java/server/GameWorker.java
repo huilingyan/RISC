@@ -1,6 +1,8 @@
 package server;
 
 import shared.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameWorker extends Thread {
@@ -108,6 +110,10 @@ public class GameWorker extends Thread {
         // call init handler
         InitHandler handler = new InitHandler();
         Map newMap = handler.handleAction(gameMap, ac);
+        // turn++
+        newMap.addTurnByOne();
+        // draw cards
+        drawCards(newMap);
         // set new map
         game.setMap(newMap);
         // clear tempActionList
@@ -137,7 +143,10 @@ public class GameWorker extends Thread {
             // if no active player, do nothing
             // System.out.println("No active player in game " + game.getGid());
         } else {
+            // TODO: accomodate card system
             newMap.updateUnitandResource();
+            // draw cards
+            drawCards(newMap);
         }
         // set new map
         game.setMap(newMap);
@@ -146,6 +155,15 @@ public class GameWorker extends Thread {
         // update game in db
         HibernateUtil.updateGame(game);
 
+    }
+
+    private void drawCards(Map map){
+        Dice dice = new Dice(6);  // 6 sided dice
+        ArrayList<Integer> newCards = new ArrayList<Integer>();
+        for (int i=0; i<game.getPlayerNum(); i++){
+            newCards.add(dice.rollDice());
+        }
+        map.setNewCards(newCards);
     }
 
     /****
