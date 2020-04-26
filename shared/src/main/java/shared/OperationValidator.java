@@ -23,6 +23,7 @@ public class OperationValidator {
   public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
   public static final int REPEATED_ALLIANCE_REQUEST = -12;// 2 new flags for ev3
   public static final int PLAYER_ALREADY_ALLIED = -13;
+  public static final int INVALID_CARD_ID = -14;
 
   private Action validatedaction;
   private shared.Map temp_map;//bad naming from ev1
@@ -173,13 +174,19 @@ public class OperationValidator {
     // 3.3 check if there's a path
     // CostofShortestPath is updated, can move through ally's territory
     int move_dist = temp_map.CostofShortestPath(src, dest);
-    if (move_dist < 0) {
+    if (move_dist < 0 &&
+        !temp_map.getPlayerStatByPid(player_id).isPortalActivated()) {
+      //when portal is activated, can move to any territory
       return INVALID_PATH;
     }
 
     // 4 check if resource is enough
     int food_remain = temp_map.getPlayerStatByPid(player_id).getFood();
-    int move_cost = moveop.getArmy().getTotalSoldiers() * move_dist;
+    int move_cost = 0;
+    if (!temp_map.getPlayerStatByPid(player_id).isPortalActivated()) {
+      //when portal is activated, move will not cost food
+      move_cost = moveop.getArmy().getTotalSoldiers() * move_dist;
+    }
     
     if(food_remain < move_cost){
       return NOT_ENOUGH_FOOD;
@@ -239,14 +246,20 @@ public class OperationValidator {
     }
 
     // 3.2 check if is adjacent
-    if (!isAdjacent(t_to_remove, t_to_move)) {
+    if (!isAdjacent(t_to_remove, t_to_move) &&
+        !temp_map.getPlayerStatByPid(player_id).isPortalActivated()) {
+      //when portal is activated, can attack non adjacent territorties
       return NOT_ADJACENT;
     }
 
     // 4 check if resource is enough
     int food_remain = temp_map.getPlayerStatByPid(player_id).getFood();
-    int attack_cost = attackop.getArmy().getTotalSoldiers();
-    //An attack order now costs 1 food per unit attacking
+    int attack_cost = 0;
+    if (!temp_map.getPlayerStatByPid(player_id).isPortalActivated()) {
+      //when portal is activated, attack will not cost food
+      attack_cost = attackop.getArmy().getTotalSoldiers();
+      //An attack order now costs 1 food per unit attacking
+    }
     if(food_remain < attack_cost){
       return NOT_ENOUGH_FOOD;
     }
@@ -258,27 +271,7 @@ public class OperationValidator {
     
     // if valid, add to move operation
     validatedaction.addAttackOperation(attackop);
-    //Break alliance when current player attacks ally’s territory
-    if (temp_map.getPlayerStatByPid(player_id).isAllied() 
-        && temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1) {
-      int allyid = t_to_move.getOwnership();
-      temp_map.breakAlliance(player_id, allyid);
-      //return FriendArmy to nearest territory
-      for (String tName : temp_map.getOwnTerritoryListName(player_id)) {
-        Territory t = temp_map.getTerritoryByName(tName);
-        if (t.getFriendDefender().getTotalSoldiers() > 0) {
-          temp_map.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
-          t.setFriendDefender(new Army());
-        }
-      }
-      for (String tName : temp_map.getOwnTerritoryListName(allyid)) {
-        Territory t = temp_map.getTerritoryByName(tName);
-        if (t.getFriendDefender().getTotalSoldiers() > 0) {
-          temp_map.getNearestTerritory(t, player_id).addDefender(t.getFriendDefender());
-          t.setFriendDefender(new Army());
-        }
-      }          
-    }
+    
     return VALID;
 
   }
@@ -331,12 +324,26 @@ public class OperationValidator {
      return VALID;
    }
 
-  public int isValidCardUsage() {
-
-
+   public int isValidCardUsage() {
+     //should be called at the start of client's turn
+     //if that client choose to use the card
+     int cid = temp_map.getPlayerStatByPid(player_id).getNewCard();
+     
+    if(cid <1 || cid > 6){
+      return INVALID_CARD_ID;
+    }
+    temp_map.getPlayerStatByPid(player_id).activateCard(cid);
+    temp_map.getPlayerStatByPid(player_id).settleCardCost(cid);
+    if(cid == 3){
+      upgrade_max_tech_lv = true;
+    }
+    if(cid == 6){
+      temp_map.getPlayerStatByPid(player_id).addGold(300);
+    }
+    //add card usage in action
     validatedaction.useNewCard(player_id);
     return VALID;
-   }
+  }
 
   //--------------------helper functions-------------------------
   // helper method: get the remaining number of unit for player

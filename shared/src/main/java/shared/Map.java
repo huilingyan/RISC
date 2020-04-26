@@ -76,6 +76,10 @@ public class Map implements Serializable {
 
   public void addTurnByOne(){
     turn += 1;
+    //subtract turns left for all activated cards, If turns left == 0, remove it from activatedCards hashmap
+    for (PlayerStat p : playerStats){
+      p.updateCardTurns();
+    }
   }
 
   public void addPlayerStat(PlayerStat p) {
@@ -272,21 +276,53 @@ public class Map implements Serializable {
   }
 
   // add 1 base unit to each territory
+  //if conscription is activated, add 5 base units in that player's territories
   private void updateUnit(){
     for (Territory t : territories) {
-      t.addDefender(new Army(1));
+      if(getPlayerStatByPid(t.getOwnership()).isConscriptionActivated()){
+        t.addDefender(new Army(5));
+      } else {
+        t.addDefender(new Army(1));
+      }
     }
   }
 
   // add each territory's resource production to its owner
-  private void updateResource(){
-    for (Territory t: territories){
+  private void updateResource() {
+    for (Territory t : territories) {
       PlayerStat ps = getPlayerStatByPid(t.getOwnership());
       // food
       ps.addFood(t.getFood());
       // gold
-      ps.addGold(t.getGold());
+      if (ps.isCommunismActivated()) {
+        //if Communism is activated, all territories do not generate gold
+        
+      } else {
+        if (ps.isSilkRoadActivated()) {
+          //territories’ gold production doubles if Silk Road is activated
+          ps.addGold(2 * t.getGold());
+        } else {
+          ps.addGold(t.getGold());
+        }
+      }
     }
+    //Loan: deducts 70 gold for the next 5 turns
+    for(PlayerStat p : playerStats){
+      if (p.isLoanActivated()) {
+        p.subtractGold(70);
+      }
+    }
+  }
+  
+  public void generateCards() {
+    for (PlayerStat p : this.playerStats) {
+      int dice6 = (int) (Math.random() * 6 + 1);//[1,6]
+      p.setNewCard(dice6);
+    }
+    
+    //cid = 1 portal
+    //...
+    //cid = 6 loan
   }
 
   public void formAlliance(int p1, int p2) {

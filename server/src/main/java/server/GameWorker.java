@@ -133,6 +133,8 @@ public class GameWorker extends Thread {
             System.out.println("No active player in game " + game.getGid());
         } else {
             newMap.updateUnitandResource();
+            //generate card
+            
         }
         // set new map
         game.setMap(newMap);
@@ -159,6 +161,8 @@ public class GameWorker extends Thread {
      ******/
     private Action validateGameAction(Action ac, int pid, Map gameMap) {
         OperationValidator validator = new OperationValidator(pid, gameMap);
+        // 0. validate card usage
+        
         // 1. validate upgrade operations
         for (UpgradeOperation uop : ac.getUpgradeOperations()) {
             validator.isValidUpgradeOperation(uop);
@@ -175,6 +179,9 @@ public class GameWorker extends Thread {
         if (ac.getUpgradeMaxTechHashMap().containsKey(pid) && ac.getUpgradeMaxTechHashMap().get(pid) == true) {
             validator.isValidUpgradeMaxTechLv();
         }
+        // 5. validate alliance formation
+        
+        
         return validator.getAction();
         // return ac; // not validated
     }
