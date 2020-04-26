@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.collections.FXCollections;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -16,7 +17,7 @@ import javafx.stage.Stage;
 import shared.ChatMessage;
 import client.ChatClient;
 
-public class ChatController {
+public class ChatController  implements PrintMessage {
 
     private TextArea mesgs;
     private Stage window;
@@ -53,14 +54,19 @@ public class ChatController {
         clrBtn.setOnAction(e->inputF.clear());
         Button sendBtn = new Button("Send");
         sendBtn.setOnAction(e -> {
-            // mesgs.appendText("Me:"+inputF.getText()+"\n");
+            this.mc.sendChatMessage("asd", "zxc", "Hello from player");
+            mesgs.appendText("Me:"+inputF.getText()+"\n");
             // chatM.sendonemessage(new ChatMessage("Long", "server",inputF.getText()));
             inputF.clear();
         });
         Text txt1 = new Text("To");
-        ChoiceBox<String> chBox = new ChoiceBox<>();
-        chBox.getItems().add("self");
-        chBox.setValue("self");
+        // ChoiceBox<String> chBox = new ChoiceBox<>();
+        // for (String p : this.mc.getPlayerList()) {
+
+        // }
+        // chBox.getItems().add("self");
+        // chBox.setValue("self");
+        ChoiceBox<String> chBox = new ChoiceBox(FXCollections.observableArrayList(this.mc.getPlayerList())); 
         hb.getChildren().addAll(clrBtn, sendBtn, txt1, chBox);
     
         VBox vb = new VBox(20);
@@ -74,6 +80,11 @@ public class ChatController {
 
     public void closeChatBox() {
         this.window.close();
+    }
+
+    @Override
+    public void printMsg(ChatMessage cm) {
+        mesgs.appendText("Server: "+cm.getMessage()+"\n");	
     }
 
 }

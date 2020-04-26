@@ -138,7 +138,7 @@ public class InitController extends SceneController {
             int room_num = servermsg.getGameID();
             // TODO: hard code dest for test; change back later
             // TODO: put this in setOnAction of chat button
-            this.mc.sendChatMessage(player_name, "zxc", "Hello from player " + player_name);
+            // this.mc.sendChatMessage(player_name, "zxc", "Hello from player " + player_name);
             // debug
             System.out.println("chat msg sent from initcontroller");
             this.mc.showGameScene(room_num, pid);

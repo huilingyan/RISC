@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import java.util.Optional;
+import java.util.ArrayList;
 import shared.GameMessage;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.ClosedByInterruptException;
@@ -49,6 +50,16 @@ public class MainController {
 
     public Map getWorldMap() {
         return this.gamemodel.worldmap;
+    }
+
+    public ArrayList<String> getPlayerList() {
+        ArrayList<String> playerList = new ArrayList<String>();
+        for (PlayerStat p : this.getWorldMap().getPlayerStats()) {
+            if (!p.getPName().equals(this.getPlayerName())) { // exclude user herself
+                playerList.add(p.getPName());
+            }
+        }
+        return playerList;
     }
 
     public ChatClient getChatClient() {
@@ -219,7 +230,7 @@ public class MainController {
         this.getGameClient().sendChatMsg(chatMsg);
     }
 
-    // test method for chat
+    // send Chat Message
     public void sendChatMessage(String from, String to, String str) {
         ChatMessage chatMsg = new ChatMessage(from, to, str);
         this.sendToChatServer(chatMsg);

@@ -16,6 +16,7 @@ import java.lang.String;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
+import client.model.*;
 import shared.*;
 
 public class ChatClient extends Thread {

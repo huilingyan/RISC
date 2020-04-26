@@ -196,6 +196,7 @@ public class RoomController extends SceneController {
                         ErrorAlerts.WaitForJoin();
                         // ErrorAlerts.deployArmyPrompt();
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
+                        this.mc.setWorldMap(servermsg.getMap());
                         // create chatclient thread
                         SocketChannel chatChannel = this.mc.getChatChannel();
                         this.mc.startChatClient(playername, chatChannel);
@@ -206,7 +207,7 @@ public class RoomController extends SceneController {
                             System.out.println("Stage number is " + stage);
                             System.out.println("Error: should be 1 (initialize units)");
                         }
-                        this.mc.setWorldMap(servermsg.getMap());
+                        // this.mc.setWorldMap(servermsg.getMap());
                         int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
                         int gid = servermsg.getGameID();
                         this.mc.showInitScene(gid, pid);
