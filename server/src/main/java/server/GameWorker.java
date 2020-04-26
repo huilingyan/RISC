@@ -184,6 +184,10 @@ public class GameWorker extends Thread {
      ******/
     private Action validateGameAction(Action ac, int pid, Map gameMap) {
         OperationValidator validator = new OperationValidator(pid, gameMap);
+        // 0. validate card usage
+        if (ac.getNewCards().containsKey(pid) && ac.getNewCards().get(pid) == true){
+            validator.isValidCardUsage();
+        }
         // 1. validate upgrade operations
         for (UpgradeOperation uop : ac.getUpgradeOperations()) {
             validator.isValidUpgradeOperation(uop);
@@ -191,6 +195,10 @@ public class GameWorker extends Thread {
         // 2. validate move operations
         for (MoveOperation mop : ac.getMoveOperations()) {
             validator.isValidMoveOperation(mop);
+        }
+        // 2.5 move from ally's army
+        for (MoveOperation maop : ac.getMoveFromAllyOperations()){
+            validator.isValidMoveOperation(maop);
         }
         // 3. validate attack operations
         for (AttackOperation aop : ac.getAttackOperations()) {
@@ -200,6 +208,11 @@ public class GameWorker extends Thread {
         if (ac.getUpgradeMaxTechHashMap().containsKey(pid) && ac.getUpgradeMaxTechHashMap().get(pid) == true) {
             validator.isValidUpgradeMaxTechLv();
         }
+        // 5. validate alliance formation
+        if (ac.getAllianceRequests().containsKey(pid)) {
+            validator.isValidAllianceRequest(ac.getAllianceRequests().get(pid));
+        }
+        
         return validator.getAction();
         // return ac; // not validated
     }

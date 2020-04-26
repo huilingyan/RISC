@@ -5,12 +5,16 @@ public class ArmyTuple {
   private Army friendArmy;
   private int hostid;
   private int allyid;
+  private int hostCommunismBonus;
+  private int allyCommunismBonus;
 
   public ArmyTuple() {
     hostArmy = new Army();
     friendArmy = new Army();
     hostid = -1;
     allyid = -1;
+    hostCommunismBonus = 0;
+    allyCommunismBonus = 0;
   }
 
   public ArmyTuple(Army host, int hid) {
@@ -18,6 +22,8 @@ public class ArmyTuple {
     friendArmy = new Army();
     hostid = hid;
     allyid = -1;
+    hostCommunismBonus = 0;
+    allyCommunismBonus = 0;
   }
 
   public ArmyTuple(Army host, int hid, Army friend, int fid) {
@@ -25,6 +31,24 @@ public class ArmyTuple {
     friendArmy = friend;
     hostid = hid;
     allyid = fid;
+    hostCommunismBonus = 0;
+    allyCommunismBonus = 0;
+  }
+  
+  public int getHostCommunismBonus(){
+  	return hostCommunismBonus;
+  }
+  
+  public int getAllyCommunismBonus(){
+  	return allyCommunismBonus;
+  }
+  
+  public void setHostCommunism(){
+  	hostCommunismBonus = 5;
+  }
+  
+  public void setAllyCommunism(){
+  	allyCommunismBonus = 5;
   }
 
   public Army getHostArmy() {
