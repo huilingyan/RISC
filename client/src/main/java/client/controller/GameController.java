@@ -103,7 +103,7 @@ public class GameController extends SceneController {
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
 
         // set right
-        AnchorPane rightpane = new InfoPaneController(this.getWorldmap()).getCurrPane();
+        AnchorPane rightpane = new InfoPaneController(this.getWorldmap(),this.getPid()).getCurrPane();
         root.setRight(rightpane);
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
 
@@ -236,7 +236,7 @@ public class GameController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(this.getWorldmap()));
+      updateRightPane(new InfoPaneController(this.getWorldmap(),this.getPid()));
     }
 
     public void showWaitPane() {

@@ -129,6 +129,8 @@ public class ErrorAlerts {
         .put(OperationValidator.INVALID_PATH, "There is no path to the destination you choose!")
         .put(OperationValidator.REPEATED_UPGRADE_MAX_TECH_LV, "You can't upgrade max tech Lv more than once in one turn!")
         .put(OperationValidator.EXCEED_MAX_LV, "Your upgrade cannot exceed your maximum tech Lv!")
+      .put(OperationValidator.PLAYER_ALREADY_ALLIED,"You are already allied with someone!")
+      .put(OperationValidator.REPEATED_ALLIANCE_REQUEST,"You can only request ally once in a turn!")
         .build();
 
     public static void inValidOpAlert(int errorcode) {

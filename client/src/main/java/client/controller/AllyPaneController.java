@@ -9,6 +9,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import shared.OperationValidator;
 
 public class AllyPaneController implements PaneController {
   public GameController gc;
@@ -32,7 +33,14 @@ public class AllyPaneController implements PaneController {
 
     proceedBtn.setOnAction(e -> {
         System.out.println(chBox.getValue());
-        this.gc.showInfoPane();
+        int topid = gc.getWorldmap().getPidByName(chBox.getValue());
+        int errorcode = gc.getOperationValidator().isValidAllianceRequest(topid);
+        if (errorcode == OperationValidator.VALID) {
+          gc.showInfoPane();
+        }
+        else {
+          ErrorAlerts.inValidOpAlert(errorcode);
+        }
     });
     cancelBtn.setOnAction(e -> this.gc.showInfoPane());
 
