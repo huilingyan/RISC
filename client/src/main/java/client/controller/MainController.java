@@ -8,9 +8,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import java.util.Optional;
 import shared.GameMessage;
-// import shared.Action;
+import java.nio.channels.SocketChannel;
+import java.nio.channels.ClosedByInterruptException;
 
 import client.GameClient;
+import client.ChatClient;
 import client.Model;
 
 public class MainController {
@@ -31,7 +33,12 @@ public class MainController {
     // Map worldmap = MapGenerator.initmapGenerator(); // dummy model
 
     public void initializeSocketConnection() {
-        this.getGameClient().connectToServer(); 
+        this.getGameClient().connectToServer();
+        // debug
+        // System.out.println("connected to gameserver");
+        this.getGameClient().connectToChatServer();
+        // System.out.println("connected to chatserver");
+
         this.getGameClient().setUpInputStream();
     }
 
@@ -51,12 +58,24 @@ public class MainController {
         return this.gamemodel.worldmap;
     }
 
+    public ChatClient getChatClient() {
+        return this.gamemodel.chatClient;
+    }
+
+    public SocketChannel getChatChannel() {
+        return this.gamemodel.gclient.getChatChannel();
+    }
+
     public void setStage(Stage stage) {
         this.window = stage;
     }
 
     public void setPlayerName(String pname) {
         this.gamemodel.player_name = pname;
+    }
+
+    public void setChatClient(String playerName, SocketChannel chatChannel) {
+        this.gamemodel.chatClient = new ChatClient(playerName, chatChannel);
     }
 
     public void setWorldMap(Map m) {
@@ -90,7 +109,6 @@ public class MainController {
         this.gameController = new GameController(this.getWorldMap(), this.getPlayerName(), room_num, pid);
         this.gameController.setMainController(this);
         updateCurrScene(this.gameController);
-        // window.setScene(gameController.getCurrScene());
     }
 
     public void updateCurrScene(SceneController sc) {
@@ -193,5 +211,36 @@ public class MainController {
     public void switchoutMsg() {
         this.getGameClient().sendSwitchOutMsg();
     }
+
+    public void sendToChatServer(ChatMessage chatMsg) {
+        this.getGameClient().sendChatMsg(chatMsg);
+    }
+
+    // test method for chat
+    public void sendChatMessage(String from, String to, String str) {
+        ChatMessage chatMsg = new ChatMessage(from, to, str);
+        this.sendToChatServer(chatMsg);
+    }
+
+    public void startChatClient(String playerName, SocketChannel chatChannel) {
+        this.setChatClient(playerName, chatChannel);
+        this.getChatClient().start();
+        // debug
+        System.out.println("Started a chatClient thread");
+    }
+
+    public void endChatClient() {
+        // try {
+            System.out.println("Try to kill chatclient");
+            this.getChatClient().exit();
+            // this.getChatClient().interrupt(); // kill the chatclient thread
+            // debug
+            // System.out.println("ChatClient thread killed");
+
+        // } catch (ClosedByInterruptException e) {
+            // this.getChatChannel().close();
+        // }        
+    }
+
 
 }
