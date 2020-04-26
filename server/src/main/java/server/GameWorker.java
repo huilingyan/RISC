@@ -1,6 +1,8 @@
 package server;
 
 import shared.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameWorker extends Thread {
@@ -108,6 +110,10 @@ public class GameWorker extends Thread {
         // call init handler
         InitHandler handler = new InitHandler();
         Map newMap = handler.handleAction(gameMap, ac);
+        // turn++
+        newMap.addTurnByOne();
+        // draw cards
+        drawCards(newMap);
         // set new map
         game.setMap(newMap);
         // clear tempActionList
@@ -137,7 +143,10 @@ public class GameWorker extends Thread {
             // if no active player, do nothing
             // System.out.println("No active player in game " + game.getGid());
         } else {
+            // TODO: accomodate card system
             newMap.updateUnitandResource();
+            // draw cards
+            drawCards(newMap);
         }
         // set new map
         game.setMap(newMap);
@@ -146,6 +155,15 @@ public class GameWorker extends Thread {
         // update game in db
         HibernateUtil.updateGame(game);
 
+    }
+
+    private void drawCards(Map map){
+        Dice dice = new Dice(6);  // 6 sided dice
+        ArrayList<Integer> newCards = new ArrayList<Integer>();
+        for (int i=0; i<game.getPlayerNum(); i++){
+            newCards.add(dice.rollDice());
+        }
+        map.setNewCards(newCards);
     }
 
     /****
@@ -166,6 +184,10 @@ public class GameWorker extends Thread {
      ******/
     private Action validateGameAction(Action ac, int pid, Map gameMap) {
         OperationValidator validator = new OperationValidator(pid, gameMap);
+        // 0. validate card usage
+        if (ac.getNewCards().containsKey(pid) && ac.getNewCards().get(pid) == true){
+            validator.isValidCardUsage();
+        }
         // 1. validate upgrade operations
         for (UpgradeOperation uop : ac.getUpgradeOperations()) {
             validator.isValidUpgradeOperation(uop);
@@ -173,6 +195,10 @@ public class GameWorker extends Thread {
         // 2. validate move operations
         for (MoveOperation mop : ac.getMoveOperations()) {
             validator.isValidMoveOperation(mop);
+        }
+        // 2.5 move from ally's army
+        for (MoveOperation maop : ac.getMoveFromAllyOperations()){
+            validator.isValidMoveOperation(maop);
         }
         // 3. validate attack operations
         for (AttackOperation aop : ac.getAttackOperations()) {
@@ -182,6 +208,11 @@ public class GameWorker extends Thread {
         if (ac.getUpgradeMaxTechHashMap().containsKey(pid) && ac.getUpgradeMaxTechHashMap().get(pid) == true) {
             validator.isValidUpgradeMaxTechLv();
         }
+        // 5. validate alliance formation
+        if (ac.getAllianceRequests().containsKey(pid)) {
+            validator.isValidAllianceRequest(ac.getAllianceRequests().get(pid));
+        }
+        
         return validator.getAction();
         // return ac; // not validated
     }
