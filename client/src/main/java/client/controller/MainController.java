@@ -78,8 +78,8 @@ public class MainController {
         this.gamemodel.player_name = pname;
     }
 
-    public void setChatClient(String playerName, SocketChannel chatChannel, MainController mc) {
-        this.gamemodel.chatClient = new ChatClient(playerName, chatChannel, mc);
+    public void setChatClient(String playerName, MainController mc) {
+        this.gamemodel.chatClient = new ChatClient(playerName, mc);
     }
 
     public void setWorldMap(Map m) {
@@ -240,8 +240,8 @@ public class MainController {
         this.chatController.getTextArea().appendText(src + ": " +  msg + "\n");
     }
 
-    public void startChatClient(String playerName, SocketChannel chatChannel, MainController mc) {
-        this.setChatClient(playerName, chatChannel, mc);
+    public void startChatClient(String playerName, MainController mc) {
+        this.setChatClient(playerName, mc);
         this.getChatClient().start();
         // debug
         System.out.println("Started a chatClient thread");

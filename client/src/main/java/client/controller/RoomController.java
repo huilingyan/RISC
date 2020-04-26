@@ -118,8 +118,8 @@ public class RoomController extends SceneController {
                         int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
                         int gid = servermsg.getGameID();
                         // create chatclient thread
-                        SocketChannel chatChannel = this.mc.getChatChannel();
-                        this.mc.startChatClient(playername, chatChannel, this.mc);
+                        // SocketChannel chatChannel = this.mc.getChatChannel();
+                        this.mc.startChatClient(playername, this.mc);
                         this.mc.showChatBox();
                         // debug stage number
                         int stage = servermsg.getStage();
@@ -198,8 +198,8 @@ public class RoomController extends SceneController {
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
                         this.mc.setWorldMap(servermsg.getMap());
                         // create chatclient thread
-                        SocketChannel chatChannel = this.mc.getChatChannel();
-                        this.mc.startChatClient(playername, chatChannel, this.mc);
+                        // SocketChannel chatChannel = this.mc.getChatChannel();
+                        this.mc.startChatClient(playername, this.mc);
                         this.mc.showChatBox();
                         // debug stage number
                         int stage = servermsg.getStage();

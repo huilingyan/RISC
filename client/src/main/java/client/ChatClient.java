@@ -29,10 +29,10 @@ public class ChatClient extends Thread {
     private final AtomicBoolean exit = new AtomicBoolean(false);
 
     // constructor
-    public ChatClient(String username, SocketChannel chatChannel, MainController mc) {
+    public ChatClient(String username, MainController mc) {
         this.clientName = username;
-        this.chatChannel = chatChannel;
         this.mc = mc;
+        this.chatChannel = this.mc.getChatChannel();        
     }
 
     public void exit(){
