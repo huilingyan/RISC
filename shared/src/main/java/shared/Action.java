@@ -92,6 +92,7 @@ public class Action implements Serializable {
   public void useNewCard(int pid) {
     //player pid choose to use card this turn
     this.useNewCards.put(pid, true);
+    //if player choose not to use card, the entry will be empty
   }
 
   public void concatInitOperation(Action clientAction) {

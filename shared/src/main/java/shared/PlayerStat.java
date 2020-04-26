@@ -167,6 +167,86 @@ public class PlayerStat implements Serializable {
     //If the map previously contained an active card, the old turn value is replaced.
   }
 
+  public void activateCard(int cid){
+    if(cid == 2 || cid == 6){
+      activateCard(cid, 5);
+      //Communism and loan lasts for 5 turns
+    } else {
+      //other cards lasts for 1 turn
+      activateCard(cid, 1);
+    }
+  }
+
+  public boolean isPortalActivated(){
+    if(activatedCards.get(1) != null){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isCommunismActivated(){
+    if(activatedCards.get(2) != null){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isTechnologyWorshipActivated(){
+    if(activatedCards.get(3) != null){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isConscriptionActivated(){
+    if(activatedCards.get(4) != null){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isSilkRoadActivated(){
+    if(activatedCards.get(5) != null){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isLoanActivated(){
+    if(activatedCards.get(6) != null){
+      return true;
+    }
+    return false;
+  }
+  
+  public void settleCardCost(int cid){
+    switch(cid)
+      {
+      case '1':
+        subtractGold(50);   
+        System.out.println("Opening the portal costs 50 gold"); 
+        break;
+      case '2':
+         break;
+      case '3' :
+        break;
+      case '4':
+        subtractFood(20 * getTerritoryNum());
+        System.out.println("Conscription costs 20 food per territory");
+        break;
+      case '5' :
+        subtractFood(10 * getTerritoryNum());
+        System.out.println("Silk Road costs 10 food per territory");
+        break;
+      case '6':
+        addGold(300);
+        System.out.println("Loan: instantly get 300 gold");
+        break;  
+      default :
+        System.out.println("invalid card id");
+      }
+  }
+
   public void updateCardTurns(){
     for (Map.Entry<Integer, Integer> entry : activatedCards.entrySet()) {
       if (entry.getValue() <= 1) {
