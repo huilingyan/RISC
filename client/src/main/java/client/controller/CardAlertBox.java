@@ -30,7 +30,7 @@ public class CardAlertBox {
     Stage window = new Stage();
     window.initModality(Modality.APPLICATION_MODAL);
     window.setTitle("Card activation");
-    window.setMaxWidth(450);
+    //window.setMaxWidth(450);
 
     Label l = new Label();
     if (cidtomsgMap.containsKey(cid)) {

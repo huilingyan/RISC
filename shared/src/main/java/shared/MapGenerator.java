@@ -46,6 +46,7 @@ public class MapGenerator {
     PlayerStat p1 = new PlayerStat(1, "p1", 100, 60, 4, "F08080");
     PlayerStat p2 = new PlayerStat(2, "p2", 10, 30, 1, "90EE90");
     p0.activateCard(1, 2);
+    p0.setNewCard(5);
 
     p0.formAlliance(1);
     p1.formAlliance(0);

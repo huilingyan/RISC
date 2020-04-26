@@ -83,6 +83,10 @@ public class GameController extends SceneController {
     public Scene getCurrScene() {
 
         setMaster(this.masterpid);
+        boolean activate = CardAlertBox.cardSelection(getWorldmap().getPlayerStatByPid(masterpid).getNewCard());
+        if (activate) {
+          int errorcode=this.getOperationValidator().isValidCardUsage();
+        }
         
         root.setPadding(new Insets(10, 10, 10, 10));
 
