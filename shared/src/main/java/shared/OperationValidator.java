@@ -10,6 +10,7 @@ import java.util.HashSet;
 public class OperationValidator {
 
   public static final int VALID = 1;
+  public static final int BREAKING_ALLIANCE = 2;
   public static final int INVALID_DEST = -1;
   public static final int NOT_ENOUGH_UNITS = -2; //ev2: change no to not
   public static final int ILLEGAL_NUM = -3;
@@ -24,6 +25,7 @@ public class OperationValidator {
   public static final int REPEATED_ALLIANCE_REQUEST = -12;// 2 new flags for ev3
   public static final int PLAYER_ALREADY_ALLIED = -13;
   public static final int INVALID_CARD_ID = -14;
+  
 
   private Action validatedaction;
   private shared.Map temp_map;//bad naming from ev1
@@ -134,7 +136,11 @@ public class OperationValidator {
     // the territory to remove units
     Territory t_to_remove = temp_map.getTerritoryByName(src);
     // 1. check if valid src
-    if ((t_to_remove == null) || (!isOwnTerritory(t_to_remove))) {
+    if (t_to_remove == null) {
+      return INVALID_SRC;
+    }
+    if (temp_map.ownerstatus(t_to_remove, temp_map.getPlayerStatByPid(player_id)) == -1) {
+      //allow moveing from own territory or from ally's territory
       return INVALID_SRC;
     }
 
@@ -193,8 +199,11 @@ public class OperationValidator {
     }
 
     // update temp_map: add and subtract army, deduct resources
-    
-    t_to_remove.subtractDefender(moveop.getArmy());
+    if(!isOwnTerritory(t_to_remove)) {
+      t_to_remove.subtractFriendDefender(moveop.getArmy());
+    } else {
+      t_to_remove.subtractDefender(moveop.getArmy());
+    }
     if ((!isOwnTerritory(t_to_move))) {
       if(temp_map.getPlayerStatByPid(player_id).isAllied() &&
            (temp_map.getPlayerStatByPid(t_to_move.getOwnership()).getAid() ==
@@ -209,7 +218,13 @@ public class OperationValidator {
     temp_map.getPlayerStatByPid(player_id).subtractFood(move_cost);
 
     // if valid, add to move operation
-    validatedaction.addMoveOperation(moveop);
+    if (temp_map.ownerstatus(t_to_remove, temp_map.getPlayerStatByPid(player_id)) == 1) {
+      //src is ally's territory
+      validatedaction.addMoveFromAllyOperation(moveop);
+    } else {
+      //src is own territory
+      validatedaction.addMoveOperation(moveop);
+    }
     return VALID;
 
   }
@@ -271,7 +286,10 @@ public class OperationValidator {
     
     // if valid, add to move operation
     validatedaction.addAttackOperation(attackop);
-    
+    if (temp_map.getPlayerStatByPid(player_id).isAllied() 
+        && temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1) {
+      return BREAKING_ALLIANCE;
+    }
     return VALID;
 
   }
@@ -361,6 +379,14 @@ public class OperationValidator {
 
   private boolean isOwnTerritory(Territory t) {
     return (t.getOwnership() == this.player_id);
+  }
+
+  private boolean isAllyTerritory(Territory t) {
+    
+    if (temp_map.ownerstatus(t, temp_map.getPlayerStatByPid(player_id)) == 1){
+        return true;
+      }
+    return false;
   }
 
   private boolean isAdjacent(Territory src, Territory dest) {

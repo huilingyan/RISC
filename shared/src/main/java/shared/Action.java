@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class Action implements Serializable {
   private ArrayList<InitOperation> initOperations;
   private ArrayList<MoveOperation> moveOperations;
+  private ArrayList<MoveOperation> moveFromAllyOperations;
   private ArrayList<AttackOperation> attackOperations;
   private ArrayList<UpgradeOperation> upgradeOperations;
   private HashMap<Integer, Boolean> upgradeMaxTechLv;//pid, upgrade or not
@@ -20,6 +21,7 @@ public class Action implements Serializable {
   public Action() {
     this.initOperations= new ArrayList<InitOperation>();
     this.moveOperations= new ArrayList<MoveOperation>();
+    this.moveFromAllyOperations = new ArrayList<MoveOperation>();
     this.attackOperations = new ArrayList<AttackOperation>();
     this.upgradeOperations = new ArrayList<UpgradeOperation>();
     this.upgradeMaxTechLv = new HashMap<Integer, Boolean>();
@@ -33,6 +35,10 @@ public class Action implements Serializable {
 
   public ArrayList<MoveOperation> getMoveOperations() {
       return moveOperations;
+  }
+  
+  public ArrayList<MoveOperation> getMoveFromAllyOperations() {
+      return moveFromAllyOperations;
   }
 
   public ArrayList<AttackOperation> getAttackOperations() {
@@ -80,6 +86,10 @@ public class Action implements Serializable {
   public void addMoveOperation(MoveOperation mop) {
       this.moveOperations.add(mop);
   }
+  
+  public void addMoveFromAllyOperation(MoveOperation mop) {
+      this.moveFromAllyOperations.add(mop);
+  }
 
   public void addAttackOperation(AttackOperation aop) {
     this.attackOperations.add(aop);
@@ -104,6 +114,7 @@ public class Action implements Serializable {
     
     this.upgradeOperations.addAll(clientAction.upgradeOperations);
     this.moveOperations.addAll(clientAction.moveOperations);
+    this.moveFromAllyOperations.addAll(clientAction.moveFromAllyOperations);
     this.attackOperations.addAll(clientAction.attackOperations);
     //if any player choose to upgrade his max tech level, set it to true
     for (HashMap.Entry<Integer, Boolean> entry :

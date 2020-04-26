@@ -83,13 +83,55 @@ public class GameHandler extends Handler {
     //deep copy
     shared.Map new_worldmap = new shared.Map(worldmap);
 
+    List<MoveOperation> moveFromAllyList = action.getMoveFromAllyOperations();
+    for (int i = 0; i < moveFromAllyList.size(); i++) {
+      MoveOperation moveOp = moveFromAllyList.get(i);
+      String src = moveOp.getSrc();
+      String dest = moveOp.getDest();
+      Army army_move = moveOp.getArmy();
+      System.out.println("move from ally, dest:" + dest + " num:" + army_move.getTotalSoldiers());
+      Territory t_src = new_worldmap.getTerritoryByName(src);
+      Territory t_dest = new_worldmap.getTerritoryByName(dest);
+      int playerid = 0;
+      int allyid;
+      if (t_src != null && t_dest != null) {
+        allyid = t_src.getOwnership();
+        for (PlayerStat p : new_worldmap.getPlayerStats()){
+          if(p.getAid() == new_worldmap.getPlayerStatByPid(allyid).getAid() &&
+             p.getPid() != allyid){
+            playerid = p.getPid();
+          }
+        }
+        t_src.subtractFriendDefender(army_move);//src is ally's territory
+        
+        if (t_dest.getOwnership() == allyid) {
+          t_dest.addFriendDefender(army_move);//move to ally's territory
+
+        } else {
+          t_dest.addDefender(army_move);//move to own territory
+
+        }
+        //System.out.println("player id " + playerid);
+        //System.out.println("ally id " + allyid);
+        if (new_worldmap.getPlayerStatByPid(playerid).isPortalActivated()) {
+          //the player can move to any self-owned territories without costing food.
+          System.out.println("using portal to move");
+        } else {
+          //(total size of territories moved through) * (number of units moved)
+          //change CostofShortestPath to account for ally territory
+          int move_cost = worldmap.CostofShortestPath(src, dest) * army_move.getTotalSoldiers();
+          new_worldmap.getPlayerStatByPid(playerid).subtractFood(move_cost);
+        }
+      }
+    }
+    
     List<MoveOperation> moveList = action.getMoveOperations();
     for (int i = 0; i < moveList.size(); i++) {
       MoveOperation moveOp = moveList.get(i);
       String src = moveOp.getSrc();
       String dest = moveOp.getDest();
       Army army_move = moveOp.getArmy();
-      System.out.println("dest:" + dest + " num:" + army_move.getTotalSoldiers());
+      System.out.println("move from own, dest:" + dest + " num:" + army_move.getTotalSoldiers());
       Territory t_src = new_worldmap.getTerritoryByName(src);
       Territory t_dest = new_worldmap.getTerritoryByName(dest);
       int playerid;
@@ -113,10 +155,7 @@ public class GameHandler extends Handler {
           //(total size of territories moved through) * (number of units moved)
           //change CostofShortestPath to account for ally territory
           int move_cost = worldmap.CostofShortestPath(src, dest) * army_move.getTotalSoldiers();
-          System.out.println("food before move:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
           new_worldmap.getPlayerStatByPid(playerid).subtractFood(move_cost);
-
-          System.out.println("food after move:" + new_worldmap.getPlayerStatByPid(playerid).getFood());
         }
       }
     }

@@ -79,7 +79,21 @@ public class allianceHandlerTest {
     assert (new_worldmap.getTerritoryByTid(1).getDefender().getTotalSoldiers() == 7);
     assert (new_worldmap.getTerritoryByTid(2).getFriendDefender().getTotalSoldiers() == 2);
     assert (new_worldmap.getTerritoryByTid(2).getDefender().getTotalSoldiers() == 5);
-
+    //------------------------------------------------------
+    //move from ally's territory
+    Action moveAction1 = new Action();
+    MoveOperation move3 = new MoveOperation("Blue", "Green", new Army(1));
+    MoveOperation move4 = new MoveOperation("Green", "Blue", new Army(2));
+    MoveOperation move5 = new MoveOperation("Blue", "Red", new Army(1));
+    moveAction1.addMoveFromAllyOperation(move3);
+    moveAction1.addMoveFromAllyOperation(move4);
+    moveAction1.addMoveFromAllyOperation(move5);
+    shared.Map m1 = h1.handleMove(new_worldmap, moveAction1);
+    assert (m1.getTerritoryByTid(1).getFriendDefender().getTotalSoldiers() == 1);
+    assert (m1.getTerritoryByTid(1).getDefender().getTotalSoldiers() == 9);
+    assert (m1.getTerritoryByTid(2).getFriendDefender().getTotalSoldiers() == 0);
+    assert (m1.getTerritoryByTid(2).getDefender().getTotalSoldiers() == 6);
+    assert (m1.getTerritoryByTid(0).getFriendDefender().getTotalSoldiers() == 1);
     
     //------------------------------------------------------
     Action attackAction = new Action();
