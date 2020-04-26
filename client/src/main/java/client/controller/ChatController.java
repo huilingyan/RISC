@@ -50,23 +50,20 @@ public class ChatController  implements PrintMessage {
     
         HBox hb = new HBox(10);
         hb.setPadding(new Insets(0, 20, 0, 340));//t,r,b,l
+        ChoiceBox<String> chBox = new ChoiceBox(FXCollections.observableArrayList(this.mc.getPlayerList())); 
         Button clrBtn = new Button("Clear");
         clrBtn.setOnAction(e->inputF.clear());
         Button sendBtn = new Button("Send");
         sendBtn.setOnAction(e -> {
-            this.mc.sendChatMessage("asd", "zxc", "Hello from player");
-            mesgs.appendText("Me:"+inputF.getText()+"\n");
+            this.mc.sendChatMessage(this.mc.getPlayerName(), chBox.getValue(), inputF.getText());
+            // debug
+            System.out.println("send chat message to " + chBox.getValue());
+            mesgs.appendText("Me: "+inputF.getText()+"\n");
             // chatM.sendonemessage(new ChatMessage("Long", "server",inputF.getText()));
             inputF.clear();
         });
         Text txt1 = new Text("To");
-        // ChoiceBox<String> chBox = new ChoiceBox<>();
-        // for (String p : this.mc.getPlayerList()) {
 
-        // }
-        // chBox.getItems().add("self");
-        // chBox.setValue("self");
-        ChoiceBox<String> chBox = new ChoiceBox(FXCollections.observableArrayList(this.mc.getPlayerList())); 
         hb.getChildren().addAll(clrBtn, sendBtn, txt1, chBox);
     
         VBox vb = new VBox(20);

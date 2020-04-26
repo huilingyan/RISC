@@ -139,53 +139,53 @@ public class GameClient {
      * Only return a ChatMessage when receives one
      * @return
      */
-    public ChatMessage recvChatMsg() {
-        ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-        while (true) {
-            int readBytes = 0;
-            try {
-                readBytes = this.chatChannel.read(readBuffer);
-            } catch (IOException e) {
-                System.out.println("IOException when recv message from chat server");
-                e.printStackTrace();
-                System.exit(0);
-            }
-            if (readBytes == 0) {
-                continue;  // no message, continue
-            }
-            // while (readBytes > 0) {
-            // // debug
-            // System.out.println("received message, length " + readBytes);
-            // readBuffer.flip();
-            // while (readBuffer.hasRemaining()) {
-            // // System.out.print((char) readBuffer.get());
-            // System.out.println("has remaining");
-            // readBuffer.get();
-            // }
-            // System.out.println("out of has remaining loop");
-            // readBuffer.clear();
-            // System.out.println("clear read buffer");
-            // readBytes = this.chatChannel.read(readBuffer);
-            // System.out.println(readBytes);
-            // }
-            if (readBytes == -1) {
-                // this.chatChannel.close();
-                // System.out.println("close channel");
-                System.out.println("readBytes = -1");
-                System.exit(0);
-            }
-            // System.out.println(readBuffer.array().length);
-            ChatMessage chatMsgRecv = (ChatMessage) SerializationUtils.deserialize(readBuffer.array());
-            readBuffer.clear();
-            // String recv = new String(readBuffer.array()).trim();
-            // debug
-            System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
-            System.out.println("To: " + chatMsgRecv.getDestPlayerName());
-            System.out.println("Saying: " + chatMsgRecv.getMessage());
-            return chatMsgRecv;
-        }
+    // public ChatMessage recvChatMsg() {
+    //     ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+    //     while (true) {
+    //         int readBytes = 0;
+    //         try {
+    //             readBytes = this.chatChannel.read(readBuffer);
+    //         } catch (IOException e) {
+    //             System.out.println("IOException when recv message from chat server");
+    //             e.printStackTrace();
+    //             System.exit(0);
+    //         }
+    //         if (readBytes == 0) {
+    //             continue;  // no message, continue
+    //         }
+    //         // while (readBytes > 0) {
+    //         // // debug
+    //         // System.out.println("received message, length " + readBytes);
+    //         // readBuffer.flip();
+    //         // while (readBuffer.hasRemaining()) {
+    //         // // System.out.print((char) readBuffer.get());
+    //         // System.out.println("has remaining");
+    //         // readBuffer.get();
+    //         // }
+    //         // System.out.println("out of has remaining loop");
+    //         // readBuffer.clear();
+    //         // System.out.println("clear read buffer");
+    //         // readBytes = this.chatChannel.read(readBuffer);
+    //         // System.out.println(readBytes);
+    //         // }
+    //         if (readBytes == -1) {
+    //             // this.chatChannel.close();
+    //             // System.out.println("close channel");
+    //             System.out.println("readBytes = -1");
+    //             System.exit(0);
+    //         }
+    //         // System.out.println(readBuffer.array().length);
+    //         ChatMessage chatMsgRecv = (ChatMessage) SerializationUtils.deserialize(readBuffer.array());
+    //         readBuffer.clear();
+    //         // String recv = new String(readBuffer.array()).trim();
+    //         // debug
+    //         System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
+    //         System.out.println("To: " + chatMsgRecv.getDestPlayerName());
+    //         System.out.println("Saying: " + chatMsgRecv.getMessage());
+    //         return chatMsgRecv;
+    //     }
 
-    }
+    // }
 
     /***
      * Send switch out message to server
