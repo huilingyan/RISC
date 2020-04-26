@@ -21,7 +21,8 @@ public class OperationValidator {
   public static final int NOT_ENOUGH_GOLD = -9;
   public static final int EXCEED_MAX_LV = -10;
   public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
-  public static final int INVALID_ALLIANCE_REQUEST = -12;// 1 new flag for ev3
+  public static final int REPEATED_ALLIANCE_REQUEST = -12;// 2 new flags for ev3
+  public static final int PLAYER_ALREADY_ALLIED = -13;
 
   private Action validatedaction;
   private shared.Map temp_map;//bad naming from ev1
@@ -317,12 +318,12 @@ public class OperationValidator {
      
      if (request_alliance) {
        //Cannot send multiple alliance requests in one turn
-       return INVALID_ALLIANCE_REQUEST;
+       return REPEATED_ALLIANCE_REQUEST;
      }
      if(temp_map.getPlayerStatByPid(player_id).isAllied() ||
         temp_map.getPlayerStatByPid(topid).isAllied()){
        //Cannot form alliance with players already allied
-       return INVALID_ALLIANCE_REQUEST;
+       return PLAYER_ALREADY_ALLIED;
      }
           
      request_alliance = true;
