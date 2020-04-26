@@ -222,23 +222,23 @@ public class PlayerStat implements Serializable {
   public void settleCardCost(int cid){
     switch(cid)
       {
-      case '1':
+      case 1:
         subtractGold(50);   
         System.out.println("Opening the portal costs 50 gold"); 
         break;
-      case '2':
-         break;
-      case '3' :
+      case 2:
         break;
-      case '4':
+      case 3:
+        break;
+      case 4:
         subtractFood(20 * getTerritoryNum());
         System.out.println("Conscription costs 20 food per territory");
         break;
-      case '5' :
+      case 5:
         subtractFood(10 * getTerritoryNum());
         System.out.println("Silk Road costs 10 food per territory");
         break;
-      case '6':
+      case 6:
         addGold(300);
         System.out.println("Loan: instantly get 300 gold");
         break;  

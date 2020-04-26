@@ -51,16 +51,35 @@ public class cardHandlerTest {
     p_list.add(p3);
     shared.Map worldmap = new shared.Map(t_map, p_list);
 
-    worldmap.getPlayerStatByPid(0).activateCard(1);
+    //test portal
+    //------------------------------------------------------
+    worldmap.getPlayerStatByPid(0).setNewCard(1);
+    worldmap.getPlayerStatByPid(3).setNewCard(1);
+    Action a1 = new Action();
+    a1.useNewCard(0);
+    Action a11 = new Action();
+    a11.useNewCard(3);
+    a1.concatGameOperation(a11);
+    MoveOperation move1 = new MoveOperation("Blue", "Red", new Army(2));
+    AttackOperation attack1 = new AttackOperation("Blue", "Yellow", new Army(1));
+    a1.addMoveOperation(move1);
+    a1.addAttackOperation(attack1);
     
     GameHandler h1 = new GameHandler();
+    shared.Map m1 = h1.handleAction(worldmap, a1);
+    assert (m1.getPlayerStatByPid(0).isPortalActivated());
+    assert (m1.getPlayerStatByPid(3).isPortalActivated());
+    assert (m1.getPlayerStatByPid(0).getFood() == 999);
     
-    
-    worldmap.generateCards();
-    System.out.println("player 0 drew card " + worldmap.getPlayerStatByPid(0).getNewCard());
-    System.out.println("player 1 drew card " + worldmap.getPlayerStatByPid(1).getNewCard());
-    System.out.println("player 2 drew card " + worldmap.getPlayerStatByPid(2).getNewCard());
-    System.out.println("player 2 drew card " + worldmap.getPlayerStatByPid(3).getNewCard());
+    //------------------------------------------------------
+    //test communism
+    //------------------------------------------------------
+    //------------------------------------------------------
+    //------------------------------------------------------
+    //------------------------------------------------------
+    //------------------------------------------------------
+      //worldmap.generateCards();
+    System.out.println("card handler test passed"); 
     
   }
 
