@@ -23,14 +23,14 @@ public class guitest_long extends Application{
        Label l = new Label("hello world");
        Map worldmap=MapGenerator.initmapGenerator();
        Map gamemap=MapGenerator.gamemapGenerator();
-
+       /*
        InitOpPaneController iopPC = new InitOpPaneController("Ditto");
        InfoPaneController iPC = new InfoPaneController(worldmap);
        ModeSelectPaneController msPC = new ModeSelectPaneController("Ditto");
        MoveOPPaneController mopPC = new MoveOPPaneController("Ditto");
        AtkOPPaneController aopPC = new AtkOPPaneController("Ditto");
        UpOPPaneController uopPC = new UpOPPaneController("Ditto");
-       
+       */
     //    InitController iC = new InitController(worldmap);
     //    iC.setMaster(0);
        GameController gC = new GameController(gamemap,"p0",101,0);

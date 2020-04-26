@@ -15,20 +15,24 @@ import java.util.Iterator;
 import java.lang.String;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import client.controller.MainController;
 
+import client.model.*;
 import shared.*;
 
 public class ChatClient extends Thread {
 
     SocketChannel chatChannel = null;
     String clientName;
+    public MainController mc;
     // boolean exit = false;
     private final AtomicBoolean exit = new AtomicBoolean(false);
 
     // constructor
-    public ChatClient(String username, SocketChannel chatChannel) {
+    public ChatClient(String username, MainController mc) {
         this.clientName = username;
-        this.chatChannel = chatChannel;
+        this.mc = mc;
+        this.chatChannel = this.mc.getChatChannel();        
     }
 
     public void exit(){
@@ -50,23 +54,12 @@ public class ChatClient extends Thread {
         } catch (IOException e) {    
             e.printStackTrace();       
         } finally {
-            // try {
-            //     if (this.chatChannel != null) {
-            //         this.chatChannel.close();
-            //     }
-            // } catch (IOException e) {
-            //     e.printStackTrace();
-            // }
+
         } 
     }
 
     public void init() throws IOException {      
-        // this.chatChannel = SocketChannel.open();
-        // this.chatChannel.configureBlocking(false);
-        // Config config = new Config("config.properties"); 
-        // String host = config.readProperty("hostname"); 
-        // String chat_port = config.readProperty("chat_port");
-        // this.chatChannel.connect(new InetSocketAddress(host, Integer.parseInt(chat_port)));
+
         // debug
         System.out.println("Started a chatClient");       
         System.out.println("chatClient Address: " + this.chatChannel.socket().getLocalAddress());
@@ -74,32 +67,7 @@ public class ChatClient extends Thread {
     }
 
     public void process() throws IOException {
-        // debug: send chatmessage
-        // ChatMessage msg = new ChatMessage("user1", "user2", "test message");
-        
-        // ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
-        // ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-        // byte[] chatBytes = SerializationUtils.serialize(msg);
-        // String str = new String(chatBytes, StandardCharsets.UTF_8);
-        // System.out.println(str);
-        // String newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
-        // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
-        // System.out.println(newStr);
-        // ByteBuffer writeBuffer = ByteBuffer.wrap(chatBytes);
-        // this.chatChannel.write(writeBuffer);
-        // str = new String(chatBytes, StandardCharsets.UTF_8);
-        // System.out.println(new String(chatBytes, StandardCharsets.UTF_8));
-        // newStr = String.format("%040x", new BigInteger(1, str.getBytes(StandardCharsets.UTF_8)));
-        // Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
-        // System.out.println(newStr);
-        // writeBuffer.clear();
-        // ByteBuffer writeBuffer = ByteBuffer.wrap("Hey Dude!".getBytes());
-               
-        // readBuffer.clear();
-        // this.chatChannel.read(readBuffer);
-        // String recv = new String(readBuffer.array()).trim();
-        // // debug
-        // System.out.println("Received back from server: " + recv);
+ 
         while (!exit.get()) {
             ByteBuffer readBuffer = ByteBuffer.allocate(1024);
             int readBytes = this.chatChannel.read(readBuffer);
@@ -131,13 +99,12 @@ public class ChatClient extends Thread {
             // System.out.println(readBuffer.array().length);
             ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
             readBuffer.clear();
-            // String recv = new String(readBuffer.array()).trim();
+            this.mc.appendToTextArea(chatMsgRecv.getSrcPlayerName(), chatMsgRecv.getMessage()); // show on text area
             // debug
             System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
             System.out.println("To: " + chatMsgRecv.getDestPlayerName());
             System.out.println("Saying: " + chatMsgRecv.getMessage());
         }
-
     }
 
     // public static void main(String[] args) {

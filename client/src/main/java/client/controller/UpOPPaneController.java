@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import shared.Army;
 import shared.OperationValidator;
+import shared.PlayerStat;
 import shared.Territory;
 import shared.UpgradeOperation;
 
@@ -31,10 +32,18 @@ public class UpOPPaneController implements PaneController {
     @Override
     public AnchorPane getCurrPane() {
         Territory terr = this.gc.getWorldmap().getTerritoryByName(terrName);
+        PlayerStat masterPS = gc.getWorldmap().getPlayerStatByPid(gc.getPid());
         
         GridPane costTable = InfoLayoutGenerator.generateUpgradeTable();
         Text selectUpgrade = new Text("Move the slider to select number of soldiers and pick the target level you want to upgrade them to.");
-        ArmySliderPlusLvSel amsld = new ArmySliderPlusLvSel(terr.getDefender());
+        Army tempArmy = new Army(0);
+        if (gc.getWorldmap().ownerstatus(terr, masterPS) ==0) {
+          tempArmy.joinArmy(terr.getDefender());
+        }
+        else {
+          tempArmy.joinArmy(terr.getFriendDefender());
+        }
+        ArmySliderPlusLvSel amsld = new ArmySliderPlusLvSel(tempArmy);
         Button proceedBtn = new Button("Proceed");
         Button cancelBtn = new Button("Cancel");
         ButtonBar BtnBar = new ButtonBar();

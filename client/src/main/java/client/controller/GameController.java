@@ -113,6 +113,7 @@ public class GameController extends SceneController {
         switchoutbtn.setOnAction(e -> {
             this.mc.switchoutMsg(); // send switchout message to server
             this.mc.endChatClient();
+            this.mc.closeChatWindow();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();           
             this.mc.showRoomScene(room_msg);            
         });
