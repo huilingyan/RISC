@@ -101,7 +101,6 @@ public class ChatClient extends Thread {
             System.out.println("To: " + chatMsgRecv.getDestPlayerName());
             System.out.println("Saying: " + chatMsgRecv.getMessage());
         }
-
     }
 
     // public static void main(String[] args) {
