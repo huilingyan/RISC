@@ -39,6 +39,10 @@ public class ChatController  implements PrintMessage {
     public void clearChatHistory() {
         mesgs.clear();
     }
+
+    public TextArea getTextArea() {
+        return this.mesgs;
+    }
     
     public void displayChatBox() {
         this.window = new Stage();

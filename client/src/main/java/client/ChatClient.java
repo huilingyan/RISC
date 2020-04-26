@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.lang.String;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import client.controller.MainController;
 
 import client.model.*;
 import shared.*;
@@ -23,13 +24,15 @@ public class ChatClient extends Thread {
 
     SocketChannel chatChannel = null;
     String clientName;
+    public MainController mc;
     // boolean exit = false;
     private final AtomicBoolean exit = new AtomicBoolean(false);
 
     // constructor
-    public ChatClient(String username, SocketChannel chatChannel) {
+    public ChatClient(String username, SocketChannel chatChannel, MainController mc) {
         this.clientName = username;
         this.chatChannel = chatChannel;
+        this.mc = mc;
     }
 
     public void exit(){
@@ -96,6 +99,7 @@ public class ChatClient extends Thread {
             // System.out.println(readBuffer.array().length);
             ChatMessage chatMsgRecv = (ChatMessage)SerializationUtils.deserialize(readBuffer.array());
             readBuffer.clear();
+            this.mc.appendToTextArea(chatMsgRecv.getSrcPlayerName(), chatMsgRecv.getMessage()); // show on text area
             // debug
             System.out.println("The chat message is from: " + chatMsgRecv.getSrcPlayerName());
             System.out.println("To: " + chatMsgRecv.getDestPlayerName());
