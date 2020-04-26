@@ -259,8 +259,8 @@ public class OperationValidator {
     // if valid, add to move operation
     validatedaction.addAttackOperation(attackop);
     //Break alliance when current player attacks ally’s territory
-    if (temp_map.getPlayerStatByPid(player_id).isAllied()
-        && (temp_map.getPlayerStatByPid(t_to_move.getOwnership()).getAid() == temp_map.getPlayerStatByPid(player_id).getAid())) {
+    if (temp_map.getPlayerStatByPid(player_id).isAllied() 
+        && temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1) {
       int allyid = t_to_move.getOwnership();
       temp_map.breakAlliance(player_id, allyid);
       //return FriendArmy to nearest territory
