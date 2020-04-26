@@ -15,10 +15,10 @@ public class GameHandler extends Handler {
     shared.Map map_cardused = handleCard(worldmap, action);
     shared.Map map_upgraded = handleUpgrade(map_cardused, action);
     shared.Map map_moved = handleMove(map_upgraded, action);
-    shared.Map map_broke = handleAllianceBreak(map_moved, action);
-    shared.Map map_attacked = handleAttack(map_broke, action);
+    shared.Map map_attacked = handleAttack(map_moved, action);
     shared.Map map_techlv_upgraded = handleMaxTechLvUpgrade(map_attacked, action);
-    shared.Map map_allied = handleAllianceFormation(map_techlv_upgraded, action);
+    shared.Map map_broke = handleAllianceBreak(map_techlv_upgraded, action);
+    shared.Map map_allied = handleAllianceFormation(map_broke, action);
     return map_allied;
   }
 
@@ -124,70 +124,7 @@ public class GameHandler extends Handler {
   }
 
 
-  public shared.Map handleAllianceBreak(
-      shared.Map worldmap, Action action) {
-
-    //deep copy
-    shared.Map new_worldmap = new shared.Map(worldmap);
-    List<AttackOperation> attackList = action.getAttackOperations();
-    for (int i = 0; i < attackList.size(); i++) {
-      AttackOperation attackOp = attackList.get(i);
-      String src = attackOp.getSrc();
-      String dest = attackOp.getDest();
-
-      Territory t_src = new_worldmap.getTerritoryByName(src);
-      Territory t_dest = new_worldmap.getTerritoryByName(dest);
-      int playerid;
-
-      if (t_src != null && t_dest != null) {
-        playerid = t_src.getOwnership();
-        //player attacks ally's territory
-        if (new_worldmap.getPlayerStatByPid(playerid).isAllied()
-            && (new_worldmap.getPlayerStatByPid(t_dest.getOwnership()).getAid() == new_worldmap
-                .getPlayerStatByPid(playerid).getAid())) {
-          //change aid and allied status for both players
-          int allyid = t_dest.getOwnership();
-          new_worldmap.breakAlliance(playerid, allyid);
-
-          System.out.println("player " + playerid + " breaks alliance with player  " + t_dest.getOwnership());
-
-          new_worldmap = returnFriendArmy(new_worldmap, playerid, allyid);
-        }
-      }
-    }
-
-    return new_worldmap;
-  }
-
-  private shared.Map returnFriendArmy(shared.Map worldmap, int playerid, int allyid) {
-    shared.Map new_worldmap = new shared.Map(worldmap);
-    //return friendArmy to the nearest self-owned territory
-    //iterate all territories for both players
-    for (String tName : new_worldmap.getOwnTerritoryListName(playerid)) {
-      Territory t = new_worldmap.getTerritoryByName(tName);
-      if (t.getFriendDefender().getTotalSoldiers() > 0) {
-        //get former ally's nearest territory from t
-        //and move FriendAmry to there
-        new_worldmap.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
-        System.out.println("return player " + allyid + "'s army (" + t.getFriendDefender().getTotalSoldiers()
-                           + " units) from " + t.getName() + " to " + new_worldmap.getNearestTerritory(t, allyid).getName());
-        t.setFriendDefender(new Army());
-      }
-    }
-
-    for (String tName : new_worldmap.getOwnTerritoryListName(allyid)) {
-      Territory t = new_worldmap.getTerritoryByName(tName);
-      if (t.getFriendDefender().getTotalSoldiers() > 0) {
-        //get former ally's nearest territory from t
-        //and move FriendAmry to there
-        new_worldmap.getNearestTerritory(t, playerid).addDefender(t.getFriendDefender());
-        System.out.println("return player " + playerid + "'s army (" + t.getFriendDefender().getTotalSoldiers()
-            + " units) from " + t.getName() + " to " + new_worldmap.getNearestTerritory(t, playerid).getName());
-        t.setFriendDefender(new Army());
-      }
-    }
-    return new_worldmap;
-  }
+  
   
   public shared.Map handleAttack(
     shared.Map worldmap, Action action) {
@@ -518,6 +455,71 @@ public class GameHandler extends Handler {
        }
 
      return new_worldmap;
+  }
+
+  public shared.Map handleAllianceBreak(
+      shared.Map worldmap, Action action) {
+
+    //deep copy
+    shared.Map new_worldmap = new shared.Map(worldmap);
+    List<AttackOperation> attackList = action.getAttackOperations();
+    for (int i = 0; i < attackList.size(); i++) {
+      AttackOperation attackOp = attackList.get(i);
+      String src = attackOp.getSrc();
+      String dest = attackOp.getDest();
+
+      Territory t_src = new_worldmap.getTerritoryByName(src);
+      Territory t_dest = new_worldmap.getTerritoryByName(dest);
+      int playerid;
+
+      if (t_src != null && t_dest != null) {
+        playerid = t_src.getOwnership();
+        //player attacks ally's territory
+        if (new_worldmap.getPlayerStatByPid(playerid).isAllied()
+            && (new_worldmap.getPlayerStatByPid(t_dest.getOwnership()).getAid() == new_worldmap
+                .getPlayerStatByPid(playerid).getAid())) {
+          //change aid and allied status for both players
+          int allyid = t_dest.getOwnership();
+          new_worldmap.breakAlliance(playerid, allyid);
+
+          System.out.println("player " + playerid + " breaks alliance with player  " + t_dest.getOwnership());
+
+          new_worldmap = returnFriendArmy(new_worldmap, playerid, allyid);
+        }
+      }
+    }
+
+    return new_worldmap;
+  }
+
+  private shared.Map returnFriendArmy(shared.Map worldmap, int playerid, int allyid) {
+    shared.Map new_worldmap = new shared.Map(worldmap);
+    //return friendArmy to the nearest self-owned territory
+    //iterate all territories for both players
+    for (String tName : new_worldmap.getOwnTerritoryListName(playerid)) {
+      Territory t = new_worldmap.getTerritoryByName(tName);
+      if (t.getFriendDefender().getTotalSoldiers() > 0) {
+        //get former ally's nearest territory from t
+        //and move FriendAmry to there
+        new_worldmap.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
+        System.out.println("return player " + allyid + "'s army (" + t.getFriendDefender().getTotalSoldiers()
+                           + " units) from " + t.getName() + " to " + new_worldmap.getNearestTerritory(t, allyid).getName());
+        t.setFriendDefender(new Army());
+      }
+    }
+
+    for (String tName : new_worldmap.getOwnTerritoryListName(allyid)) {
+      Territory t = new_worldmap.getTerritoryByName(tName);
+      if (t.getFriendDefender().getTotalSoldiers() > 0) {
+        //get former ally's nearest territory from t
+        //and move FriendAmry to there
+        new_worldmap.getNearestTerritory(t, playerid).addDefender(t.getFriendDefender());
+        System.out.println("return player " + playerid + "'s army (" + t.getFriendDefender().getTotalSoldiers()
+            + " units) from " + t.getName() + " to " + new_worldmap.getNearestTerritory(t, playerid).getName());
+        t.setFriendDefender(new Army());
+      }
+    }
+    return new_worldmap;
   }
 
   public shared.Map handleAllianceFormation(

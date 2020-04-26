@@ -271,27 +271,7 @@ public class OperationValidator {
     
     // if valid, add to move operation
     validatedaction.addAttackOperation(attackop);
-    //Break alliance when current player attacks ally’s territory
-    if (temp_map.getPlayerStatByPid(player_id).isAllied() 
-        && temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1) {
-      int allyid = t_to_move.getOwnership();
-      temp_map.breakAlliance(player_id, allyid);
-      //return FriendArmy to nearest territory
-      for (String tName : temp_map.getOwnTerritoryListName(player_id)) {
-        Territory t = temp_map.getTerritoryByName(tName);
-        if (t.getFriendDefender().getTotalSoldiers() > 0) {
-          temp_map.getNearestTerritory(t, allyid).addDefender(t.getFriendDefender());
-          t.setFriendDefender(new Army());
-        }
-      }
-      for (String tName : temp_map.getOwnTerritoryListName(allyid)) {
-        Territory t = temp_map.getTerritoryByName(tName);
-        if (t.getFriendDefender().getTotalSoldiers() > 0) {
-          temp_map.getNearestTerritory(t, player_id).addDefender(t.getFriendDefender());
-          t.setFriendDefender(new Army());
-        }
-      }          
-    }
+    
     return VALID;
 
   }
@@ -344,9 +324,11 @@ public class OperationValidator {
      return VALID;
    }
 
-   public int isValidCardUsage(int cid) {
+   public int isValidCardUsage() {
      //should be called at the start of client's turn
      //if that client choose to use the card
+     int cid = temp_map.getPlayerStatByPid(player_id).getNewCard();
+     
     if(cid <1 || cid > 6){
       return INVALID_CARD_ID;
     }
