@@ -1,7 +1,6 @@
 package shared;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
 
 public class OperationValidatorTest {
@@ -161,4 +160,5 @@ public class OperationValidatorTest {
   public static final int NOT_ENOUGH_GOLD = -9;
   public static final int EXCEED_MAX_LV = -10;
   public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
+  public static final int INVALID_ALLIANCE_REQUEST = -12;// 1 new flag for ev3
 }

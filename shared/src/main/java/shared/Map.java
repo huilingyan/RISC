@@ -262,6 +262,7 @@ public class Map implements Serializable {
     }
     return namelist;
   }
+
   
   public void updateUnitandResource(){
     updateUnit();
@@ -300,4 +301,35 @@ public class Map implements Serializable {
     getPlayerStatByPid(p2).breakAlliance();
   }
 
+  public int getAllyId(int pid){
+    if (getPlayerStatByPid(pid).isAllied()) {
+      for (PlayerStat ps : playerStats) {
+        if (ps.getPid() == pid) {
+          continue;
+        }
+        if (ps.getAid() == getPlayerStatByPid(pid).getAid()) {
+          return ps.getPid();
+        }
+      }
+    }
+    return -1;//no ally
+  }
+
+  public Territory getNearestTerritory(Territory src, int pid) {
+    int minDist = 99999;
+    Territory nearestTerritory = getTerritoryByName(getOwnTerritoryListName(pid).get(0));
+    for (Territory t : territories) {
+      if(t.getTid() == src.getTid() || t.getOwnership() != pid){
+        //avoid self territory and enemy territory
+        continue;
+      }
+      
+      int distance = CostofShortestPath(src.getName(), t.getName());
+      if (distance > 0 && distance < minDist) {
+        minDist = distance;
+        nearestTerritory = t;
+      }
+    }
+    return nearestTerritory;
+  }
 }
