@@ -140,7 +140,7 @@ public class GameHandler extends Handler {
         playerid = t_src.getOwnership();
         t_src.subtractDefender(army_move);//src territory - unit
         if(new_worldmap.getPlayerStatByPid(playerid).isAllied() &&
-        (ownerstatus(t_dest, new_worldmap.getPlayerStatByPid(playerid)) == 1)) {
+        (new_worldmap.ownerstatus(t_dest, new_worldmap.getPlayerStatByPid(playerid)) == 1)) {
           t_dest.addFriendDefender(army_move);//move to ally's territory
       
         } else {
@@ -514,7 +514,7 @@ public class GameHandler extends Handler {
         playerid = t_src.getOwnership();
         //player attacks ally's territory
         if (new_worldmap.getPlayerStatByPid(playerid).isAllied() &&
-        (ownerstatus(t_dest, new_worldmap.getPlayerStatByPid(playerid)) == 1)) {
+        (new_worldmap.ownerstatus(t_dest, new_worldmap.getPlayerStatByPid(playerid)) == 1)) {
           //change aid and allied status for both players
           int allyid = t_dest.getOwnership();
           new_worldmap.breakAlliance(playerid, allyid);
