@@ -52,8 +52,6 @@ deploy:
   tags: 
      - ece651 
   stage: deploy
-  dependencies:
-     - db 
   script: ./scripts/redeploy.sh
  
 test-deployment: 
