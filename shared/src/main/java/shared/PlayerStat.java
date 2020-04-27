@@ -224,20 +224,20 @@ public class PlayerStat implements Serializable {
     switch(cid)
       {
       case 1:
-        subtractGold(50);   
-        System.out.println("Opening the portal costs 50 gold"); 
+        subtractGold(25);   
+        System.out.println("Opening the portal costs 25 gold"); 
         break;
       case 2:
         break;
       case 3:
         break;
       case 4:
-        subtractFood(20 * getTerritoryNum());
-        System.out.println("Conscription costs 20 food per territory");
+        subtractFood(10 * getTerritoryNum());
+        System.out.println("Conscription costs 10 food per territory");
         break;
       case 5:
-        subtractFood(10 * getTerritoryNum());
-        System.out.println("Silk Road costs 10 food per territory");
+        subtractFood(5 * getTerritoryNum());
+        System.out.println("Silk Road costs 5 food per territory");
         break;
       case 6:
         addGold(300);
@@ -249,14 +249,18 @@ public class PlayerStat implements Serializable {
   }
 
   public void updateCardTurns(){
+    HashMap <Integer, Integer> tempCards = new HashMap <Integer, Integer>(activatedCards);
+    
     for (Map.Entry<Integer, Integer> entry : activatedCards.entrySet()) {
       if (entry.getValue() <= 1) {
-        //the card effect expired, remove card from map
-        activatedCards.remove(entry.getKey(), entry.getValue());
-      } else{
+        //the card effect expired
+        tempCards.remove(entry.getKey(), entry.getValue());
+      } else {
       	//deduct number of turns left by 1
-      	activatedCards.put(entry.getKey(), entry.getValue() - 1);
+      	tempCards.put(entry.getKey(), entry.getValue() - 1);
       }
-     } 
+    }
+    //temp and swap
+    activatedCards = tempCards
   }
 }
