@@ -261,6 +261,6 @@ public class PlayerStat implements Serializable {
       }
     }
     //temp and swap
-    activatedCards = tempCards
+    activatedCards = tempCards;
   }
 }
