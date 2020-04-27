@@ -253,9 +253,10 @@ public class PlayerStat implements Serializable {
       if (entry.getValue() <= 1) {
         //the card effect expired, remove card from map
         activatedCards.remove(entry.getKey(), entry.getValue());
+      } else{
+      	//deduct number of turns left by 1
+      	activatedCards.put(entry.getKey(), entry.getValue() - 1);
       }
-      //deduct number of turns left by 1
-      activatedCards.put(entry.getKey(), entry.getValue() - 1);
      } 
   }
 }
