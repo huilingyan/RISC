@@ -9,7 +9,6 @@ stages:
    - build
    - test
    - coverage
-   - db
    - deploy
    - test-deployment
 
@@ -40,16 +39,17 @@ pages:
  artifacts:
    paths:
      - public
-      
-db:
-  image: postgres
-  environment:
-    POSTGRES_PASSWORD: abc123
-    POSTGRES_USER: postgres
-    POSTGRES_DB: risc
-  restart: always
-  volumes:
-        - data-volume:/var/lib/postgressql/data
+
+services:       
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: abc123
+      POSTGRES_USER: postgres
+      POSTGRES_DB: risc
+    restart: always
+    volumes:
+          - data-volume:/var/lib/postgressql/data
 
 deploy:
   tags: 
