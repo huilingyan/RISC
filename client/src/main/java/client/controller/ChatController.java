@@ -59,11 +59,16 @@ public class ChatController  implements PrintMessage {
         clrBtn.setOnAction(e->inputF.clear());
         Button sendBtn = new Button("Send");
         sendBtn.setOnAction(e -> {
-            this.mc.sendChatMessage(this.mc.getPlayerName(), chBox.getValue(), inputF.getText());
-            // debug
-            System.out.println("send chat message to " + chBox.getValue());
-            mesgs.appendText("Me to " + chBox.getValue() + " : " + inputF.getText()+"\n");
-            inputF.clear();
+            if (chBox.getValue() == null) { // if don't choose anything
+                ErrorAlerts.mustChooseAPlayer();
+            }
+            else {
+                this.mc.sendChatMessage(this.mc.getPlayerName(), chBox.getValue(), inputF.getText());
+                // debug
+                System.out.println("send chat message to " + chBox.getValue());
+                mesgs.appendText("Me to " + chBox.getValue() + " : " + inputF.getText()+"\n");
+                inputF.clear();
+            }
         });
         Text txt1 = new Text("To");
 

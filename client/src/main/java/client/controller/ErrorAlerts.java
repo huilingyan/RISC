@@ -191,6 +191,24 @@ public class ErrorAlerts {
         alert.showAndWait();
     }
 
+    public static void mustChooseAPlayer() {
+        Alert alert = new Alert(AlertType.ERROR);
 
+        alert.setTitle("Error");
+        alert.setHeaderText("Please choose a player");
+        alert.setContentText("You must choose a player to send message to! Please try again:");
+
+        alert.showAndWait();
+    }
+
+    public static void sendEmptyMsg() {
+        Alert alert = new Alert(AlertType.ERROR);
+
+        alert.setTitle("Error");
+        alert.setHeaderText("Please write something");
+        alert.setContentText("You can't send an empty message! Please input some words:");
+
+        alert.showAndWait();
+    }
 
 }
