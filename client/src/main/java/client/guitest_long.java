@@ -1,6 +1,7 @@
 package client;
 
 import client.controller.AtkOPPaneController;
+import client.controller.CardAlertBox;
 import client.controller.GameController;
 import client.controller.InfoPaneController;
 import client.controller.InitController;
@@ -37,6 +38,8 @@ public class guitest_long extends Application{
        //Scene s1 = new Scene(uopPC.getCurrPane(), 1280, 720);
         stage.setScene(gC.getCurrScene());
        stage.show();
+       //boolean activate=CardAlertBox.cardSelection(-1);
+       //System.out.println(activate);
 
     }
 
