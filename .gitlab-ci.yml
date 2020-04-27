@@ -47,13 +47,11 @@ pages:
  artifacts:
    paths:
      - public
-
+      
 deploy:
   tags: 
      - ece651 
-  stage: deploy
-  dependencies:
-     - db 
+  stage: deploy 
   script: ./scripts/redeploy.sh
  
 test-deployment: 
