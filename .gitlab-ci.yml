@@ -9,6 +9,7 @@ stages:
    - build
    - test
    - coverage
+   - db
    - deploy
    - test-deployment
 
@@ -40,10 +41,22 @@ pages:
    paths:
      - public
       
+db:
+  image: postgres
+  environment:
+    POSTGRES_PASSWORD: abc123
+    POSTGRES_USER: postgres
+    POSTGRES_DB: risc
+  restart: always
+  volumes:
+        - data-volume:/var/lib/postgressql/data
+
 deploy:
   tags: 
      - ece651 
-  stage: deploy 
+  stage: deploy
+  dependencies:
+     - db 
   script: ./scripts/redeploy.sh
  
 test-deployment: 
