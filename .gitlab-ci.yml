@@ -1,5 +1,5 @@
 services:
-  - postgres:12.2-alpine
+  - postgres:9.4
   
 variables:
     POSTGRES_DB: risc
