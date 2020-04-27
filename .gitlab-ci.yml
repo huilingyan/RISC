@@ -1,3 +1,11 @@
+services:
+  - postgres:12.2-alpine
+  
+variables:
+    POSTGRES_DB: risc
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: abc123
+
 before_script:
   - hostname
   - whoami
@@ -39,11 +47,11 @@ pages:
  artifacts:
    paths:
      - public
-      
+
 deploy:
   tags: 
      - ece651 
-  stage: deploy 
+  stage: deploy
   script: ./scripts/redeploy.sh
  
 test-deployment: 

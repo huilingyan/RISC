@@ -73,10 +73,32 @@ public class cardHandlerTest {
     
     //------------------------------------------------------
     //test communism
+    worldmap.getPlayerStatByPid(0).setNewCard(2);
+    
+    Action a2 = new Action();
+    a2.useNewCard(0);
+    AttackOperation attack2 = new AttackOperation("Blue", "Green", new Army(3));
+    AttackOperation attack3 = new AttackOperation("Blue", "Green", new Army(4));
+    a2.addAttackOperation(attack2);
+    a2.addAttackOperation(attack3);
+    
+    
+    shared.Map m2 = h1.handleAction(worldmap, a2);
     //------------------------------------------------------
+    //Max tech lv upgrade by 1
+    worldmap.getPlayerStatByPid(0).setNewCard(3);
+    
+    Action a3 = new Action();
+    a3.useNewCard(0);
+    shared.Map m3 = h1.handleAction(worldmap, a3);
+    assert (m3.getPlayerStatByPid(0).getMaxTechLvl() == 2);
+    assert (m3.getPlayerStatByPid(0).getGold() == 999);
     //------------------------------------------------------
+    //costs 20 food per territory
     //------------------------------------------------------
+    //each territory costs 10 food
     //------------------------------------------------------
+    //instantly get 300 gold
     //------------------------------------------------------
       //worldmap.generateCards();
     System.out.println("card handler test passed"); 

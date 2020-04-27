@@ -131,6 +131,7 @@ public class ErrorAlerts {
       .put(OperationValidator.EXCEED_MAX_LV, "Your upgrade cannot exceed your maximum tech Lv!")
       .put(OperationValidator.PLAYER_ALREADY_ALLIED,"You are already allied with someone!")
       .put(OperationValidator.REPEATED_ALLIANCE_REQUEST,"You can only request ally once in a turn!")
+      .put(OperationValidator.BREAKING_ALLIANCE,"You broke the alliance!")
       .build();
 
     public static void inValidOpAlert(int errorcode) {

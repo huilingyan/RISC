@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 public class OperationValidatorTest {
   @Test
   public void test_operationvalidator() {
-    shared.Map worldmap = MapGenerator.gamemapGenerator();
+    shared.Map worldmap = OldMapGenerator.gamemapGenerator();
     //PlayerStat p0 = new PlayerStat(0, "p0", 113, 40, 4, "87CEFA");
     //pid 0, food 113, gold 40, 4 territories tid 1,4,9,5
     
@@ -58,6 +58,7 @@ public class OperationValidatorTest {
     Army a5 = new Army();
     a5.addSoldiers(4, 2);
     UpgradeOperation uop5 = new UpgradeOperation("Ditto", new Army(2), a5);
+    //System.out.println("uop5 return " + v0.isValidUpgradeOperation(uop5));
     assert (v0.isValidUpgradeOperation(uop5) == NOT_ENOUGH_GOLD);
 
     Army a6 = new Army();
@@ -95,6 +96,7 @@ public class OperationValidatorTest {
     v0.getCurrentMapState().getTerritoryByTid(5).setOwnership(1);
     //invalid path test
     MoveOperation moveop7 = new MoveOperation("Ditto", "Jumpluff", new Army(1));
+     System.out.println("moveop7 return " + v0.isValidMoveOperation(moveop7));
     assert (v0.isValidMoveOperation(moveop7) == INVALID_PATH);
     v0.getCurrentMapState().getTerritoryByTid(4).setOwnership(0);
     v0.getCurrentMapState().getTerritoryByTid(5).setOwnership(0);
