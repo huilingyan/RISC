@@ -13,7 +13,7 @@ services:
 
   server:
       build: .
-      command: gradle run-server
+      command: ./gradlew run-server
       # volumes:
       #   - ./web-app:/code
       expose:

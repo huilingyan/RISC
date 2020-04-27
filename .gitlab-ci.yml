@@ -58,7 +58,7 @@ deploy:
   stage: deploy 
   script: # ./scripts/redeploy.sh
      - docker-compose stop
-     - docker-compose up
+     - docker-compose up --build
  
 test-deployment: 
   tags: 
