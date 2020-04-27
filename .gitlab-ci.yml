@@ -5,6 +5,7 @@ variables:
     POSTGRES_DB: risc
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: abc123
+    POSTGRES_HOST_AUTH_METHOD: trust
 
 before_script:
   - hostname
