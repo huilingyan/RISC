@@ -1,8 +1,13 @@
 #!/bin/bash
 
+
+# docker compose
+sudo apt-get install -y docker-compose
+sudo docker-compose stop
+
 # first terminate any old ones
-docker kill citest-651
-docker rm citest-651
+# docker kill citest-651
+# docker rm citest-651
 
 # now run the new one
 # set up postgres
@@ -18,6 +23,6 @@ docker rm citest-651
 
 
 # docker compose
-sudo apt-get install -y docker-compose
+# sudo apt-get install -y docker-compose
 sudo docker-compose up
 
