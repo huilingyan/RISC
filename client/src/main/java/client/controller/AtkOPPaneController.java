@@ -63,7 +63,11 @@ public class AtkOPPaneController implements PaneController {
                 gc.showInfoPane();
             }
             else {
+              
                 ErrorAlerts.inValidOpAlert(errorcode);
+                if (errorcode == OperationValidator.BREAKING_ALLIANCE) {
+                  gc.showInfoPane();
+                }
             }
         });
         cancelBtn.setOnAction(e -> gc.showInfoPane());
