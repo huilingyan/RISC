@@ -24,14 +24,14 @@ public class ChatController  implements PrintMessage {
     // private ChatModel chatM;
 
     public MainController mc;
-    private ChatClient chatClient;
+    // private ChatClient chatClient;
 
     public void setMainController(MainController mainC) {
         this.mc = mainC;
     }
 
-    public ChatController(ChatClient c) {
-        this.chatClient = c;
+    public ChatController() {
+        // this.chatClient = c;
         this.mesgs = new TextArea();
         this.mesgs.setPrefHeight(450);
     }
@@ -62,8 +62,7 @@ public class ChatController  implements PrintMessage {
             this.mc.sendChatMessage(this.mc.getPlayerName(), chBox.getValue(), inputF.getText());
             // debug
             System.out.println("send chat message to " + chBox.getValue());
-            mesgs.appendText("Me: "+inputF.getText()+"\n");
-            // chatM.sendonemessage(new ChatMessage("Long", "server",inputF.getText()));
+            mesgs.appendText("Me to " + chBox.getValue() + " : " + inputF.getText()+"\n");
             inputF.clear();
         });
         Text txt1 = new Text("To");

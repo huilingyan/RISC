@@ -106,11 +106,4 @@ public class ChatClient extends Thread {
             System.out.println("Saying: " + chatMsgRecv.getMessage());
         }
     }
-
-    // public static void main(String[] args) {
-    //     // run the game
-    //     ChatClient chatClient = new ChatClient("Player");
-    //     chatClient.run();
-    // }
-
 }
