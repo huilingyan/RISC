@@ -1,0 +1,48 @@
+version: '2'
+
+services:
+  postgres:
+      image: postgres
+      environment:
+        POSTGRES_PASSWORD: abc123
+        POSTGRES_USER: postgres
+        POSTGRES_DB: risc
+      restart: always
+      volumes:
+            - data-volume:/var/lib/postgresql/data
+  # web-init:
+  #     build: ./web-app
+  #     command: /code/initserver.sh
+  #     volumes:
+  #       - ./web-app:/code
+  #     depends_on:
+  #       - db
+  web:
+      build: .
+      user: nobody
+      command: gradle run-server
+      # volumes:
+      #   - ./web-app:/code
+      expose:
+        - "1651:7777"
+        - "6666:6666"
+      depends_on:
+        - postgres
+  # ups:
+  #     build: ./backend
+  #     command: /code_back/runups.sh vcm-14576.vm.duke.edu vcm-14576.vm.duke.edu 5555
+  #     volumes:
+  #       - ./backend:/code_back
+  #     depends_on:
+  #       - web-init
+
+  # nginx:
+  #    image: nginx:latest
+  #    ports:
+  #      - "9999:9999"
+  #    volumes:
+  #      - ./nginx/config:/etc/nginx/conf.d
+  #    depends_on:
+  #      - web
+volumes:
+   data-volume: 
