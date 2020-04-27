@@ -19,11 +19,9 @@ services:
       expose:
         - "1651"
         - "6666"
-        - "5432"
       ports:
         - "1651:7777"
         - "6666:6666"
-        - "5432:5432"
       depends_on:
         - postgres
   # ups:
