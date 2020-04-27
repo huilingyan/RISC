@@ -2,12 +2,12 @@
 
 
 # docker compose
-apt-get install -y docker-compose
-docker-compose stop
+# apt-get install -y docker-compose  # not root?
+# docker-compose stop
 
 # first terminate any old ones
-# docker kill citest-651
-# docker rm citest-651
+docker kill citest-651
+docker rm citest-651
 
 # now run the new one
 # set up postgres
@@ -19,10 +19,10 @@ docker-compose stop
 # psql -U runner -h localhost -d risc -W
 
 # # old code
-# docker run -d --name citest-651 -p 1651:7777 6666:6666 -t citest ./gradlew run-server
+docker run -d --name citest-651 -p 1651:7777 -p 6666:6666 -t citest ./gradlew run-server
 
 
 # docker compose
 # sudo apt-get install -y docker-compose
-docker-compose up
+# docker-compose up
 
