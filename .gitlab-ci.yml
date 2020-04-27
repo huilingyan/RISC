@@ -1,3 +1,15 @@
+services:
+  db:
+      image: postgres
+      environment:
+        POSTGRES_PASSWORD: abc123
+        POSTGRES_USER: postgres
+        POSTGRES_DB: risc
+      restart: always
+      volumes:
+            - data-volume:/var/lib/postgresql/data
+
+
 before_script:
   - hostname
   - whoami
