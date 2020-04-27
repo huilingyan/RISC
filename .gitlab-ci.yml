@@ -1,3 +1,11 @@
+services:
+  - postgres:12.2-alpine
+  
+variables:
+    POSTGRES_DB: risc
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: abc123
+
 before_script:
   - hostname
   - whoami
@@ -39,17 +47,6 @@ pages:
  artifacts:
    paths:
      - public
-
-services:       
-  db:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: abc123
-      POSTGRES_USER: postgres
-      POSTGRES_DB: risc
-    restart: always
-    volumes:
-          - data-volume:/var/lib/postgressql/data
 
 deploy:
   tags: 
