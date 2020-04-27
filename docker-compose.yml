@@ -11,13 +11,15 @@ services:
       volumes:
             - data-volume:/var/lib/postgresql/data
 
-  web:
+  server:
       build: .
-      user: nobody
       command: gradle run-server
       # volumes:
       #   - ./web-app:/code
       expose:
+        - "1651"
+        - "6666"
+      ports:
         - "1651:7777"
         - "6666:6666"
       depends_on:
