@@ -2,8 +2,8 @@
 
 
 # docker compose
-sudo apt-get install -y docker-compose
-sudo docker-compose stop
+apt-get install -y docker-compose
+docker-compose stop
 
 # first terminate any old ones
 # docker kill citest-651
@@ -24,5 +24,5 @@ sudo docker-compose stop
 
 # docker compose
 # sudo apt-get install -y docker-compose
-sudo docker-compose up
+docker-compose up
 
