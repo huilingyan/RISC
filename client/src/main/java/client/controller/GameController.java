@@ -83,7 +83,10 @@ public class GameController extends SceneController {
     public Scene getCurrScene() {
 
         setMaster(this.masterpid);
-        boolean activate = CardAlertBox.cardSelection(getWorldmap().getPlayerStatByPid(masterpid).getNewCard());
+        boolean activate = false;
+        if (this.worldmap.getPlayerStatByName(this.player_name).hasTerritory()) {
+            activate = CardAlertBox.cardSelection(getWorldmap().getPlayerStatByPid(masterpid).getNewCard());
+        }
         if (activate) {
           int errorcode=this.getOperationValidator().isValidCardUsage();
         }
@@ -139,6 +142,9 @@ public class GameController extends SceneController {
 
         Button allyBtn = new Button("Make an ally");
         allyBtn.setOnAction(e->showAllyPane());
+        if (!this.worldmap.getPlayerStatByName(this.player_name).hasTerritory()) {
+            allyBtn.setDisable(true);
+        }
         
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
