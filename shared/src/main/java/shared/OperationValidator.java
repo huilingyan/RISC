@@ -355,9 +355,7 @@ public class OperationValidator {
     if(cid == 3){
       upgrade_max_tech_lv = true;
     }
-    if(cid == 6){
-      temp_map.getPlayerStatByPid(player_id).addGold(300);
-    }
+    
     //add card usage in action
     validatedaction.useNewCard(player_id);
     return VALID;
