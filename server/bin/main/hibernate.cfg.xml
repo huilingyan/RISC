@@ -10,7 +10,8 @@
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <!-- localhost or postgres -->
         <property name="hibernate.connection.url">jdbc:postgresql://postgres:5432/risc</property>
-        <property name="hibernate.connection.username">postgres</property>
+        <!-- postgres or runner -->
+        <property name="hibernate.connection.username">runner</property>
         <property name="hibernate.connection.password">abc123</property>
   
         <!-- SQL dialect -->
