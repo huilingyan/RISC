@@ -175,7 +175,7 @@ public class OperationValidator {
     // can move to ally's territory
     if ((!isOwnTerritory(t_to_move))) {
       if(temp_map.getPlayerStatByPid(player_id).isAllied() &&
-        (ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1)){
+        (temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1)){
         //allow moving to ally's territory
       } else {
         return INVALID_DEST;
@@ -216,7 +216,7 @@ public class OperationValidator {
     }
     if ((!isOwnTerritory(t_to_move))) {
       if(temp_map.getPlayerStatByPid(player_id).isAllied() &&
-        (ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1)) {
+        (temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1)) {
         //allow moving to ally's territory
         //add to FriendDefender instead of Defender
         t_to_move.addFriendDefender(moveop.getArmy());
