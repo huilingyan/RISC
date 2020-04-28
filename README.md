@@ -24,29 +24,13 @@ Commit ID: 9bebbe4e
 Commit ID: 9bebbe4e
 In evolution 3, the server requires postgreSQL to run, here are the steps to install postgreSQL in the virtualbox:
 
-1.install necessary liberaries:
-sudo apt install postgresql postgresql-contrib libpqxx-dev
+1.install necessary liberaries:  sudo apt install postgresql postgresql-contrib libpqxx-dev
 
-2.set up user 'postgres': (enter the following commands one by one, notice the ';' in the 3rd one)
-sudo su -postgres
-psql
-ALTER USER postgres with encrypted password 'abc123';
-\q
-exit
+2.set up user 'postgres': (enter the following commands one by one, notice the ';' in the 3rd one)  sudo su -postgres  psql  ALTER USER postgres with encrypted password 'abc123';  \q  exit
 
-3.start postgresql service:
-sudo vim /etc/postgresql/11/main/pg_hba.conf
-in the file find this line:
-local  all  postgres  peer
-change to:
-local  all  postgres  md5
-save and exit and do:
-sudo service postgresql restart
+3.start postgresql service:  sudo vim /etc/postgresql/11/main/pg_hba.conf  In the file find this line:  local  all  postgres  peer  change to:  local  all  postgres  md5  save and exit and do:  sudo service postgresql restart
 
-4.create a risc DB:(notice ';' in pqsl)
-psql -U postgres
-CREATE DATABASE risc;
-\q
+4.create a risc DB:(notice ';' in pqsl)  psql -U postgres  CREATE DATABASE risc;  \q
 
 5.from now you should be able to run the server.
 
