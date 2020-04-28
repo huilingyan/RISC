@@ -29,6 +29,7 @@ public class InitOpPaneController implements PaneController {
     @Override
     public AnchorPane getCurrPane() {
         Territory terr = ic.getWorldmap().getTerritoryByName(terrName);
+        PlayerStat ownerPS = ic.getWorldmap().getPlayerStatByPid(terr.getOwnership());
         boolean showiop = (terr.getOwnership() == ic.getPid()); // decide if show the slider
         
         GridPane grid = new GridPane();
@@ -56,18 +57,18 @@ public class InitOpPaneController implements PaneController {
         proceedBtn.setOnAction(e -> {
             int n = (int) NofArmySlider.getValue();
             // debug
-            System.out.println("soldiers to deploy: " + n);
+            // System.out.println("soldiers to deploy: " + n);
             Army army = new Army(n);
             // validate operation
             InitOperation iop = new InitOperation(terrName, army);
             // debug
-            System.out.println("Current soldier number: " + this.ic.getnofSoldiers());
+            // System.out.println("Current soldier number: " + this.ic.getnofSoldiers());
             int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, Map.INIT_UNIT);
             // int errorcode = this.ic.getOperationValidator().isValidInitOperation(iop, this.ic.getnofSoldiers());
             if (errorcode == OperationValidator.VALID) {
                 this.ic.subSoldiers(n);
                 // debug
-                System.out.println("Now have soldiers: " + this.ic.getnofSoldiers());
+                // System.out.println("Now have soldiers: " + this.ic.getnofSoldiers());
                 this.ic.showInfoPane();
             }
             else {
@@ -77,7 +78,7 @@ public class InitOpPaneController implements PaneController {
         });
         cancelBtn.setOnAction(e -> this.ic.showInfoPane());
         
-        GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr);//text info about this territory
+        GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr,ownerPS);//text info about this territory
         
         VBox vb = new VBox();
         //vb.setPadding(new Insets(10));

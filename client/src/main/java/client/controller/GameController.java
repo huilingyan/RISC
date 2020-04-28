@@ -11,12 +11,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import shared.ClientMessage;
+import shared.GameMessage;
 import shared.Map;
 import shared.OperationValidator;
 import shared.RoomMessage;
 import shared.ServerMessage;
 import shared.Territory;
-import shared.GameMessage;
 
 public class GameController extends SceneController {
 
@@ -83,6 +83,13 @@ public class GameController extends SceneController {
     public Scene getCurrScene() {
 
         setMaster(this.masterpid);
+        boolean activate = false;
+        if (this.worldmap.getPlayerStatByName(this.player_name).hasTerritory()) {
+            activate = CardAlertBox.cardSelection(getWorldmap().getPlayerStatByPid(masterpid).getNewCard());
+        }
+        if (activate) {
+          int errorcode=this.getOperationValidator().isValidCardUsage();
+        }
         
         root.setPadding(new Insets(10, 10, 10, 10));
 
@@ -103,7 +110,7 @@ public class GameController extends SceneController {
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
 
         // set right
-        AnchorPane rightpane = new InfoPaneController(this.getWorldmap()).getCurrPane();
+        AnchorPane rightpane = new InfoPaneController(this.getWorldmap(),this.getPid()).getCurrPane();
         root.setRight(rightpane);
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
 
@@ -112,6 +119,8 @@ public class GameController extends SceneController {
         switchoutbtn.setStyle("-fx-font-weight: bold; -fx-background-color: #ff7575;");
         switchoutbtn.setOnAction(e -> {
             this.mc.switchoutMsg(); // send switchout message to server
+            this.mc.endChatClient();
+            this.mc.closeChatWindow();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();           
             this.mc.showRoomScene(room_msg);            
         });
@@ -130,6 +139,13 @@ public class GameController extends SceneController {
             }
 
         });
+
+        Button allyBtn = new Button("Make an ally");
+        allyBtn.setOnAction(e->showAllyPane());
+        if (!this.worldmap.getPlayerStatByName(this.player_name).hasTerritory()) {
+            allyBtn.setDisable(true);
+        }
+        
         Button endTurnbtn = new Button("End Turn");
         endTurnbtn.setOnAction(e -> {
             this.mc.sendToServer(new ClientMessage(this.room_num, 2, this.ov.getAction())); // commit order
@@ -156,7 +172,7 @@ public class GameController extends SceneController {
                                
         });
 
-        FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn, endTurnbtn);
+        FlowPane bottompane = new FlowPane(switchoutbtn, upgradeMaxTechbtn,allyBtn, endTurnbtn);
         bottompane.setHgap(5); 
         root.setBottom(bottompane);
         bottompane.setPadding(new Insets(10, 10, 10, 10));       
@@ -178,12 +194,12 @@ public class GameController extends SceneController {
         for (int i = 0; i < Territory.MAP_SIZE; i++) {
             String t_name = this.worldmap.getTerritoryNameByTid(i);
             if (t_name != null) {
-                // debug
-                System.out.println(" tid: " + i + " name: " + t_name);
+                // // debug
+                // System.out.println(" tid: " + i + " name: " + t_name);
                 Button button = new Button(t_name);
                 // get the button colour according to player
                 int pid = this.worldmap.getTerritoryByName(t_name).getOwnership();
-                System.out.println("pid: " + pid);
+                // System.out.println("pid: " + pid);
                 String color = this.worldmap.getPlayerStatByPid(pid).getColor();
 
                 button.setPrefWidth(100);
@@ -199,6 +215,12 @@ public class GameController extends SceneController {
             }
         }
         return buttongroup;
+    }
+
+    public void showAllyPane() {
+      AllyPaneController aPC = new AllyPaneController();
+      aPC.setGameController(this);
+      updateRightPane(aPC);
     }
 
     public void showModePane(String t_name) {
@@ -226,7 +248,7 @@ public class GameController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(this.getWorldmap()));
+      updateRightPane(new InfoPaneController(this.getWorldmap(),this.getPid()));
     }
 
     public void showWaitPane() {

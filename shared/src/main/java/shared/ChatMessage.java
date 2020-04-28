@@ -4,40 +4,40 @@ import java.io.Serializable;
 
 public class ChatMessage implements Serializable {
 
-  private int fromPid;
-  private int toPid;
+  private String srcPlayerName;
+  private String destPlayerName;
   private String message;
 
-  public ChatMessage(int from, int to, String str) {
-    fromPid = from;
-    toPid = to;
-    message = str;
+  public ChatMessage(String from, String to, String str) {
+    this.srcPlayerName = from;
+    this.destPlayerName = to;
+    this.message = str;
   }
   
   //construct a tunnel without setting message 
-  public ChatMessage(int from, int to){
-    fromPid = from;
-    toPid = to;
+  public ChatMessage(String from, String to){
+    this.srcPlayerName = from;
+    this.destPlayerName = to;
   }
 
-  public int getFromPid() {
-    return fromPid;
+  public String getSrcPlayerName() {
+    return this.srcPlayerName;
   }
 
-  public int getToPid() {
-    return toPid;
+  public String getDestPlayerName() {
+    return this.destPlayerName;
   }
 
   public String getMessage() {
-    return message;
+    return this.message;
   }
 
-  public void setFromPid(int from){
-    fromPid = from;
+  public void setSrcPlayerName(String from){
+    this.srcPlayerName = from;
   }
 
-  public void setToPid(int to) {
-    toPid = to;
+  public void setDestPlayerName(String to) {
+    this.destPlayerName = to;
   }
 
   public void setMessage(String str){

@@ -148,9 +148,20 @@ public class OperationValidator {
     if (!isArmyPostive(moveop.getArmy())) {
       return ILLEGAL_NUM;
     }
-    if (!isTerritoryHaveEnoughArmy(moveop.getArmy(), t_to_remove)) {
-      //with gui slider, this situation should never occur
-        return NOT_ENOUGH_UNITS;
+    
+    if(temp_map.ownerstatus(t_to_remove, temp_map.getPlayerStatByPid(player_id)) == 0) {
+        //move from own territory
+        if (!isTerritoryHaveEnoughArmy(moveop.getArmy(), t_to_remove)) {
+          //with gui slider, this situation should never occur
+            return NOT_ENOUGH_UNITS;
+        }
+    } else if(temp_map.ownerstatus(t_to_remove, temp_map.getPlayerStatByPid(player_id)) == 1) {
+        //move from friend territory
+        if (!isTerritoryHaveEnoughFriendArmy(moveop.getArmy(), t_to_remove)) {
+          //with gui slider, this situation should never occur
+            return NOT_ENOUGH_UNITS;
+        }
+        
     }
     
     // 3. check if valid dest
@@ -164,8 +175,7 @@ public class OperationValidator {
     // can move to ally's territory
     if ((!isOwnTerritory(t_to_move))) {
       if(temp_map.getPlayerStatByPid(player_id).isAllied() &&
-           (temp_map.getPlayerStatByPid(t_to_move.getOwnership()).getAid() ==
-              temp_map.getPlayerStatByPid(player_id).getAid())) {
+        (temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1)){
         //allow moving to ally's territory
       } else {
         return INVALID_DEST;
@@ -206,8 +216,7 @@ public class OperationValidator {
     }
     if ((!isOwnTerritory(t_to_move))) {
       if(temp_map.getPlayerStatByPid(player_id).isAllied() &&
-           (temp_map.getPlayerStatByPid(t_to_move.getOwnership()).getAid() ==
-              temp_map.getPlayerStatByPid(player_id).getAid())) {
+        (temp_map.ownerstatus(t_to_move, temp_map.getPlayerStatByPid(player_id)) == 1)) {
         //allow moving to ally's territory
         //add to FriendDefender instead of Defender
         t_to_move.addFriendDefender(moveop.getArmy());
@@ -355,9 +364,7 @@ public class OperationValidator {
     if(cid == 3){
       upgrade_max_tech_lv = true;
     }
-    if(cid == 6){
-      temp_map.getPlayerStatByPid(player_id).addGold(300);
-    }
+    
     //add card usage in action
     validatedaction.useNewCard(player_id);
     return VALID;
@@ -410,6 +417,17 @@ public class OperationValidator {
     }
     return true;
   }
+  
+  public boolean isTerritoryHaveEnoughFriendArmy(Army army, Territory t) {
+    for (int i = 0; i <= army.getHighestLevel(); i++) {
+      if (army.getSoldierNumber(i) > t.getFriendDefender().getSoldierNumber(i)) {
+        // not enough units to move for level i (0-max lv)
+        return false;
+      }
+    }
+    return true;
+  }
+  
 
   private boolean isArmyPostive(Army army_to_check) {
     for (int i = 0; i < 7; i++) { //  0-6 levels

@@ -123,13 +123,16 @@ public class ErrorAlerts {
     }
 
     private static final Map<Integer, String> ecodetomsgMap = ImmutableMap.<Integer, String>builder()
-        .put(OperationValidator.NOT_ENOUGH_FOOD, "You don't have enough food to do this!")
-        .put(OperationValidator.NOT_ENOUGH_GOLD, "You don't have enough gold to upgrade!")
-        .put(OperationValidator.NOT_ADJACENT, "You can only attack territories adjacent to this one!")
-        .put(OperationValidator.INVALID_PATH, "There is no path to the destination you choose!")
-        .put(OperationValidator.REPEATED_UPGRADE_MAX_TECH_LV, "You can't upgrade max tech Lv more than once in one turn!")
-        .put(OperationValidator.EXCEED_MAX_LV, "Your upgrade cannot exceed your maximum tech Lv!")
-        .build();
+      .put(OperationValidator.NOT_ENOUGH_FOOD, "You don't have enough food to do this!")
+      .put(OperationValidator.NOT_ENOUGH_GOLD, "You don't have enough gold to upgrade!")
+      .put(OperationValidator.NOT_ADJACENT, "You can only attack territories adjacent to this one!")
+      .put(OperationValidator.INVALID_PATH, "There is no path to the destination you choose!")
+      .put(OperationValidator.REPEATED_UPGRADE_MAX_TECH_LV, "You can't upgrade max tech Lv more than once in one turn!")
+      .put(OperationValidator.EXCEED_MAX_LV, "Your upgrade cannot exceed your maximum tech Lv!")
+      .put(OperationValidator.PLAYER_ALREADY_ALLIED,"You are already allied with someone!")
+      .put(OperationValidator.REPEATED_ALLIANCE_REQUEST,"You can only request ally once in a turn!")
+      .put(OperationValidator.BREAKING_ALLIANCE,"You broke the alliance!")
+      .build();
 
     public static void inValidOpAlert(int errorcode) {
         Stage window = new Stage();
@@ -188,6 +191,24 @@ public class ErrorAlerts {
         alert.showAndWait();
     }
 
+    public static void mustChooseAPlayer() {
+        Alert alert = new Alert(AlertType.ERROR);
 
+        alert.setTitle("Error");
+        alert.setHeaderText("Please choose a player");
+        alert.setContentText("You must choose a player to send message to! Please try again:");
+
+        alert.showAndWait();
+    }
+
+    public static void sendEmptyMsg() {
+        Alert alert = new Alert(AlertType.ERROR);
+
+        alert.setTitle("Error");
+        alert.setHeaderText("Please write something");
+        alert.setContentText("You can't send an empty message! Please input some words:");
+
+        alert.showAndWait();
+    }
 
 }

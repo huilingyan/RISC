@@ -1,6 +1,8 @@
 package server;
 
 import shared.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameWorker extends Thread {
@@ -28,7 +30,7 @@ public class GameWorker extends Thread {
                 case (GameMessage.WAIT_FOR_PLAYERS): // wait for players
                     // wait until all players join
                     System.out.println("Player num: " + game.getPlayerNum());
-                    while (!game.isFull()) {
+                    while (!game.isFilled()) {
                         sleepOnThread(10);
                     }
                     // debug
@@ -37,13 +39,14 @@ public class GameWorker extends Thread {
                     game.setPlayerStats();
                     // change stage to initialize units
                     game.setStage(GameMessage.INITIALIZE_UNITS);
+                    HibernateUtil.updateGame(game);  // update game in database
                     synchronized (game) {
                         notifyClientWorkers();
                     }
                     break;
                 case (GameMessage.INITIALIZE_UNITS): // initialize units
                     // wait until all active players send action
-                    while (!game.turnFinished()) {
+                    while (!boss.turnFinished(game)) {
                         sleepOnThread(10);
                     }
                     synchronized (game) {
@@ -53,7 +56,7 @@ public class GameWorker extends Thread {
                     break;
                 case (GameMessage.GAME_PLAY): // play game
                     // wait until all active players send action
-                    while (!game.turnFinished()) {
+                    while (!boss.turnFinished(game)) {
                         sleepOnThread(10);
                     }
                     synchronized (game) {
@@ -69,10 +72,12 @@ public class GameWorker extends Thread {
             } // switch
         } // while
           // gameover, gameworker exits
+          boss.deleteGame(game);  // delete game
+
     }
 
     private void notifyClientWorkers() {
-        System.out.println("Game worker notifies all client workers");
+        // System.out.println("Game worker notifies all client workers");
         game.notifyAll(); // notify clientworkers
     }
 
@@ -105,18 +110,24 @@ public class GameWorker extends Thread {
         // call init handler
         InitHandler handler = new InitHandler();
         Map newMap = handler.handleAction(gameMap, ac);
+        // turn++
+        newMap.addTurnByOne();
+        // draw cards
+        drawCards(newMap);
         // set new map
         game.setMap(newMap);
         // clear tempActionList
         game.clearTempActions();
         // update stage
         game.setStage(GameMessage.GAME_PLAY);
+        // update game in db
+        HibernateUtil.updateGame(game);
 
     }
 
     private void updateOneTurn() {
         // debug
-        System.out.println("All players finished one turn in game " + game.getGid());
+        // System.out.println("All players finished one turn in game " + game.getGid());
         // validate actions
         Map gameMap = game.getMap();
         Action ac = validateAllGameOperations(game.getTempActionList(), gameMap);
@@ -128,19 +139,31 @@ public class GameWorker extends Thread {
         // if no, check active player number and update map
         if (isGameOver(newMap)) {
             game.setStage(GameMessage.GAME_OVER);
-        } else if (game.noActivePlayer()) {
+        } else if (boss.noActivePlayer(game)) {
             // if no active player, do nothing
-            System.out.println("No active player in game " + game.getGid());
+            // System.out.println("No active player in game " + game.getGid());
         } else {
+            // TODO: accomodate card system
             newMap.updateUnitandResource();
-            //generate card
-            
+            // draw cards
+            drawCards(newMap);
         }
         // set new map
         game.setMap(newMap);
         // clear tempActionList
         game.clearTempActions();
+        // update game in db
+        HibernateUtil.updateGame(game);
 
+    }
+
+    private void drawCards(Map map){
+        Dice dice = new Dice(6);  // 6 sided dice
+        ArrayList<Integer> newCards = new ArrayList<Integer>();
+        for (int i=0; i<game.getPlayerNum(); i++){
+            newCards.add(dice.rollDice());
+        }
+        map.setNewCards(newCards);
     }
 
     /****
@@ -162,7 +185,9 @@ public class GameWorker extends Thread {
     private Action validateGameAction(Action ac, int pid, Map gameMap) {
         OperationValidator validator = new OperationValidator(pid, gameMap);
         // 0. validate card usage
-        
+        if (ac.getNewCards().containsKey(pid) && ac.getNewCards().get(pid) == true){
+            validator.isValidCardUsage();
+        }
         // 1. validate upgrade operations
         for (UpgradeOperation uop : ac.getUpgradeOperations()) {
             validator.isValidUpgradeOperation(uop);
@@ -170,6 +195,10 @@ public class GameWorker extends Thread {
         // 2. validate move operations
         for (MoveOperation mop : ac.getMoveOperations()) {
             validator.isValidMoveOperation(mop);
+        }
+        // 2.5 move from ally's army
+        for (MoveOperation maop : ac.getMoveFromAllyOperations()){
+            validator.isValidMoveOperation(maop);
         }
         // 3. validate attack operations
         for (AttackOperation aop : ac.getAttackOperations()) {
@@ -180,15 +209,17 @@ public class GameWorker extends Thread {
             validator.isValidUpgradeMaxTechLv();
         }
         // 5. validate alliance formation
-        
+        if (ac.getAllianceRequests().containsKey(pid)) {
+            validator.isValidAllianceRequest(ac.getAllianceRequests().get(pid));
+        }
         
         return validator.getAction();
         // return ac; // not validated
     }
 
-    private Action validateAllInitOperations(HashMap<Integer, Action> actionList, Map gamemap) {
+    private Action validateAllInitOperations(java.util.Map<Integer, Action> actionList, Map gamemap) {
         Action action = new Action();
-        for (HashMap.Entry<Integer, Action> entry : actionList.entrySet()) {
+        for (java.util.Map.Entry<Integer, Action> entry : actionList.entrySet()) {
             int pid = entry.getKey();
             Action ac = entry.getValue();
             action.concatInitOperation(validateInitAction(ac, pid, gamemap));
@@ -196,9 +227,9 @@ public class GameWorker extends Thread {
         return action;
     }
 
-    private Action validateAllGameOperations(HashMap<Integer, Action> actionList, Map gamemap) {
+    private Action validateAllGameOperations(java.util.Map<Integer, Action> actionList, Map gamemap) {
         Action action = new Action();
-        for (HashMap.Entry<Integer, Action> entry : actionList.entrySet()) {
+        for (java.util.Map.Entry<Integer, Action> entry : actionList.entrySet()) {
             // skip the action sent by already losed player
             int pid = entry.getKey();
             if (gamemap.getPlayerStatByPid(pid).hasTerritory()) {

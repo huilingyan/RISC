@@ -107,7 +107,7 @@ public class InitController extends SceneController {
         leftpane.setStyle("-fx-background-color: #d0d0d0;");
 
         // set right
-        AnchorPane rightpane = new InfoPaneController(this.getWorldmap()).getCurrPane();
+        AnchorPane rightpane = new InfoPaneController(this.getWorldmap(),getPid()).getCurrPane();
         root.setRight(rightpane);
         BorderPane.setMargin(rightpane, new Insets(10, 10, 10, 10));
         
@@ -117,6 +117,8 @@ public class InitController extends SceneController {
         switchoutbtn.setPadding(new Insets(5, 5, 5, 5));
         switchoutbtn.setOnAction(e -> {            
             this.mc.switchoutMsg(); // send switchout message to server
+            this.mc.endChatClient();
+            this.mc.closeChatWindow();
             RoomMessage room_msg = (RoomMessage)this.mc.recvFromServer();
             this.mc.showRoomScene(room_msg);
             
@@ -134,6 +136,8 @@ public class InitController extends SceneController {
             this.mc.setWorldMap(servermsg.getMap()); 
             int pid = servermsg.getMap().getPidByName(this.player_name);
             int room_num = servermsg.getGameID();
+            // debug
+            System.out.println("chat msg sent from initcontroller");
             this.mc.showGameScene(room_num, pid);
             
         });
@@ -151,13 +155,13 @@ public class InitController extends SceneController {
     }
 
     private Group generateMap() {
-        // debug
-        for (Territory t : this.worldmap.getTerritories()) {
-            System.out.println("Territory id: " + t.getTid());
-            System.out.println("Territory name: " + t.getName());
-            System.out.println("Belongs to: " + t.getOwnership());
-        }
-        System.out.println("");
+        // // debug
+        // for (Territory t : this.worldmap.getTerritories()) {
+        //     System.out.println("Territory id: " + t.getTid());
+        //     System.out.println("Territory name: " + t.getName());
+        //     System.out.println("Belongs to: " + t.getOwnership());
+        // }
+        // System.out.println("");
 
         Group buttongroup = new Group();
         int init_x = 50;
@@ -193,7 +197,7 @@ public class InitController extends SceneController {
     }
 
     public void showInfoPane() {
-        updateRightPane(new InfoPaneController(this.worldmap));
+      updateRightPane(new InfoPaneController(this.worldmap,getPid()));
     }
 
     public void showWaitPane() {

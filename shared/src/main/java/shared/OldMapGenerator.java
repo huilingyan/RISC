@@ -3,7 +3,7 @@ package shared;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MapGenerator {
+public class OldMapGenerator {
   //generate a map for testing
   public static final String[] TERRITORY_NAME_LIST = {"Pikachu", "Ditto", "Gengar", "Eevee", "Snorlax", "Mew", "Psyduck", "Magneton", "Vulpix", "Jumpluff", "Bulbasaur", "Charmandar", "Squirtle", "Pidgey", "Caterpie", "Rattata"};
 
@@ -42,14 +42,9 @@ public class MapGenerator {
   }
 
   public static Map gamemapGenerator() {
-    PlayerStat p0 = new PlayerStat(0, "p0", 113, 400, 4, "87CEFA");
+    PlayerStat p0 = new PlayerStat(0, "p0", 113, 40, 4, "87CEFA");
     PlayerStat p1 = new PlayerStat(1, "p1", 100, 60, 4, "F08080");
     PlayerStat p2 = new PlayerStat(2, "p2", 10, 30, 1, "90EE90");
-    p0.activateCard(1, 2);
-    p0.setNewCard(5);
-
-    p0.formAlliance(1);
-    p1.formAlliance(0);
 
     ArrayList<PlayerStat> psList = new ArrayList<>();
     psList.add(p0);
@@ -59,7 +54,6 @@ public class MapGenerator {
     ArrayList<Integer> tids = new ArrayList<Integer>(Arrays.asList(1, 4, 9, 5, 10, 13, 2, 6, 11));
     ArrayList<Territory> tList = new ArrayList<>();
     Army army = new Army(new ArrayList<Integer>(Arrays.asList(7,6,5,4,3,2,1)));
-    Army friendarmy=new Army(new ArrayList<Integer>(Arrays.asList(3,3,3,3,3,3,3)));
 
     for (int i = 0; i < tids.size(); i++) {
       int pid = i / 4;  
@@ -67,9 +61,6 @@ public class MapGenerator {
       String name = TERRITORY_NAME_LIST[tid];
       Territory t = new Territory(pid, tid, name,3,9,6);
       t.addDefender(army);
-      if (pid < 2) {
-        t.addFriendDefender(friendarmy);
-      }
       tList.add(t);  // right now territories ordered as in tids
     }
 

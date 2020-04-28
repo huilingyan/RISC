@@ -256,6 +256,17 @@ public class Map implements Serializable {
 
     return -1;//ps is the enermy
   }
+
+  public ArrayList<String> getOtherPlayerNames(int pid) {
+    ArrayList<String> namelist = new ArrayList<>();
+    for (PlayerStat ps : playerStats) {
+      if (ps.getPid() != pid) {
+        namelist.add(ps.getPName());
+      }
+    }
+    return namelist;
+  }
+
   
   public void updateUnitandResource(){
     updateUnit();
@@ -303,15 +314,24 @@ public class Map implements Serializable {
     }
   }
   
-  public void generateCards() {
-    for (PlayerStat p : this.playerStats) {
-      int dice6 = (int) (Math.random() * 6 + 1);//[1,6]
-      p.setNewCard(dice6);
-    }
+  // public void generateCards() {
+  //   for (PlayerStat p : this.playerStats) {
+  //     int dice6 = (int) (Math.random() * 6 + 1);//[1,6]
+  //     p.setNewCard(dice6);
+  //   }
     
-    //cid = 1 portal
-    //...
-    //cid = 6 loan
+  //   //cid = 1 portal
+  //   //...
+  //   //cid = 6 loan
+  // }
+
+  // generate new cards in gameworker, then assign to the map
+  public void setNewCards(ArrayList<Integer> newCards){
+    int ind = 0;
+    for (PlayerStat ps : playerStats){
+      ps.setNewCard(newCards.get(ind));
+      ind++;
+    }
   }
 
   public void formAlliance(int p1, int p2) {
