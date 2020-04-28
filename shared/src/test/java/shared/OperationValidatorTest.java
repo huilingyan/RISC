@@ -1,13 +1,12 @@
 package shared;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
 
 public class OperationValidatorTest {
   @Test
   public void test_operationvalidator() {
-    shared.Map worldmap = MapGenerator.gamemapGenerator();
+    shared.Map worldmap = OldMapGenerator.gamemapGenerator();
     //PlayerStat p0 = new PlayerStat(0, "p0", 113, 40, 4, "87CEFA");
     //pid 0, food 113, gold 40, 4 territories tid 1,4,9,5
     
@@ -59,6 +58,7 @@ public class OperationValidatorTest {
     Army a5 = new Army();
     a5.addSoldiers(4, 2);
     UpgradeOperation uop5 = new UpgradeOperation("Ditto", new Army(2), a5);
+    //System.out.println("uop5 return " + v0.isValidUpgradeOperation(uop5));
     assert (v0.isValidUpgradeOperation(uop5) == NOT_ENOUGH_GOLD);
 
     Army a6 = new Army();
@@ -96,6 +96,7 @@ public class OperationValidatorTest {
     v0.getCurrentMapState().getTerritoryByTid(5).setOwnership(1);
     //invalid path test
     MoveOperation moveop7 = new MoveOperation("Ditto", "Jumpluff", new Army(1));
+     System.out.println("moveop7 return " + v0.isValidMoveOperation(moveop7));
     assert (v0.isValidMoveOperation(moveop7) == INVALID_PATH);
     v0.getCurrentMapState().getTerritoryByTid(4).setOwnership(0);
     v0.getCurrentMapState().getTerritoryByTid(5).setOwnership(0);
@@ -161,4 +162,5 @@ public class OperationValidatorTest {
   public static final int NOT_ENOUGH_GOLD = -9;
   public static final int EXCEED_MAX_LV = -10;
   public static final int REPEATED_UPGRADE_MAX_TECH_LV = -11;
+  public static final int INVALID_ALLIANCE_REQUEST = -12;// 1 new flag for ev3
 }

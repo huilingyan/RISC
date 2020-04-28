@@ -76,6 +76,10 @@ public class Map implements Serializable {
 
   public void addTurnByOne(){
     turn += 1;
+    //subtract turns left for all activated cards, If turns left == 0, remove it from activatedCards hashmap
+    for (PlayerStat p : playerStats){
+      p.updateCardTurns();
+    }
   }
 
   public void addPlayerStat(PlayerStat p) {
@@ -164,8 +168,9 @@ public class Map implements Serializable {
 
   public ArrayList<String> getOwnTerritoryListName(int pid) {
     ArrayList<String> list = new ArrayList<>();
+    PlayerStat ps = getPlayerStatByPid(pid);
     for (Territory t : territories) {
-      if (t.getOwnership() == pid) {
+      if (ownerstatus(t, ps)>=0) {
         list.add(t.getName());
       }
     }
@@ -184,7 +189,7 @@ public class Map implements Serializable {
 
   public int CostofShortestPath(String src, String dest) {
     //Dijkstra's algorithm
-    int masterPid = getTerritoryByName(src).getOwnership();
+    PlayerStat ps =this.getPlayerStatByPid(getTerritoryByName(src).getOwnership()) ;
     HashMap<String, Integer> distQ = new HashMap<>();
     HashMap<String, Integer> visited = new HashMap<>();
     distQ.put(src, 0);
@@ -202,7 +207,7 @@ public class Map implements Serializable {
       for (int tid : t.getNeighborList()) {
         if (tid != -1) {
           Territory neighbour = getTerritoryByTid(tid);
-          if (neighbour.getOwnership() == masterPid) {
+          if (ownerstatus(neighbour, ps)>=0) {
             String neigName = neighbour.getName();
             if (visited.containsKey(neigName) == false) {
               //this neighbout is not finally determined its minimum distance
@@ -240,6 +245,29 @@ public class Map implements Serializable {
     return s;
   }
 
+  public int ownerstatus(Territory t, PlayerStat ps) {
+    if (t.getOwnership() == ps.getPid()) {
+      return 0;//ps is the owner
+    }
+    PlayerStat ownerps = this.getPlayerStatByPid(t.getOwnership());
+    if (ownerps.getAid() == ps.getAid()) {
+      return 1;//ps is the alliance
+    }
+
+    return -1;//ps is the enermy
+  }
+
+  public ArrayList<String> getOtherPlayerNames(int pid) {
+    ArrayList<String> namelist = new ArrayList<>();
+    for (PlayerStat ps : playerStats) {
+      if (ps.getPid() != pid) {
+        namelist.add(ps.getPName());
+      }
+    }
+    return namelist;
+  }
+
+  
   public void updateUnitandResource(){
     updateUnit();
     updateResource();
@@ -248,20 +276,61 @@ public class Map implements Serializable {
   }
 
   // add 1 base unit to each territory
+  //if conscription is activated, add 5 base units in that player's territories
   private void updateUnit(){
     for (Territory t : territories) {
-      t.addDefender(new Army(1));
+      if(getPlayerStatByPid(t.getOwnership()).isConscriptionActivated()){
+        t.addDefender(new Army(5));
+      } else {
+        t.addDefender(new Army(1));
+      }
     }
   }
 
   // add each territory's resource production to its owner
-  private void updateResource(){
-    for (Territory t: territories){
+  private void updateResource() {
+    for (Territory t : territories) {
       PlayerStat ps = getPlayerStatByPid(t.getOwnership());
       // food
       ps.addFood(t.getFood());
       // gold
-      ps.addGold(t.getGold());
+      if (ps.isCommunismActivated()) {
+        //if Communism is activated, all territories do not generate gold
+        
+      } else {
+        if (ps.isSilkRoadActivated()) {
+          //territories’ gold production doubles if Silk Road is activated
+          ps.addGold(2 * t.getGold());
+        } else {
+          ps.addGold(t.getGold());
+        }
+      }
+    }
+    //Loan: deducts 70 gold for the next 5 turns
+    for(PlayerStat p : playerStats){
+      if (p.isLoanActivated()) {
+        p.subtractGold(70);
+      }
+    }
+  }
+  
+  // public void generateCards() {
+  //   for (PlayerStat p : this.playerStats) {
+  //     int dice6 = (int) (Math.random() * 6 + 1);//[1,6]
+  //     p.setNewCard(dice6);
+  //   }
+    
+  //   //cid = 1 portal
+  //   //...
+  //   //cid = 6 loan
+  // }
+
+  // generate new cards in gameworker, then assign to the map
+  public void setNewCards(ArrayList<Integer> newCards){
+    int ind = 0;
+    for (PlayerStat ps : playerStats){
+      ps.setNewCard(newCards.get(ind));
+      ind++;
     }
   }
 
@@ -277,4 +346,35 @@ public class Map implements Serializable {
     getPlayerStatByPid(p2).breakAlliance();
   }
 
+  public int getAllyId(int pid){
+    if (getPlayerStatByPid(pid).isAllied()) {
+      for (PlayerStat ps : playerStats) {
+        if (ps.getPid() == pid) {
+          continue;
+        }
+        if (ps.getAid() == getPlayerStatByPid(pid).getAid()) {
+          return ps.getPid();
+        }
+      }
+    }
+    return -1;//no ally
+  }
+
+  public Territory getNearestTerritory(Territory src, int pid) {
+    int minDist = 99999;
+    Territory nearestTerritory = getTerritoryByName(getOwnTerritoryListName(pid).get(0));
+    for (Territory t : territories) {
+      if(t.getTid() == src.getTid() || t.getOwnership() != pid){
+        //avoid self territory and enemy territory
+        continue;
+      }
+      
+      int distance = CostofShortestPath(src.getName(), t.getName());
+      if (distance > 0 && distance < minDist) {
+        minDist = distance;
+        nearestTerritory = t;
+      }
+    }
+    return nearestTerritory;
+  }
 }

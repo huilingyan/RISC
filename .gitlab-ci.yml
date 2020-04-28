@@ -1,9 +1,21 @@
+# services:
+#   - postgres:latest
+  
+# variables:
+#     POSTGRES_DB: risc
+#     POSTGRES_USER: postgres
+#     POSTGRES_PASSWORD: abc123
+#     POSTGRES_HOST_AUTH_METHOD: trust
+#     POSTGRES_HOST: postgres
+#     POSTGRES_PORT: 5432
+
 before_script:
   - hostname
   - whoami
   - pwd
   - ls -la
   - docker --version
+  - docker-compose --version
 
 stages:
    - build
@@ -43,8 +55,10 @@ pages:
 deploy:
   tags: 
      - ece651 
-  stage: deploy 
+  stage: deploy
   script: ./scripts/redeploy.sh
+    #  - docker-compose stop
+    #  - docker-compose up --build
  
 test-deployment: 
   tags: 

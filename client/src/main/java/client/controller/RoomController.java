@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import java.nio.channels.SocketChannel;
 
 import shared.*;
 
@@ -116,6 +117,10 @@ public class RoomController extends SceneController {
                         this.mc.setWorldMap(servermsg.getMap());  // set map
                         int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
                         int gid = servermsg.getGameID();
+                        // create chatclient thread
+                        // SocketChannel chatChannel = this.mc.getChatChannel();
+                        this.mc.showChatBox();
+                        this.mc.startChatClient(playername, this.mc);
                         // debug stage number
                         int stage = servermsg.getStage();
                         if (stage == GameMessage.INITIALIZE_UNITS) {
@@ -191,13 +196,18 @@ public class RoomController extends SceneController {
                         ErrorAlerts.WaitForJoin();
                         // ErrorAlerts.deployArmyPrompt();
                         ServerMessage servermsg = (ServerMessage) this.mc.recvFromServer();
+                        this.mc.setWorldMap(servermsg.getMap());
+                        // create chatclient thread
+                        // SocketChannel chatChannel = this.mc.getChatChannel();
+                        this.mc.showChatBox();
+                        this.mc.startChatClient(playername, this.mc);                        
                         // debug stage number
                         int stage = servermsg.getStage();
                         if (stage != GameMessage.INITIALIZE_UNITS) {
                             System.out.println("Stage number is " + stage);
                             System.out.println("Error: should be 1 (initialize units)");
                         }
-                        this.mc.setWorldMap(servermsg.getMap());
+                        // this.mc.setWorldMap(servermsg.getMap());
                         int pid = servermsg.getMap().getPidByName(this.mc.getPlayerName());
                         int gid = servermsg.getGameID();
                         this.mc.showInitScene(gid, pid);

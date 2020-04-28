@@ -11,7 +11,7 @@ public class MapTest {
     Map worldmap = MapGenerator.gamemapGenerator();
     Map test1 = MapGenerator.initmapGenerator();
     assertEquals(-1, worldmap.CostofShortestPath("Ditto", "Charmandar"));
-    assertEquals(-1, worldmap.CostofShortestPath("Ditto", "Pidgey"));
+    assertEquals(9, worldmap.CostofShortestPath("Ditto", "Pidgey"));
     assertEquals(0, worldmap.CostofShortestPath("Ditto", "Ditto"));
     assertEquals(3, worldmap.CostofShortestPath("Ditto", "Mew"));
     assertEquals(6, worldmap.CostofShortestPath("Ditto", "Jumpluff"));

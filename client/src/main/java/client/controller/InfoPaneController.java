@@ -1,6 +1,7 @@
 package client.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -11,9 +12,19 @@ import shared.PlayerStat;
 
 public class InfoPaneController implements PaneController {
   private Map worldmap;
+  private PlayerStat ownerPS;
+  private HashMap<Integer, String> cidNameMap;
 
-  public InfoPaneController(Map m) {
+  public InfoPaneController(Map m,int pid) {
     this.worldmap = m;
+    this.ownerPS = m.getPlayerStatByPid(pid);
+    this.cidNameMap = new HashMap<>();
+    cidNameMap.put(1, "Portal");
+    cidNameMap.put(2, "Communism");
+    cidNameMap.put(3, "Technology Worship");
+    cidNameMap.put(4, "Conscription");
+    cidNameMap.put(5, "Silk Road");
+    cidNameMap.put(6, "Loan");
   }
 
   @Override
@@ -28,6 +39,7 @@ public class InfoPaneController implements PaneController {
       grid.add(new Text("Food"),3,0);
       grid.add(new Text("Gold"),4,0);
       grid.add(new Text("Max tech"),5,0);
+      grid.add(new Text("Aliance ID"),6,0);
       
       ArrayList<PlayerStat> psList = this.worldmap.getPlayerStats();
       for (int i = 0; i < psList.size(); i++) {
@@ -41,6 +53,23 @@ public class InfoPaneController implements PaneController {
           grid.add(new Text(Integer.toString(ps.getFood())),3,row);
           grid.add(new Text(Integer.toString(ps.getGold())),4,row);
           grid.add(new Text(Integer.toString(ps.getMaxTechLvl())),5,row);
+          grid.add(new Text(Integer.toString(ps.getAid())),6,row);
+      }
+
+      int rows = psList.size();
+      rows++;
+      grid.addRow(rows, new Text("Your current activeted card:"));
+      if (ownerPS.getActivatedCards().isEmpty()) {
+        //no card is activated
+        rows++;
+        grid.addRow(rows, new Text("None."));
+      }
+      else {
+        for (HashMap.Entry<Integer, Integer> entry : ownerPS.getActivatedCards().entrySet()) {
+          rows++;
+          String s = cidNameMap.get(entry.getKey()) + ":" + entry.getValue() + " turns";
+          grid.addRow(rows, new Text(s));
+        }
       }
 
       AnchorPane anchorP = new AnchorPane(grid);

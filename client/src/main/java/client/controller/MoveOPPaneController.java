@@ -10,8 +10,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import shared.Army;
 import shared.MoveOperation;
 import shared.OperationValidator;
+import shared.PlayerStat;
 import shared.Territory;
 
 public class MoveOPPaneController implements PaneController {
@@ -29,10 +31,18 @@ public class MoveOPPaneController implements PaneController {
     @Override
     public AnchorPane getCurrPane() {
         Territory terr = this.gc.getWorldmap().getTerritoryByName(terrName);
+        PlayerStat masterPS = gc.getWorldmap().getPlayerStatByPid(gc.getPid());
 
         Text costNotification = new Text("Move will cost food = the sum of territory sizes the path travelled including the destination\n x number of soldiers moved.");
         Text selectArmy = new Text("Move the slider to select how many soldiers you want to move:");
-        ArmySlider amsld = new ArmySlider(terr.getDefender());
+        Army tempArmy = new Army(0);
+        if (gc.getWorldmap().ownerstatus(terr, masterPS) ==0) {
+          tempArmy.joinArmy(terr.getDefender());
+        }
+        else {
+          tempArmy.joinArmy(terr.getFriendDefender());
+        }
+        ArmySlider amsld = new ArmySlider(tempArmy);
         Text selectDest = new Text("Select the destination where the army will go:");
         ChoiceBox<String> chBox = new ChoiceBox<>();
         ArrayList<String> ownTnames = this.gc.getWorldmap().getOwnTerritoryListName(gc.getPid());
