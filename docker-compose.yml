@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  postgres:
+      image: postgres
+      environment:
+        POSTGRES_PASSWORD: abc123
+        POSTGRES_USER: postgres
+        POSTGRES_DB: risc
+      restart: always
+      volumes:
+            - data-volume:/var/lib/postgresql/data
+
+  server:
+      build: .
+      command: ./gradlew run-server
+      # volumes:
+      #   - ./web-app:/code
+      expose:
+        - "1651"
+        - "6666"
+      ports:
+        - "1651:7777"
+        - "6666:6666"
+      depends_on:
+        - postgres
+  
+volumes:
+   data-volume: 
