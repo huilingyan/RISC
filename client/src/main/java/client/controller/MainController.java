@@ -104,7 +104,7 @@ public class MainController {
     }
 
     public void showChatBox() {
-        this.chatController = new ChatController(this.getChatClient());
+        this.chatController = new ChatController();
         this.chatController.setMainController(this);
         this.chatController.displayChatBox();
     }
@@ -237,7 +237,7 @@ public class MainController {
     }
 
     public void appendToTextArea(String src, String msg) {
-        this.chatController.getTextArea().appendText(src + ": " +  msg + "\n");
+        this.chatController.getTextArea().appendText(src + " to Me : " + msg + "\n");
     }
 
     public void startChatClient(String playerName, MainController mc) {

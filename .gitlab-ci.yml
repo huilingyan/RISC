@@ -55,7 +55,7 @@ pages:
 deploy:
   tags: 
      - ece651 
-  stage: deploy 
+  stage: deploy
   script: ./scripts/redeploy.sh
     #  - docker-compose stop
     #  - docker-compose up --build

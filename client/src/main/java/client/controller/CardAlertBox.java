@@ -16,11 +16,11 @@ import javafx.stage.Stage;
 public class CardAlertBox {
   private static final Map<Integer, String> cidtomsgMap = ImmutableMap.<Integer, String>builder()
     .put(-1, "You got a card: this card has no effect.")
-    .put(1,"You got card 'Portal': For this turn, you can spend 50 gold and your move and attack will cost no food.")
+    .put(1,"You got card 'Portal': For this turn, you can spend 25 gold and your move and attack will cost no food.")
     .put(2,"You got card 'Communism': For the next 5 turns, you get no gold from you territories, but all your soldiers get +5 bonus during battle.")
     .put(3,"You got card 'Technology Worship': Automatically upgrade you max tech lv by 1 this turn (IT\"S FREE!).")
-    .put(4, "You got card 'Conscription': For this turn, you will get 5 soldiers from each territory at the end but it will cost 20 food per territory. ")
-    .put(5,"You got card 'Silk Road': For this turn you get double gold from you terrtories, but it will cost 10 food per territory.")
+    .put(4, "You got card 'Conscription': For this turn, you will get 5 soldiers from each territory at the end but it will cost 10 food per territory. ")
+    .put(5,"You got card 'Silk Road': For this turn you get double gold from you terrtories, but it will cost 5 food per territory.")
     .put(6,"You got card 'Loan': You instantly get 300 gold this turn, but pay 70 gold for the next 5 turns.")
     .build();
 

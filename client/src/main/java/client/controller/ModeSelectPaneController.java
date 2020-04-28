@@ -27,7 +27,7 @@ public class ModeSelectPaneController implements PaneController {
         Territory terr = gc.getWorldmap().getTerritoryByName(terrName);
         PlayerStat masterPS = gc.getWorldmap().getPlayerStatByPid(gc.getPid());
         PlayerStat ownerPS = gc.getWorldmap().getPlayerStatByPid(terr.getOwnership());
-        boolean showmodeBtn = ((gc.getWorldmap().ownerstatus(terr, masterPS)) >=0);//decide if show the selection buttons
+        int showmodeBtn = gc.getWorldmap().ownerstatus(terr, masterPS);//decide if show the selection buttons
         boolean hasmoved = gc.isMoved();//decide if show the upgrade button
 
         GridPane t_textGridPane = InfoLayoutGenerator.generateTerritoryText(terr,ownerPS);//text info about this territory
@@ -60,11 +60,14 @@ public class ModeSelectPaneController implements PaneController {
         //vb.setPrefColumns(0);
         vb.getChildren().add(t_textGridPane);
         vb.setAlignment(Pos.CENTER);
-        if (showmodeBtn) {
+        if (showmodeBtn==0) {
             if (hasmoved == false) {
                 vb.getChildren().addAll(upgradeNotification,upgradeBtn);
             }
             vb.getChildren().addAll(moveBtn, atkBtn);
+        }
+        if (showmodeBtn == 1) {
+          vb.getChildren().addAll(moveBtn);
         }
         vb.getChildren().add(cancelBtn);
         

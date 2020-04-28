@@ -131,6 +131,7 @@ public class ErrorAlerts {
       .put(OperationValidator.EXCEED_MAX_LV, "Your upgrade cannot exceed your maximum tech Lv!")
       .put(OperationValidator.PLAYER_ALREADY_ALLIED,"You are already allied with someone!")
       .put(OperationValidator.REPEATED_ALLIANCE_REQUEST,"You can only request ally once in a turn!")
+      .put(OperationValidator.BREAKING_ALLIANCE,"You broke the alliance!")
       .build();
 
     public static void inValidOpAlert(int errorcode) {
@@ -190,6 +191,24 @@ public class ErrorAlerts {
         alert.showAndWait();
     }
 
+    public static void mustChooseAPlayer() {
+        Alert alert = new Alert(AlertType.ERROR);
 
+        alert.setTitle("Error");
+        alert.setHeaderText("Please choose a player");
+        alert.setContentText("You must choose a player to send message to! Please try again:");
+
+        alert.showAndWait();
+    }
+
+    public static void sendEmptyMsg() {
+        Alert alert = new Alert(AlertType.ERROR);
+
+        alert.setTitle("Error");
+        alert.setHeaderText("Please write something");
+        alert.setContentText("You can't send an empty message! Please input some words:");
+
+        alert.showAndWait();
+    }
 
 }
